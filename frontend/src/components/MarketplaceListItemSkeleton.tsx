@@ -9,22 +9,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 
-export interface IMarketplaceItem {
-  id: number;
-  url: string;
-  name: string;
-  description?: string;
-  value: number;
-  dateCreated: string;
-}
-
-interface IMarketplaceItemProps {
-  item: IMarketplaceItem;
-}
-
-const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  item: { id, url, name, description, value, dateCreated },
-}) => {
+const MarketplaceListItemSkeleton: React.FC = () => {
   return (
     <Card sx={{ display: "flex", flexDirection: "column" }}>
       <CardMedia
@@ -35,18 +20,16 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
       />
       <CardContent sx={{ flexGrow: 1 }}>
         <Typography gutterBottom variant="h5" component="h2">
-          {name}
+          some
         </Typography>
-        <Typography>{description}</Typography>
+        <Typography>some</Typography>
       </CardContent>
       <CardActions>
-        <Link style={{ textDecoration: "none" }} to={`/marketplace/${id}`}>
-          <Button size="small">View</Button>
-        </Link>
+        <Button size="small">View</Button>
         <Button size="small">Edit</Button>
       </CardActions>
     </Card>
   );
 };
 
-export default MarketplaceItem;
+export default MarketplaceListItemSkeleton;

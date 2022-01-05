@@ -5,15 +5,31 @@ import Box from "@mui/material/Box";
 
 import listings from "fixtures/listings";
 
-import MarketplaceItem from "components/MarketplaceItem";
+import MarketplaceListItem from "components/MarketplaceListItem";
+import MarketplaceItemSkeleton from "components/MarketplaceItemSkeleton";
 
 const Marketplace = () => {
+  const [state, setState] = React.useState({ loading: true });
+
+  const getListItems = () => {
+    setTimeout(() => {
+      setState({ loading: false });
+    }, 500);
+  };
+
+  React.useEffect(() => {
+    getListItems();
+  }, []);
   return (
     <Box>
       <Grid container spacing={4}>
-        {listings.map((card, index) => (
+        {listings.map((listItem, index) => (
           <Grid item key={index} xs={12} sm={6} md={4}>
-            <MarketplaceItem />
+            {state.loading ? (
+              <MarketplaceItemSkeleton />
+            ) : (
+              <MarketplaceListItem listItem={listItem} />
+            )}
           </Grid>
         ))}
       </Grid>

@@ -18,5 +18,5 @@
     "types": ["node", "jest"],
     "baseUrl": "src"
   },
-  "include": ["src"]
+  "include": ["src", "src/components/.tsx"]
 }

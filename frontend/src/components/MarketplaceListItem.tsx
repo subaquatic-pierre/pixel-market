@@ -9,21 +9,14 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 
-export interface IMarketplaceItem {
-  id: number;
-  url: string;
-  name: string;
-  description?: string;
-  value: number;
-  dateCreated: string;
+import { IMarketplaceItem } from "components/MarketplaceItem";
+
+interface IMarketplaceListItemProps {
+  listItem: IMarketplaceItem;
 }
 
-interface IMarketplaceItemProps {
-  item: IMarketplaceItem;
-}
-
-const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  item: { id, url, name, description, value, dateCreated },
+const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
+  listItem: { id, url, name, description, value, dateCreated },
 }) => {
   return (
     <Card sx={{ display: "flex", flexDirection: "column" }}>
@@ -49,4 +42,4 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   );
 };
 
-export default MarketplaceItem;
+export default MarketplaceListItem;
