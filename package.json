@@ -1,7 +1,7 @@
 {
-  "name": "dive-log-dapp",
+  "name": "pixel-node-marketplace",
   "version": "1.0.0",
-  "description": "Dapp to create dive log NFT's",
+  "description": "Market place to create NFTs with your own images and sell them",
   "directories": {
     "test": "test"
   },
@@ -10,13 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/subaquatic-pierre/dive-log-dapp.git"
+    "url": "git+https://github.com/subaquatic-pierre/pixel-node-marketplace.git"
   },
   "keywords": [],
   "author": "Nomic Labs",
   "license": "MIT",
   "dependencies": {
-    "@mui/icons-material": "^5.2.5",
     "@openzeppelin/contracts": "^4.4.1",
     "dotenv": "^10.0.0"
   },
