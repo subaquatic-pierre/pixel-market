@@ -1,5 +1,3 @@
-# Dive Log Dapp
+# Pixel Node Marketplace
 
-The latest web3 decentralized application used to log dives from around the world.
-
-Each dive is a unique NFT on the Avalanche blockchain
+A market place launched on Avax network which allows authors to upload their pictures and create NFTs to sell
