@@ -8,7 +8,7 @@ import listings from "fixtures/listings";
 import MarketplaceListItem from "components/MarketplaceListItem";
 import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 
-const Marketplace = () => {
+const Marketplace: React.FC = () => {
   const [state, setState] = React.useState({ loading: true });
 
   const getListItems = () => {

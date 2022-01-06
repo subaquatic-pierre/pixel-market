@@ -39,6 +39,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             elevation={0}
           >
             <CardMedia
+              sx={{ p: 2 }}
               component="img"
               image="https://source.unsplash.com/random"
               alt="random"

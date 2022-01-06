@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import MarketplaceItem from "components/MarketplaceItem";
 import MarketplaceItemSkeleton from "components/MarketplaceItemSkeleton";
 
@@ -24,13 +24,13 @@ const MarketplaceItemPage = () => {
   }, []);
 
   return (
-    <Box>
+    <Container maxWidth="lg">
       {state.loading ? (
         <MarketplaceItemSkeleton />
       ) : (
         <MarketplaceItem item={item} />
       )}
-    </Box>
+    </Container>
   );
 };
 

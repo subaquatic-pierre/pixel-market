@@ -43,9 +43,7 @@ const Layout: React.FC = ({ children }) => {
       >
         <Toolbar />
         <AlertMessage />
-        <Container component="main" maxWidth="xl">
-          {children}
-        </Container>
+        <Box component="main">{children}</Box>
       </Box>
     </Box>
   );

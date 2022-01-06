@@ -7,7 +7,41 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 
-const MarketplaceItemSkeleton: React.FC = () => {
+interface IFormData {
+  image: any;
+  url: string;
+  name: string;
+  description?: string;
+  value: string;
+  dateCreated: string;
+}
+
+const initialFormState: IFormData = {
+  image: "",
+  url: "",
+  name: "",
+  description: "",
+  value: "",
+  dateCreated: "",
+};
+
+const CreateListing = () => {
+  const [formState, setFormState] = React.useState(initialFormState);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const field = event.target.name;
+    const value = event.target.value;
+
+    updateFormState(field, value);
+  };
+
+  const updateFormState = (field: string, value: string) => {
+    setFormState((oldState) => ({
+      ...oldState,
+      [field]: value,
+    }));
+  };
+
   return (
     <Paper>
       <Grid container spacing={0}>
@@ -18,8 +52,8 @@ const MarketplaceItemSkeleton: React.FC = () => {
             elevation={0}
           >
             <Stack spacing={1}>
-              <Box sx={{ p: 2 }}>
-                <Skeleton sx={{ mb: 4 }} variant="rectangular" height={450} />
+              <Skeleton variant="rectangular" height={500} />
+              <Box sx={{ px: 2, pb: 2 }}>
                 <Skeleton variant="text" height={50} />
                 <Skeleton variant="text" height={50} />
               </Box>
@@ -40,4 +74,4 @@ const MarketplaceItemSkeleton: React.FC = () => {
   );
 };
 
-export default MarketplaceItemSkeleton;
+export default CreateListing;

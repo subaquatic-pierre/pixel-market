@@ -5,6 +5,7 @@ import DashboardPage from "pages/DashboardPage";
 import WalletPage from "pages/WalletPage";
 import MarketPlacePage from "pages/MarketplacePage";
 import MarketplaceItemPage from "pages/MarketplaceItemPage";
+import CreateListingPage from "pages/CreateListingPage";
 
 const BaseRouter = () => {
   return (
@@ -13,6 +14,7 @@ const BaseRouter = () => {
       <Route path="/wallet" element={<WalletPage />} />
       <Route path="/marketplace" element={<MarketPlacePage />} />
       <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
+      <Route path="/create" element={<CreateListingPage />} />
     </Routes>
   );
 };
