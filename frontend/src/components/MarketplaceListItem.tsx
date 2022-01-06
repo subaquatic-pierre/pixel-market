@@ -32,11 +32,15 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
         </Typography>
         <Typography>{description}</Typography>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ p: 2 }}>
         <Link style={{ textDecoration: "none" }} to={`/marketplace/${id}`}>
-          <Button size="small">View</Button>
+          <Button sx={{ mr: 2 }} color="primary" variant="contained">
+            View
+          </Button>
         </Link>
-        <Button size="small">Edit</Button>
+        <Button sx={{ mr: 2 }} color="primary" variant="contained">
+          Edit
+        </Button>
       </CardActions>
     </Card>
   );

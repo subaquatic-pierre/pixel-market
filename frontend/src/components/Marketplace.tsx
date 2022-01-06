@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import listings from "fixtures/listings";
 
 import MarketplaceListItem from "components/MarketplaceListItem";
-import MarketplaceItemSkeleton from "components/MarketplaceItemSkeleton";
+import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 
 const Marketplace = () => {
   const [state, setState] = React.useState({ loading: true });

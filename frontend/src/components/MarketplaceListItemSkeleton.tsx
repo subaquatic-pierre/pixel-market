@@ -1,33 +1,26 @@
 import React from "react";
 
-import { Link } from "react-router-dom";
-
-import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 const MarketplaceListItemSkeleton: React.FC = () => {
   return (
-    <Card sx={{ display: "flex", flexDirection: "column" }}>
-      <CardMedia
-        component="img"
-        image="https://source.unsplash.com/random"
-        alt="random"
-        height={300}
-      />
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="h2">
-          some
-        </Typography>
-        <Typography>some</Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small">View</Button>
-        <Button size="small">Edit</Button>
-      </CardActions>
+    <Card
+      sx={{ display: "flex", flexDirection: "column" }}
+      square
+      elevation={0}
+    >
+      <Stack spacing={1}>
+        <Skeleton variant="rectangular" height={300} />
+        <Box sx={{ px: 2, pb: 2 }}>
+          <Skeleton variant="text" height={50} />
+          <Skeleton variant="text" height={50} />
+        </Box>
+      </Stack>
     </Card>
   );
 };
