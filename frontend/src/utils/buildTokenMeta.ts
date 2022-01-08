@@ -25,8 +25,8 @@ export const buildMetaUrl = (tokenId: string) => {
   return tokenUrl;
 };
 
-export const buildImageUrl = (tokenId: string, imageName: string) => {
-  const imageUrl = `${IMAGE_URL}/token-id-${tokenId}-${imageName}`;
+export const buildImageUrl = (tokenId: string) => {
+  const imageUrl = `${IMAGE_URL}/token-id-${tokenId}.jpeg`;
   return imageUrl;
 };
 
@@ -39,7 +39,7 @@ export const buildTokenMeta = (
   const tokenMetaJson = {
     name: name,
     description: description,
-    imageUrl: buildImageUrl(tokenId, name),
+    imageUrl: buildImageUrl(tokenId),
     attributes: attrs,
   };
 
@@ -52,8 +52,12 @@ export const saveTokenMeta = (tokenMeta: TokenMeta): void => {
   }
 };
 
-export const saveTokenImage = (tokenMeta: TokenMeta): void => {
+export const saveTokenImage = (tokenId: string): void => {
   if (!fs.existsSync(IMAGE_DIR)) {
     fs.mkdirSync(IMAGE_DIR);
   }
+
+  const imagePath = `${IMAGE_DIR}/token-id-${tokenId}.jpeg`;
+
+  //   fs.writeFileSync(imagePath, JSON.stringify(ContractArtifact, null, 2));
 };
