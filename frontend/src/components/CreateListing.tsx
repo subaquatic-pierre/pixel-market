@@ -1,8 +1,9 @@
 import React from "react";
 
+import axios from "axios";
 import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
 import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -38,8 +39,8 @@ const ImageInput: React.FC<IImageInputProps> = ({
 }) => {
   const handleChange = (fileInputEvent: any) => {
     const file = fileInputEvent.target.files[0];
-    console.log(file);
     const fileType = "image/jpeg";
+
     if (file.type.match(fileType)) {
       setImage(file);
     } else {
@@ -59,6 +60,7 @@ const ImageInput: React.FC<IImageInputProps> = ({
 
 const CreateListing = () => {
   const [image, setImage] = React.useState<any>();
+  const [imageSrc, setImageSrc] = React.useState<any>();
   const [inputError, setInputError] = React.useState<any>();
 
   const [formState, setFormState] = React.useState(initialFormState);
@@ -77,9 +79,43 @@ const CreateListing = () => {
     }));
   };
 
+  const handleImageChange = () => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageSrc(reader.result);
+    };
+    reader.readAsDataURL(image);
+  };
+
+  async function postData(url = "") {
+    const response = await fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "content-type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+    });
+    return response;
+  }
+
+  const handleFormSubmit = (url: string) => {
+    const data = { answer: 42 };
+
+    axios
+      .post(url, data)
+      .then((res) => console.log(res))
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   React.useEffect(() => {
     if (image) {
-      console.log(image);
+      handleImageChange();
     }
   }, [image]);
 
@@ -92,32 +128,51 @@ const CreateListing = () => {
             square
             elevation={0}
           >
-            <Stack spacing={1}>
+            {image ? (
+              <CardMedia
+                component="img"
+                image={imageSrc}
+                alt="random"
+                height={500}
+              />
+            ) : (
               <Skeleton variant="rectangular" height={500} />
-              <Box sx={{ px: 2, pb: 2 }}>
-                <Skeleton variant="text" height={50} />
-                <Skeleton variant="text" height={50} />
-              </Box>
-            </Stack>
+            )}
+            <Box sx={{ p: 2 }}>
+              <Button variant="contained" component="label">
+                Upload File
+                <ImageInput setImage={setImage} setInputError={setInputError} />
+              </Button>
+              {inputError && (
+                <Typography sx={{ mt: 2 }} color="red">
+                  {inputError}
+                </Typography>
+              )}
+            </Box>
           </Card>
           <Grid />
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ p: 2 }}>
-            <Button variant="contained" component="label">
-              Upload File
-              <ImageInput setImage={setImage} setInputError={setInputError} />
+            <Button
+              sx={{ mr: 3 }}
+              variant="contained"
+              onClick={() =>
+                handleFormSubmit("http://localhost:8080/save-image")
+              }
+              component="label"
+            >
+              Save Image
             </Button>
-            {inputError && (
-              <Typography sx={{ mt: 2 }} color="red">
-                {inputError}
-              </Typography>
-            )}
-
-            {/* <Stack spacing={1}>
-              <Skeleton variant="text" height={50} />
-              <Skeleton variant="text" height={50} />
-            </Stack> */}
+            <Button
+              variant="contained"
+              onClick={() =>
+                handleFormSubmit("http://localhost:8080/save-meta")
+              }
+              component="label"
+            >
+              Save Meta
+            </Button>
           </Box>
         </Grid>
       </Grid>
