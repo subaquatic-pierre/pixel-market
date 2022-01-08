@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Skeleton from "@mui/material/Skeleton";
@@ -14,6 +15,21 @@ import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
 import FileInput from "components/FileInput";
+
+import { HOST_URL } from "const";
+
+export interface TokenMetaAttributes {
+  [key: string]: string;
+}
+
+export interface TokenMeta {
+  tokenId: string;
+  tokenUri: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  attributes: TokenMetaAttributes[];
+}
 
 interface IFormData {
   image: any;
@@ -34,13 +50,14 @@ const initialFormState: IFormData = {
 };
 
 const CreateListing = () => {
-  const [_n, { setWarning }] = useNotificationContext();
+  const navigate = useNavigate();
+  const [_n, { setWarning, setSuccess }] = useNotificationContext();
   // Get pixel NFT contract from dapp state
   const [dappState, _] = useDappContext();
   const [pixelNFTContract, setPixelNFTContract] = React.useState<any>();
 
   // Get latest token Id from query to the blockchain
-  const [latestTokenId, setLatestTokenId] = React.useState<any>();
+  const [tokenId, setTokenId] = React.useState<string>("");
 
   // Handle file input state
   const [file, setFile] = React.useState<any>();
@@ -50,6 +67,20 @@ const CreateListing = () => {
   const [imageSrc, setImageSrc] = React.useState<any>();
 
   const [formState, setFormState] = React.useState(initialFormState);
+
+  // Query contract for total token supply, set latest token Id
+  const getLatestTokenId = async () => {
+    pixelNFTContract
+      .totalSupply()
+      .then((res) => {
+        const bigNum = res;
+        const strNum = bigNum.toString();
+        setTokenId(strNum);
+      })
+      .catch((err) => {
+        setWarning(err);
+      });
+  };
 
   // Handle text input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,14 +105,13 @@ const CreateListing = () => {
       setImageSrc(reader.result);
     };
     reader.readAsDataURL(file);
-    console.log(file);
   };
 
   const handleImageSave = () => {
-    const url = "http://localhost:8080/save-image";
+    const url = `${HOST_URL}/save-image`;
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("tokenId", latestTokenId);
+    formData.append("tokenId", tokenId);
 
     axios
       .post(url, formData, {
@@ -89,23 +119,53 @@ const CreateListing = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => console.log(res))
       .catch((err) => {
-        console.error(err);
+        console.error(setWarning(err.message));
       });
   };
 
-  // Query contract for total token supply, set latest token Id
-  const getLatestTokenId = () => {
-    console.log(pixelNFTContract);
-    // pixelNFTContract
-    //   .getBalance()
-    //   .then((res) => {
-    //     setLatestTokenId(res);
-    //   })
-    //   .catch((err) => {
-    //     setWarning(err);
-    //   });
+  const handleMetaDataSave = (): boolean => {
+    const url = `${HOST_URL}/save-meta`;
+    const data: TokenMeta = {
+      tokenId: tokenId,
+      tokenUri: `${`${HOST_URL}/meta/token-id-${tokenId}.json`}`,
+      name: "Cool NFT",
+      description: "This is the first description of an NFT",
+      imageUrl: `${HOST_URL}/token-image/${tokenId}.jpg`,
+      attributes: [{ amount: "42" }, { author: "The Amazing Creator" }],
+    };
+
+    axios.post(url, data).catch((err) => {
+      console.error(setWarning(err.message));
+      return false;
+    });
+    return true;
+  };
+
+  const handleCreateToken = () => {
+    if (file) {
+      handleImageSave();
+    } else {
+      setWarning("No image uploaded");
+      return;
+    }
+    if (!handleMetaDataSave()) {
+      setWarning("There was an error saving meta data");
+      return;
+    }
+
+    // Create token on block chain
+    if (tokenId) {
+      pixelNFTContract
+        .createToken(`${`${HOST_URL}/meta/token-id-${tokenId}.json`}`)
+        .then((res) => {
+          navigate(`/marketplace/${tokenId}`);
+          setSuccess(`Token successfully create, tx hash: ${res.hash}`);
+        })
+        .catch((err) => {
+          setWarning(err.message);
+        });
+    }
   };
 
   // Handle file input change
@@ -164,16 +224,20 @@ const CreateListing = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ p: 2 }}>
-            <Button
+            {/* <Button
               sx={{ mr: 3 }}
               variant="contained"
               onClick={handleImageSave}
               component="label"
             >
               Save Image
-            </Button>
-            <Button variant="contained" onClick={() => {}} component="label">
-              Save Meta
+            </Button> */}
+            <Button
+              variant="contained"
+              onClick={handleCreateToken}
+              component="label"
+            >
+              Create Token
             </Button>
           </Box>
         </Grid>

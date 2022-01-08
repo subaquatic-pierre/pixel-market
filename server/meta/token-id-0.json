@@ -1,0 +1,12 @@
+{
+    "tokenId": "0",
+    "tokenUri": "http://localhost:8080/meta/token-id-0.json",
+    "name": "Cool NFT",
+    "description": "This is the first description of an NFT",
+    "imageUrl": "http://localhost:8080/token-image/0.jpg",
+    "attributes": [{
+        "amount": "42"
+    }, {
+        "author": "The Amazing Creator"
+    }]
+}

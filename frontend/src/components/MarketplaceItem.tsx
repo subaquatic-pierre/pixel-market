@@ -28,6 +28,7 @@ interface IMarketplaceItemProps {
 const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   item: { id, url, name, description, value, dateCreated },
 }) => {
+  console.log(url);
   return (
     <Paper>
       <Grid container spacing={0}>
@@ -41,8 +42,8 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             <CardMedia
               sx={{ p: 2 }}
               component="img"
-              image="https://source.unsplash.com/random"
-              alt="random"
+              image={url}
+              alt={name}
               height={500}
             />
             <CardContent sx={{ flexGrow: 1 }}>

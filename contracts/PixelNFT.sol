@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract IPixelNFT is ERC721Enumerable {
+contract PixelNFT is ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -61,14 +61,11 @@ contract IPixelNFT is ERC721Enumerable {
         }
     }
 
-    function createItem(address _author, string memory _tokenURI)
-        public
-        returns (uint256)
-    {
+    function createToken(string memory _tokenURI) public returns (uint256) {
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _mint(_author, newItemId);
+        _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, _tokenURI);
 
         return newItemId;
