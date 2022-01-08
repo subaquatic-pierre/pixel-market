@@ -28,23 +28,20 @@ const initialFormState: IFormData = {
   dateCreated: "",
 };
 
-interface IImageInputProps {
-  setImage: React.Dispatch<any>;
-  setInputError: React.Dispatch<any>;
+interface IFileInputProps {
+  setFile: React.Dispatch<any>;
+  setFileError: React.Dispatch<any>;
 }
 
-const ImageInput: React.FC<IImageInputProps> = ({
-  setImage,
-  setInputError,
-}) => {
+const FileInput: React.FC<IFileInputProps> = ({ setFile, setFileError }) => {
   const handleChange = (fileInputEvent: any) => {
     const file = fileInputEvent.target.files[0];
     const fileType = "image/jpeg";
 
     if (file.type.match(fileType)) {
-      setImage(file);
+      setFile(file);
     } else {
-      setInputError("File not supported!");
+      setFileError("File not supported!");
     }
   };
 
@@ -59,12 +56,16 @@ const ImageInput: React.FC<IImageInputProps> = ({
 };
 
 const CreateListing = () => {
-  const [image, setImage] = React.useState<any>();
+  // Handle file input state
+  const [file, setFile] = React.useState<any>();
+  const [fileError, setFileError] = React.useState<any>();
+
+  // Used to display image in card
   const [imageSrc, setImageSrc] = React.useState<any>();
-  const [inputError, setInputError] = React.useState<any>();
 
   const [formState, setFormState] = React.useState(initialFormState);
 
+  // Handle text input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const field = event.target.name;
     const value = event.target.value;
@@ -72,6 +73,7 @@ const CreateListing = () => {
     updateFormState(field, value);
   };
 
+  // Call update form state if text input changes
   const updateFormState = (field: string, value: string) => {
     setFormState((oldState) => ({
       ...oldState,
@@ -79,34 +81,29 @@ const CreateListing = () => {
     }));
   };
 
-  const handleImageChange = () => {
+  // Handle file change to display image on card
+  const handleFileChange = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       setImageSrc(reader.result);
     };
-    reader.readAsDataURL(image);
+    reader.readAsDataURL(file);
+    console.log(file);
   };
 
-  async function postData(url = "") {
-    const response = await fetch(url, {
-      method: "POST",
-      mode: "no-cors",
-      cache: "no-cache",
-      credentials: "same-origin",
-      headers: {
-        "content-type": "application/json",
-      },
-      redirect: "follow",
-      referrerPolicy: "no-referrer",
-    });
-    return response;
-  }
-
-  const handleFormSubmit = (url: string) => {
-    const data = { answer: 42 };
+  const handleImageSave = () => {
+    const url = "http://localhost:8080/save-image";
+    var formData = new FormData();
+    formData.append("file", file);
+    formData.append("tokenId", "42");
+    formData.append("description", "42 is the answer to the universe");
 
     axios
-      .post(url, data)
+      .post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res) => console.log(res))
       .catch((err) => {
         console.error(err);
@@ -114,10 +111,10 @@ const CreateListing = () => {
   };
 
   React.useEffect(() => {
-    if (image) {
-      handleImageChange();
+    if (file) {
+      handleFileChange();
     }
-  }, [image]);
+  }, [file]);
 
   return (
     <Paper>
@@ -128,7 +125,7 @@ const CreateListing = () => {
             square
             elevation={0}
           >
-            {image ? (
+            {file ? (
               <CardMedia
                 component="img"
                 image={imageSrc}
@@ -141,11 +138,11 @@ const CreateListing = () => {
             <Box sx={{ p: 2 }}>
               <Button variant="contained" component="label">
                 Upload File
-                <ImageInput setImage={setImage} setInputError={setInputError} />
+                <FileInput setFile={setFile} setFileError={setFileError} />
               </Button>
-              {inputError && (
+              {setFileError && (
                 <Typography sx={{ mt: 2 }} color="red">
-                  {inputError}
+                  {fileError}
                 </Typography>
               )}
             </Box>
@@ -157,20 +154,12 @@ const CreateListing = () => {
             <Button
               sx={{ mr: 3 }}
               variant="contained"
-              onClick={() =>
-                handleFormSubmit("http://localhost:8080/save-image")
-              }
+              onClick={handleImageSave}
               component="label"
             >
               Save Image
             </Button>
-            <Button
-              variant="contained"
-              onClick={() =>
-                handleFormSubmit("http://localhost:8080/save-meta")
-              }
-              component="label"
-            >
+            <Button variant="contained" onClick={() => {}} component="label">
               Save Meta
             </Button>
           </Box>
