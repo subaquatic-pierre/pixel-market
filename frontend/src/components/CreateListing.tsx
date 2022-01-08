@@ -10,6 +10,11 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
+import useDappContext from "hooks/useDappContext";
+import useNotificationContext from "hooks/useNotificationContext";
+
+import FileInput from "components/FileInput";
+
 interface IFormData {
   image: any;
   url: string;
@@ -28,34 +33,15 @@ const initialFormState: IFormData = {
   dateCreated: "",
 };
 
-interface IFileInputProps {
-  setFile: React.Dispatch<any>;
-  setFileError: React.Dispatch<any>;
-}
-
-const FileInput: React.FC<IFileInputProps> = ({ setFile, setFileError }) => {
-  const handleChange = (fileInputEvent: any) => {
-    const file = fileInputEvent.target.files[0];
-    const fileType = "image/jpeg";
-
-    if (file.type.match(fileType)) {
-      setFile(file);
-    } else {
-      setFileError("File not supported!");
-    }
-  };
-
-  return (
-    <input
-      accept="image/*"
-      type="file"
-      onChange={handleChange}
-      style={{ display: "none" }}
-    />
-  );
-};
-
 const CreateListing = () => {
+  const [_n, { setWarning }] = useNotificationContext();
+  // Get pixel NFT contract from dapp state
+  const [dappState, _] = useDappContext();
+  const [pixelNFTContract, setPixelNFTContract] = React.useState<any>();
+
+  // Get latest token Id from query to the blockchain
+  const [latestTokenId, setLatestTokenId] = React.useState<any>();
+
   // Handle file input state
   const [file, setFile] = React.useState<any>();
   const [fileError, setFileError] = React.useState<any>();
@@ -95,8 +81,7 @@ const CreateListing = () => {
     const url = "http://localhost:8080/save-image";
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("tokenId", "42");
-    formData.append("description", "42 is the answer to the universe");
+    formData.append("tokenId", latestTokenId);
 
     axios
       .post(url, formData, {
@@ -110,11 +95,39 @@ const CreateListing = () => {
       });
   };
 
+  // Query contract for total token supply, set latest token Id
+  const getLatestTokenId = () => {
+    console.log(pixelNFTContract);
+    // pixelNFTContract
+    //   .getBalance()
+    //   .then((res) => {
+    //     setLatestTokenId(res);
+    //   })
+    //   .catch((err) => {
+    //     setWarning(err);
+    //   });
+  };
+
+  // Handle file input change
   React.useEffect(() => {
     if (file) {
       handleFileChange();
     }
   }, [file]);
+
+  // Get the latest tokenId on render
+  React.useEffect(() => {
+    if (pixelNFTContract) {
+      getLatestTokenId();
+    }
+  }, [pixelNFTContract]);
+
+  // Set NFT contract to interact with blockchain
+  React.useEffect(() => {
+    if (dappState.isInitialized) {
+      setPixelNFTContract(dappState.contracts.pixelNFT);
+    }
+  }, [dappState]);
 
   return (
     <Paper>

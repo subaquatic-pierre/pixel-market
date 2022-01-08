@@ -29,26 +29,19 @@ app.use(
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 
+// Image save on upload
 app.post("/save-image", upload.single("file"), (req, res) => {
-  const imagePath = req.file.path;
-  const description = req.body.description;
   const tokenId = req.body.tokenId;
 
+  // Rename image to token Id
   fs.rename(
     req.file.path,
-    `${IMAGES_DIR}${tokenId}${path.extname(req.file.originalname)}`,
-    (err) => {
-      console.log(err);
-    }
+    `${IMAGES_DIR}token-id-${tokenId}${path.extname(req.file.originalname)}`
   );
 
   if (req.file) {
     res.json(req.file);
   }
-
-  console.log(description, imagePath);
-  //   res.send({ description, imagePath });
-  //   console.log(req.file);
 });
 
 app.post("/save-meta", (req, res) => {
