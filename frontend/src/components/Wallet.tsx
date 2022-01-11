@@ -42,7 +42,8 @@ const Wallet = () => {
   const [_n, { setSuccess, setWarning }] = useNotificationContext();
 
   const getTokenBalance = () => {
-    const token = dappState.contracts.tokenContract;
+    const token = dappState.contracts.pixelToken;
+    console.log(dappState);
     console.log(token);
     const address = dappState.currentAccount;
     token.balanceOf(address).then((res) => {
@@ -56,7 +57,7 @@ const Wallet = () => {
 
   const initWalletState = async () => {
     // Get details off dappState
-    const token = dappState.contracts.tokenContract;
+    const token = dappState.contracts.pixelToken;
     const address = dappState.currentAccount;
 
     const bigNumVal = await token.balanceOf(address);

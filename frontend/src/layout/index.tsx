@@ -8,18 +8,13 @@ import Container from "@mui/material/Container";
 
 import SideNav from "components/SideNav";
 import TopNav from "components/TopNav";
-import TopNavSkeleton from "components/TopNavSkeleton";
-import SideNavSkeleton from "components/SideNavSkeleton";
-import MainSkeleton from "components/MainSkeleton";
 
 import AlertMessage from "components/AlertMessage";
-import useDappContext from "hooks/useDappContext";
 
 const drawerWidth = 240;
 
 const Layout: React.FC = ({ children }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [{ isInitialized }, _] = useDappContext();
   const theme = useTheme();
 
   const handleDrawerToggle = () => {
@@ -48,9 +43,7 @@ const Layout: React.FC = ({ children }) => {
       >
         <Toolbar />
         <AlertMessage />
-        <Container component="main" maxWidth="xl">
-          {isInitialized ? children : <MainSkeleton />}
-        </Container>
+        <Box component="main">{children}</Box>
       </Box>
     </Box>
   );

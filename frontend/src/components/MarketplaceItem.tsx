@@ -1,36 +1,66 @@
 import React from "react";
+
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 
-interface IMarketplaceProps {}
+export interface IMarketplaceItem {
+  id: number;
+  imageUrl: string;
+  name: string;
+  description?: string;
+  value: number;
+  dateCreated: string;
+}
 
-const MarketplaceItem = () => {
+interface IMarketplaceItemProps {
+  item: IMarketplaceItem;
+}
+
+const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
+  item: { id, imageUrl, name, description, value, dateCreated },
+}) => {
   return (
-    <Card sx={{ display: "flex", flexDirection: "column" }}>
-      <CardMedia
-        component="img"
-        image="https://source.unsplash.com/random"
-        alt="random"
-        height={300}
-      />
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="h2">
-          Heading
-        </Typography>
-        <Typography>
-          This is a media card. You can use this section to describe the
-          content.
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small">View</Button>
-        <Button size="small">Edit</Button>
-      </CardActions>
-    </Card>
+    <Paper>
+      <Grid container spacing={0}>
+        <Grid item sm={12} md={6}>
+          <Card
+            sx={{ display: "flex", flexDirection: "column" }}
+            raised={false}
+            square
+            elevation={0}
+          >
+            <CardMedia
+              sx={{ p: 2 }}
+              component="img"
+              image={imageUrl}
+              alt={name}
+              height={500}
+            />
+            <CardContent sx={{ flexGrow: 1 }}>
+              <Typography gutterBottom variant="h5" component="h2">
+                {name}
+              </Typography>
+              <Typography>{description}</Typography>
+            </CardContent>
+            <CardActions sx={{ p: 2 }}>
+              <Button color="primary" variant="contained">
+                Purchase
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <Box sx={{ p: 2 }}>right side</Box>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 };
 

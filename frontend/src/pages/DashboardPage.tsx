@@ -1,12 +1,13 @@
 import React from "react";
-import Box from "@mui/material/Box";
 
+import Container from "@mui/material/Container";
 import Dashboard from "components/Dashboard";
+
 const DashboardPage: React.FC = ({ children }) => {
   return (
-    <Box>
+    <Container maxWidth="xl">
       <Dashboard />
-    </Box>
+    </Container>
   );
 };
 

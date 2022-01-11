@@ -1,13 +1,6 @@
-interface IListing {
-  id: number;
-  url: string;
-  name: string;
-  description?: string;
-  value: number;
-  dateCreated: string;
-}
+import { IMarketplaceItem } from "components/MarketplaceItem";
 
-const listings: IListing[] = [
+const listings = [
   {
     id: 1,
     url: "hhtp://localhost:3000",

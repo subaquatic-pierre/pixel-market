@@ -1,13 +1,18 @@
 import React from "react";
-import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 
+import useDappContext from "hooks/useDappContext";
+
+import WalletSkeleton from "components/WalletSkeleton";
 import Wallet from "components/Wallet";
 
 const DashboardPage: React.FC = ({ children }) => {
+  const [{ isInitialized }, _] = useDappContext();
+
   return (
-    <Box>
-      <Wallet />
-    </Box>
+    <Container maxWidth="lg">
+      {isInitialized ? <Wallet /> : <WalletSkeleton />}
+    </Container>
   );
 };
 

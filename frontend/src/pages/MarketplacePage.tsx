@@ -1,14 +1,14 @@
 import React from "react";
 
-import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 
-import MarketplaceItem from "components/Marketplace";
+import Marketplace from "components/Marketplace";
 
 const MarketPlacePage = () => {
   return (
-    <Box>
-      <MarketplaceItem />
-    </Box>
+    <Container maxWidth="xl">
+      <Marketplace />
+    </Container>
   );
 };
 

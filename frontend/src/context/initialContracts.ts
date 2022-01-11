@@ -1,27 +1,25 @@
 import { ethers } from "ethers";
 
-// We import the contract's artifacts and address here, as we are going to be
-// using them with ethers
-import BallotArtifact from "contracts/Ballot.json";
-import TokenArtifact from "contracts/Token.json";
-import tokenAddress from "contracts/token-contract-address.json";
-import ballotAddress from "contracts/ballot-contract-address.json";
+import PixelNFTArtifact from "contracts/PixelNFT.json";
+import pixelNFTAddress from "contracts/PixelNFT-contract-address.json";
+import PixelTokenArtifact from "contracts/PixelToken.json";
+import pixelTokenAddress from "contracts/PixelToken-contract-address.json";
 
 export const buildContracts = (provider) => {
-  const ballotContract = new ethers.Contract(
-    ballotAddress.Ballot,
-    BallotArtifact.abi,
+  const pixelNFT = new ethers.Contract(
+    pixelNFTAddress.PixelNFT,
+    PixelNFTArtifact.abi,
     provider.getSigner(0)
   );
 
-  const tokenContract = new ethers.Contract(
-    tokenAddress.Token,
-    TokenArtifact.abi,
+  const pixelToken = new ethers.Contract(
+    pixelTokenAddress.PixelToken,
+    PixelTokenArtifact.abi,
     provider.getSigner(0)
   );
 
   return {
-    ballotContract,
-    tokenContract,
+    pixelNFT,
+    pixelToken,
   };
 };
