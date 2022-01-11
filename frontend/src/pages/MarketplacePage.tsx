@@ -2,12 +2,12 @@ import React from "react";
 
 import Container from "@mui/material/Container";
 
-import MarketplaceItem from "components/Marketplace";
+import Marketplace from "components/Marketplace";
 
 const MarketPlacePage = () => {
   return (
     <Container maxWidth="xl">
-      <MarketplaceItem />
+      <Marketplace />
     </Container>
   );
 };

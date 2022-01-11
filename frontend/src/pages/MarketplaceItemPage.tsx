@@ -15,15 +15,26 @@ import { HOST_URL } from "const";
 
 const MarketplaceItemPage = () => {
   const { id } = useParams();
-  const [state, setState] = React.useState({
-    loading: true,
-    item: undefined,
-    tokenUri: undefined,
-  });
+  const [loading, setLoading] = React.useState(true);
+  const [tokenUri, setTokenUri] = React.useState("");
+  const [item, setItem] = React.useState<any>();
   const [dappState, _] = useDappContext();
   const [pixelNFTContract, setPixelNFTContract] = React.useState<any>();
 
   // const item = listings.filter((item) => item.id === Number(id))[0];
+
+  const getTokenUri = () => {
+    dappState.contracts.pixelNFT
+      .tokenURI(id)
+      .then((res) => {
+        setTokenUri(res.toString());
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const loadItem = () => {
+    getTokenMeta(id);
+  };
 
   const getTokenMeta = (tokenId) => {
     axios
@@ -38,12 +49,8 @@ const MarketplaceItemPage = () => {
           value: attrs[0].value,
           dateCreated: "somedate",
         };
-        setState((oldState) => ({
-          ...oldState,
-          loading: false,
-          item: itemRes,
-        }));
-        console.log(itemRes);
+        setItem(itemRes);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -51,29 +58,23 @@ const MarketplaceItemPage = () => {
       });
   };
 
-  const loadItem = () => {
-    getTokenMeta(id);
-  };
-
   // Set loading state true until request from blockchain is complete
   React.useEffect(() => {
     loadItem();
-  }, []);
+    console.log(tokenUri);
+  }, [tokenUri]);
 
-  // React.useEffect(() => {
-  //   loadItem();
-  //   // if (dappState.isInitialized) {
-  //   //   setPixelNFTContract(dappState.contracts.pixelNFT);
-  //   // }
-  // }, [dappState]);
+  React.useEffect(() => {
+    loadItem();
+    if (dappState.isInitialized) {
+      setPixelNFTContract(dappState.contracts.pixelNFT);
+      getTokenUri();
+    }
+  }, [dappState]);
 
   return (
     <Container maxWidth="lg">
-      {state.loading ? (
-        <MarketplaceItemSkeleton />
-      ) : (
-        <MarketplaceItem item={state.item} />
-      )}
+      {loading ? <MarketplaceItemSkeleton /> : <MarketplaceItem item={item} />}
     </Container>
   );
 };

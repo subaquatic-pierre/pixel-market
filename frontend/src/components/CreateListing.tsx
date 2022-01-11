@@ -128,7 +128,7 @@ const CreateListing = () => {
     const url = `${HOST_URL}/save-meta`;
     const data: TokenMeta = {
       tokenId: tokenId,
-      tokenUri: `${`${HOST_URL}/meta/token-id-${tokenId}.json`}`,
+      tokenUri: `${HOST_URL}/token-meta/${tokenId}`,
       name: "Cool NFT",
       description: "This is the first description of an NFT",
       imageUrl: `${HOST_URL}/token-image/${tokenId}.jpg`,
@@ -157,7 +157,7 @@ const CreateListing = () => {
     // Create token on block chain
     if (tokenId) {
       pixelNFTContract
-        .createToken(`${`${HOST_URL}/meta/token-id-${tokenId}.json`}`)
+        .createToken(`${HOST_URL}/token-meta/${tokenId}`)
         .then((res) => {
           navigate(`/marketplace/${tokenId}`);
           setSuccess(`Token successfully create, tx hash: ${res.hash}`);
