@@ -28,16 +28,26 @@ const Marketplace: React.FC = () => {
 
   const getListItems = async () => {
     const contract = dappState.contracts.pixelNFT;
-    const totalSupply = await contract.totalSupply();
+    const bigNumTotalSupply = await contract.totalSupply();
+    const totalSupply = Number(bigNumTotalSupply.toString());
+    const tokenIdToUri = [];
     const tokenIds = [];
+
+    // Loop over total supply to get token Ids
     for (let i = 0; i < totalSupply; i++) {
-      const tokenId = await contract.tokenByIndex(i).toString();
-      tokenIds.push(tokenId);
+      const tokenId = await contract.tokenByIndex(i);
+      tokenIds.push(tokenId.toString());
     }
-    console.log(contract);
-    setTimeout(() => {
-      setState({ loading: false, listItems: [] });
-    }, 500);
+
+    // Loop over Ids to get token Uri, set state list items
+    for (let i = 0; i < tokenIds.length; i++) {
+      const tokenId = tokenIds[i];
+      const tokenUri = await contract.tokenURI(tokenId);
+      const item = { tokenId, tokenUri };
+      tokenIdToUri.push(item);
+    }
+
+    setState({ loading: false, listItems: tokenIdToUri });
   };
 
   React.useEffect(() => {
@@ -45,6 +55,7 @@ const Marketplace: React.FC = () => {
       getListItems();
     }
   }, [dappState]);
+
   return (
     <Box>
       <Grid container spacing={4}>
@@ -60,7 +71,12 @@ const Marketplace: React.FC = () => {
                 )}
               </Grid>
             ))}
-        {!state.loading && state.listItems.map((item) => <div></div>)}
+        {!state.loading &&
+          state.listItems.map((item, index) => (
+            <Grid item key={index} xs={12} sm={6} md={4}>
+              <MarketplaceListItem listItem={item} />
+            </Grid>
+          ))}
       </Grid>
     </Box>
   );

@@ -28,7 +28,6 @@ interface IMarketplaceItemProps {
 const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   item: { id, url, name, description, value, dateCreated },
 }) => {
-  console.log(url);
   return (
     <Paper>
       <Grid container spacing={0}>
