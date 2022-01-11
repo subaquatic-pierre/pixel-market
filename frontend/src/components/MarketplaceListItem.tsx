@@ -8,6 +8,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import CardActionArea from "@mui/material/CardActionArea";
 
 import { HOST_URL } from "const";
 import useDappContext from "hooks/useDappContext";
@@ -29,7 +30,6 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   const [dappState, _] = useDappContext();
 
   const loadItem = () => {
-    console.log(listItem);
     axios
       .get(listItem.tokenUri)
       .then((res) => {
@@ -66,12 +66,19 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
       {loading && <div>loading</div>}
       {item && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
-          <CardMedia
-            component="img"
-            image="https://source.unsplash.com/random"
-            alt="random"
-            height={300}
-          />
+          <Link
+            style={{ textDecoration: "none" }}
+            to={`/marketplace/${listItem.tokenId}`}
+          >
+            <CardActionArea>
+              <CardMedia
+                component="img"
+                image={item.url}
+                alt={item.name}
+                height={300}
+              />
+            </CardActionArea>
+          </Link>
           <CardContent sx={{ flexGrow: 1 }}>
             <Typography gutterBottom variant="h5" component="h2">
               {item.name}
@@ -83,12 +90,12 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
               style={{ textDecoration: "none" }}
               to={`/marketplace/${listItem.tokenId}`}
             >
-              <Button sx={{ mr: 2 }} color="primary" variant="contained">
+              <Button sx={{ mr: 1 }} color="primary" variant="contained">
                 View
               </Button>
             </Link>
-            <Button sx={{ mr: 2 }} color="primary" variant="contained">
-              Edit
+            <Button sx={{ mr: 1 }} color="secondary" variant="contained">
+              Purchase
             </Button>
           </CardActions>
         </Card>

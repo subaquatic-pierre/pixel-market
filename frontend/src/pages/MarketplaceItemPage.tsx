@@ -12,6 +12,7 @@ import MarketplaceItemSkeleton from "components/MarketplaceItemSkeleton";
 
 const MarketplaceItemPage = () => {
   const { id } = useParams();
+  const [_n, { setWarning }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [tokenUri, setTokenUri] = React.useState("");
   const [item, setItem] = React.useState<any>();
@@ -24,7 +25,9 @@ const MarketplaceItemPage = () => {
       .then((res) => {
         setTokenUri(res.toString());
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setWarning(err.message);
+      });
   };
 
   const loadItem = () => {
@@ -44,14 +47,14 @@ const MarketplaceItemPage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        setWarning(err.message);
         return;
       });
   };
 
   // Set loading state true until request from blockchain is complete
   React.useEffect(() => {
-    loadItem();
+    if (tokenUri) loadItem();
   }, [tokenUri]);
 
   React.useEffect(() => {
