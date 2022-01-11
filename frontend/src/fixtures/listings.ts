@@ -1,6 +1,6 @@
 import { IMarketplaceItem } from "components/MarketplaceItem";
 
-const listings: IMarketplaceItem[] = [
+const listings = [
   {
     id: 1,
     url: "hhtp://localhost:3000",

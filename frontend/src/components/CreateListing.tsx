@@ -23,8 +23,7 @@ export interface TokenMetaAttributes {
 }
 
 export interface TokenMeta {
-  tokenId: string;
-  tokenUri: string;
+  tokenId: number;
   name: string;
   description: string;
   imageUrl: string;
@@ -57,7 +56,7 @@ const CreateListing = () => {
   const [pixelNFTContract, setPixelNFTContract] = React.useState<any>();
 
   // Get latest token Id from query to the blockchain
-  const [tokenId, setTokenId] = React.useState<string>("");
+  const [tokenId, setTokenId] = React.useState<number>();
 
   // Handle file input state
   const [file, setFile] = React.useState<any>();
@@ -75,7 +74,7 @@ const CreateListing = () => {
       .then((res) => {
         const bigNum = res;
         const strNum = bigNum.toString();
-        setTokenId(strNum);
+        setTokenId(Number(strNum) + 1);
       })
       .catch((err) => {
         setWarning(err);
@@ -111,7 +110,7 @@ const CreateListing = () => {
     const url = `${HOST_URL}/save-image`;
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("tokenId", tokenId);
+    formData.append("tokenId", `${tokenId}`);
 
     axios
       .post(url, formData, {
@@ -128,7 +127,6 @@ const CreateListing = () => {
     const url = `${HOST_URL}/save-meta`;
     const data: TokenMeta = {
       tokenId: tokenId,
-      tokenUri: `${HOST_URL}/token-meta/${tokenId}`,
       name: "Cool NFT",
       description: "This is the first description of an NFT",
       imageUrl: `${HOST_URL}/token-image/${tokenId}.jpg`,
@@ -159,7 +157,7 @@ const CreateListing = () => {
       pixelNFTContract
         .createToken(`${HOST_URL}/token-meta/${tokenId}`)
         .then((res) => {
-          navigate(`/marketplace/${tokenId}`);
+          navigate(`/marketplace`);
           setSuccess(`Token successfully create, tx hash: ${res.hash}`);
         })
         .catch((err) => {

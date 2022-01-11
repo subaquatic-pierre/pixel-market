@@ -1,7 +1,5 @@
 import React from "react";
 
-import { Link } from "react-router-dom";
-
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -14,7 +12,7 @@ import Box from "@mui/material/Box";
 
 export interface IMarketplaceItem {
   id: number;
-  url: string;
+  imageUrl: string;
   name: string;
   description?: string;
   value: number;
@@ -26,7 +24,7 @@ interface IMarketplaceItemProps {
 }
 
 const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  item: { id, url, name, description, value, dateCreated },
+  item: { id, imageUrl, name, description, value, dateCreated },
 }) => {
   return (
     <Paper>
@@ -41,7 +39,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             <CardMedia
               sx={{ p: 2 }}
               component="img"
-              image={url}
+              image={imageUrl}
               alt={name}
               height={500}
             />

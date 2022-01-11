@@ -37,7 +37,7 @@ const MarketplaceItemPage = () => {
         const attrs = res.data.attributes;
         const itemRes = {
           id: res.data.tokenId,
-          url: res.data.imageUrl,
+          imageUrl: res.data.imageUrl,
           name: res.data.name,
           description: res.data.description,
           value: attrs[0].value,

@@ -1,1 +1,1 @@
-{"tokenId":"2","tokenUri":"http://localhost:8080/token-meta/2","name":"Cool NFT","description":"This is the first description of an NFT","imageUrl":"http://localhost:8080/token-image/2.jpg","attributes":[{"amount":"42"},{"author":"The Amazing Creator"}]}
+{"tokenId":2,"name":"Cool NFT","description":"This is the first description of an NFT","imageUrl":"http://localhost:8080/token-image/2.jpg","attributes":[{"amount":"42"},{"author":"The Amazing Creator"}]}

@@ -10,8 +10,9 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 
-import { HOST_URL } from "const";
+import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import useDappContext from "hooks/useDappContext";
+import useNotificationContext from "hooks/useNotificationContext";
 
 interface TokenIdToUri {
   tokenId: number;
@@ -26,6 +27,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   listItem,
 }) => {
   const [item, setItem] = React.useState<any>(null);
+  const [_n, { setWarning }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
 
@@ -36,17 +38,17 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
         const attrs = res.data.attributes;
         const itemRes = {
           id: res.data.tokenId,
-          url: res.data.imageUrl,
+          imageUrl: res.data.imageUrl,
           name: res.data.name,
           description: res.data.description,
           value: attrs[0].value,
-          dateCreated: "somedate",
+          dateCreated: "some date",
         };
         setItem(itemRes);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        setWarning(err.message);
         return;
       });
   };
@@ -57,13 +59,9 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
     }
   }, [dappState]);
 
-  React.useEffect(() => {
-    // console.log(item);
-  }, [item]);
-
   return (
     <div>
-      {loading && <div>loading</div>}
+      {loading && <MarketplaceItemSkeleton />}
       {item && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
           <Link
@@ -73,7 +71,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
             <CardActionArea>
               <CardMedia
                 component="img"
-                image={item.url}
+                image={item.imageUrl}
                 alt={item.name}
                 height={300}
               />
