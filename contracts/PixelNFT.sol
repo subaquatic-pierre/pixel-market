@@ -12,6 +12,7 @@ contract PixelNFT is ERC721Enumerable {
     Counters.Counter private _tokenIds;
 
     mapping(uint256 => string) private _tokenURIs;
+    mapping(uint256 => uint256) public _tokenValues;
 
     constructor() ERC721("PixelNFT", "PIXNFT") {}
 
@@ -53,6 +54,14 @@ contract PixelNFT is ERC721Enumerable {
         _tokenURIs[tokenId] = _tokenURI;
     }
 
+    function _setTokenValue(uint256 tokenId, uint256 tokenValue) internal {
+        require(
+            _exists(tokenId),
+            "ERC721URIStorage: URI set of nonexistent token"
+        );
+        _tokenValues[tokenId] = tokenValue;
+    }
+
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
 
@@ -61,12 +70,16 @@ contract PixelNFT is ERC721Enumerable {
         }
     }
 
-    function createToken(string memory _tokenURI) public returns (uint256) {
+    function createToken(string memory _tokenURI, uint256 _tokenValue)
+        public
+        returns (uint256)
+    {
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, _tokenURI);
+        _setTokenValue(newItemId, _tokenValue);
 
         return newItemId;
     }

@@ -5,7 +5,7 @@ import DashboardPage from "pages/DashboardPage";
 import WalletPage from "pages/WalletPage";
 import MarketPlacePage from "pages/MarketplacePage";
 import MarketplaceItemPage from "pages/MarketplaceItemPage";
-import CreateListingPage from "pages/CreateListingPage";
+import CreateListingPage from "pages/CreateTokenPage";
 
 const BaseRouter = () => {
   return (

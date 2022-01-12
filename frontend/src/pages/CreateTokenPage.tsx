@@ -1,7 +1,7 @@
 import React from "react";
 
 import Container from "@mui/material/Container";
-import CreateListing from "components/CreateListing";
+import CreateListing from "components/CreateToken";
 
 const CreateListingPage = () => {
   return (
