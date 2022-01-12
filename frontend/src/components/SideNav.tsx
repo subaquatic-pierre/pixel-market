@@ -2,17 +2,18 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
+import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 
 import BrandLogo from "components/BrandLogo";
 
-import useNavLinks from "hooks/useNavLinks";
+import { useNavLinks, useAdminLinks } from "hooks/useNavLinks";
+import useDappContext from "hooks/useDappContext";
+import filterIconByName from "utils/filterIconByName";
 
 interface ISideNavProps {
   mobileOpen: boolean;
@@ -28,7 +29,7 @@ const NavList: React.FC<INavListProps> = ({ handleDrawerToggle }) => {
   const links = useNavLinks();
   return (
     <List color="inherit">
-      {links.map(({ text, link }, index) => (
+      {links.map(({ text, link, icon }, index) => (
         <Link
           key={index}
           style={{ textDecoration: "none", color: "inherit" }}
@@ -36,7 +37,30 @@ const NavList: React.FC<INavListProps> = ({ handleDrawerToggle }) => {
         >
           <ListItem button onClick={handleDrawerToggle}>
             <ListItemIcon sx={{ color: "inherit" }}>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              {filterIconByName(icon)}
+            </ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        </Link>
+      ))}
+    </List>
+  );
+};
+
+const AdminNavList: React.FC<INavListProps> = ({ handleDrawerToggle }) => {
+  const links = useAdminLinks();
+  return (
+    <List color="inherit">
+      <Divider />
+      {links.map(({ text, link, icon }, index) => (
+        <Link
+          key={index}
+          style={{ textDecoration: "none", color: "inherit" }}
+          to={link}
+        >
+          <ListItem button onClick={handleDrawerToggle}>
+            <ListItemIcon sx={{ color: "inherit" }}>
+              {filterIconByName(icon)}
             </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
@@ -51,6 +75,21 @@ const SideNav: React.FC<ISideNavProps> = ({
   drawerWidth,
   handleDrawerToggle,
 }) => {
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [dappState, _] = useDappContext();
+
+  const checkIsAdmin = async () => {
+    const marketContract = dappState.contracts.pixelMarketplace;
+    const isAdmin = await marketContract.isAdmin();
+    setIsAdmin(isAdmin);
+  };
+
+  React.useEffect(() => {
+    if (dappState.isInitialized) {
+      checkIsAdmin();
+    }
+  }, [dappState]);
+
   return (
     <Box
       component="nav"
@@ -105,6 +144,7 @@ const SideNav: React.FC<ISideNavProps> = ({
         >
           <BrandLogo />
           <NavList />
+          {isAdmin && <AdminNavList />}
         </AppBar>
       </Drawer>
     </Box>

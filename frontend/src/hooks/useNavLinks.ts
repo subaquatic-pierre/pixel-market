@@ -1,10 +1,20 @@
 const navLinks = [
-  { text: "Dashboard", link: "/" },
-  { text: "Wallet", link: "wallet" },
-  { text: "Marketplace", link: "marketplace" },
-  { text: "Create Token", link: "create" },
+  { text: "Dashboard", link: "/", icon: "dashboard" },
+  { text: "Wallet", link: "wallet", icon: "wallet" },
+  { text: "Marketplace", link: "marketplace", icon: "market" },
+  { text: "Create Token", link: "create", icon: "create" },
+  { text: "My Tokens", link: "tokens", icon: "token" },
+  { text: "My Listings", link: "listings", icon: "listings" },
 ];
 
-export default function useNavLinks() {
+export function useNavLinks() {
   return navLinks;
+}
+
+const adminLinks = [
+  { text: "Author Requests", link: "author-requests", icon: "author" },
+];
+
+export function useAdminLinks() {
+  return adminLinks;
 }

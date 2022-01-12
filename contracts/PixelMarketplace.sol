@@ -9,6 +9,7 @@ import "./PixelToken.sol";
 struct Author {
     string authorName;
     string authorEmail;
+    bool exists;
     bool isActive;
 }
 
@@ -89,6 +90,7 @@ contract PixelMarketplace is IERC721Receiver {
         Author memory newAuthor = Author(
             _authorName,
             _authorEmail,
+            true,
             _isActiveStatus
         );
         authors[_authorWalletAddress] = newAuthor;
@@ -98,6 +100,19 @@ contract PixelMarketplace is IERC721Receiver {
             _authorEmail,
             _isActiveStatus
         );
+    }
+
+    function isAdmin() public view returns (bool) {
+        return msg.sender == _owner;
+    }
+
+    function isAuthor() public view returns (bool) {
+        Author memory author = authors[msg.sender];
+        if (author.exists) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // function getAuthorListings(address _authorAddress)
