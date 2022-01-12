@@ -4,20 +4,36 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "./PixelNFT.sol";
+import "./PixelToken.sol";
+
+struct Author {
+    string authorName;
+    string authorEmail;
+    bool isActive;
+}
+
+struct AuthorRequest {
+    address authorWalletAddress;
+    string authorName;
+    string authorEmail;
+    bool processed;
+}
 
 abstract contract PixelMarketplace is IERC721Receiver {
-    struct Author {
-        string authorName;
-        string authorEmail;
-        bool isActive;
-    }
+    address _owner;
+    PixelNFT NFTContract;
+    PixelToken tokenContract;
 
-    struct AuthorRequest {
-        address authorWalletAddress;
-        string authorName;
-        string authorEmail;
-        bool processed;
-    }
+    // Marketplace items
+    uint256 public marketplaceItemCount;
+    mapping(uint256 => PixelNFT) public marketplaceItems;
+
+    // Marketplace authors
+    uint256 public authorCount;
+    mapping(address => Author) public authors;
+
+    // Author requests
+    AuthorRequest[] authorRequests;
 
     event AuthorshipRequested(
         address _authorWalletAddress,
@@ -32,21 +48,10 @@ abstract contract PixelMarketplace is IERC721Receiver {
         bool isActive
     );
 
-    address _owner;
-
-    // Marketplace items
-    uint256 public marketplaceItemCount;
-    mapping(address => PixelNFT) public marketplaceItems;
-
-    // Marketplace authors
-    uint256 public authorCount;
-    mapping(address => Author) public authors;
-
-    // Author requests
-    AuthorRequest[] authorRequests;
-
-    constructor() {
+    constructor(address _NFTContractAddress, address _tokenContractAddress) {
         _owner = msg.sender;
+        NFTContract = PixelNFT(_NFTContractAddress);
+        tokenContract = PixelToken(_tokenContractAddress);
     }
 
     function requestAuthorship(
@@ -82,5 +87,15 @@ abstract contract PixelMarketplace is IERC721Receiver {
             _authorEmail,
             _isActiveStatus
         );
+    }
+
+    function getAuthorListings(address _authorAddress)
+        public
+        pure
+        returns (uint256[] memory)
+    {
+        uint256[] memory a = new uint256[](5);
+        // uint256[] memory tokenIds = new [1, 2];
+        return a;
     }
 }

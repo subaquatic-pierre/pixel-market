@@ -12,7 +12,7 @@ contract PixelNFT is ERC721Enumerable {
     Counters.Counter private _tokenIds;
 
     mapping(uint256 => string) private _tokenURIs;
-    mapping(uint256 => uint256) public _tokenValues;
+    mapping(uint256 => uint256) private _tokenValues;
 
     constructor() ERC721("PixelNFT", "PIXNFT") {}
 
@@ -82,5 +82,10 @@ contract PixelNFT is ERC721Enumerable {
         _setTokenValue(newItemId, _tokenValue);
 
         return newItemId;
+    }
+
+    function getTokenValue(uint256 _tokenId) public view returns (uint256) {
+        uint256 _tokenValue = _tokenValues[_tokenId];
+        return _tokenValue;
     }
 }
