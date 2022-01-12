@@ -17,14 +17,27 @@ const MyMarketplaceListPage = () => {
   const checkAuthorshipStatus = async () => {
     const contract = dappState.contracts.pixelMarketplace;
     const isAuthor = await contract.isAuthor();
-    console.log(isAuthor);
-    if (isAuthor) {
+    const isRequestSent = await contract.isAuthorRequestSent();
+
+    if (isRequestSent) {
       setAuthorshipStatus({
         isAuthor: false,
+        requestSent: true,
+        loading: false,
+      });
+      return;
+    }
+
+    if (isAuthor) {
+      setAuthorshipStatus({
+        isAuthor: true,
         requestSent: false,
         loading: false,
       });
+      return;
     }
+
+    setAuthorshipStatus((oldStatus) => ({ ...oldStatus, loading: false }));
   };
 
   React.useEffect(() => {

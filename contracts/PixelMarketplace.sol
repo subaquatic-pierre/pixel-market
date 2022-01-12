@@ -72,6 +72,14 @@ contract PixelMarketplace is IERC721Receiver {
         string memory _authorName,
         string memory _authorEmail
     ) public {
+        // Check if request already exists from user
+        bool requestExists = isAuthorRequestSent();
+        require(!requestExists, "You have already requested authorship status");
+
+        // Check if author already exists
+        bool _isAuthor = isAuthor();
+        require(!_isAuthor, "Author already exists");
+
         bool setReuqestAuthorExistsInMap = true;
         authorRequests[msg.sender] = AuthorRequest(
             msg.sender,

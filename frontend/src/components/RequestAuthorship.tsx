@@ -63,7 +63,8 @@ const RequestAuthorship: React.FC<IRequestAuthorshipProps> = ({
         formState.authorName,
         formState.authorEmail
       );
-      console.log(resHash);
+      setFormState({ authorName: "", authorEmail: "" });
+      setSuccess("Your request has been submitted");
     } catch (err) {
       setWarning(err.message);
     }
@@ -76,15 +77,7 @@ const RequestAuthorship: React.FC<IRequestAuthorshipProps> = ({
       setWarning("Form fields cannot be empty");
       return;
     }
-
-    submitTransaction()
-      .then((res) => {
-        setFormState({ authorName: "", authorEmail: "" });
-        setSuccess("Your request has been submitted");
-      })
-      .catch((err) => {
-        setWarning(err.message);
-      });
+    submitTransaction();
   };
 
   React.useEffect(() => {
