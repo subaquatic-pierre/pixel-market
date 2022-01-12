@@ -160,7 +160,7 @@ const Wallet = () => {
           Wallet
         </Typography>
         <>
-          <Grid container sx={{ mt: 3 }}>
+          <Grid container maxWidth="sm" sx={{ mt: 3 }}>
             <Grid item xs></Grid>
             <Grid item>
               <Grid item xs>
