@@ -9,8 +9,8 @@ import "./PixelToken.sol";
 struct Author {
     string authorName;
     string authorEmail;
-    bool exists;
     bool isActive;
+    bool exists;
 }
 
 struct AuthorRequest {
@@ -18,6 +18,7 @@ struct AuthorRequest {
     string authorName;
     string authorEmail;
     bool processed;
+    bool exists;
 }
 
 contract PixelMarketplace is IERC721Receiver {
@@ -34,7 +35,8 @@ contract PixelMarketplace is IERC721Receiver {
     mapping(address => Author) public authors;
 
     // Author requests
-    AuthorRequest[] authorRequests;
+    uint256 public authorRequestCount;
+    mapping(address => AuthorRequest) public authorRequests;
 
     event AuthorshipRequested(
         address _authorWalletAddress,
@@ -70,8 +72,13 @@ contract PixelMarketplace is IERC721Receiver {
         string memory _authorName,
         string memory _authorEmail
     ) public {
-        authorRequests.push(
-            AuthorRequest(msg.sender, _authorName, _authorEmail, false)
+        bool setReuqestAuthorExistsInMap = true;
+        authorRequests[msg.sender] = AuthorRequest(
+            msg.sender,
+            _authorName,
+            _authorEmail,
+            false,
+            setReuqestAuthorExistsInMap
         );
         emit AuthorshipRequested(msg.sender, _authorName, _authorEmail);
     }
@@ -87,12 +94,15 @@ contract PixelMarketplace is IERC721Receiver {
             "Only contract owner has the right to create set Author Status"
         );
 
+        bool setAuthorExistsInMap = true;
+
         Author memory newAuthor = Author(
             _authorName,
             _authorEmail,
-            true,
-            _isActiveStatus
+            _isActiveStatus,
+            setAuthorExistsInMap
         );
+
         authors[_authorWalletAddress] = newAuthor;
         emit AuthorStatusUpdate(
             _authorWalletAddress,
@@ -108,7 +118,20 @@ contract PixelMarketplace is IERC721Receiver {
 
     function isAuthor() public view returns (bool) {
         Author memory author = authors[msg.sender];
+        if (isAdmin()) {
+            return true;
+        }
         if (author.exists) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function isAuthorRequestSent() public view returns (bool) {
+        AuthorRequest memory request = authorRequests[msg.sender];
+
+        if (request.exists) {
             return true;
         } else {
             return false;

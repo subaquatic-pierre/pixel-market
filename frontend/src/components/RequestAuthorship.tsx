@@ -13,7 +13,28 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
-const RequestAuthorship = () => {
+interface IRequestAuthorshipProps {
+  requestSent: boolean;
+}
+
+const RequestAlreadySubmitted = () => {
+  return (
+    <Box component="form" noValidate sx={{ mt: 1 }}>
+      <Divider />
+      <Grid container maxWidth="sm" sx={{ mt: 2 }}>
+        <Grid item>
+          <Typography>
+            Your request has already been submitted, please come back later
+          </Typography>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+const RequestAuthorship: React.FC<IRequestAuthorshipProps> = ({
+  requestSent,
+}) => {
   const [formState, setFormState] = React.useState<any>({
     authorName: "",
     authorEmail: "",
@@ -93,49 +114,53 @@ const RequestAuthorship = () => {
         <Typography sx={{ mt: 2 }} component="h1" variant="h4">
           Request Authorship
         </Typography>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
-          <Divider />
-          <Grid container maxWidth="sm" sx={{ mt: 2 }}>
-            <Grid item>
-              <Typography>
-                In order to list your items on the marketplace you first need to
-                apply for Author Status. Once you have sent the request an admin
-                will confirm your status, please check your email for updates.
-                The request can take up to 24 hours to process
-              </Typography>
+        {requestSent ? (
+          <RequestAlreadySubmitted />
+        ) : (
+          <Box component="form" noValidate sx={{ mt: 1 }}>
+            <Divider />
+            <Grid container maxWidth="sm" sx={{ mt: 2 }}>
+              <Grid item>
+                <Typography>
+                  In order to list your items on the marketplace you first need
+                  to apply for Author Status. Once you have sent the request an
+                  admin will confirm your status, please check your email for
+                  updates. The request can take up to 24 hours to process
+                </Typography>
+              </Grid>
             </Grid>
-          </Grid>
-          <TextField
-            margin="normal"
-            onChange={handleInputChange}
-            required
-            fullWidth
-            name="authorName"
-            value={formState.authorName}
-            label="Full Name"
-            id="authorName"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            onChange={handleInputChange}
-            value={formState.authorEmail}
-            required
-            fullWidth
-            id="authorEmail"
-            type="email"
-            label="Email Address"
-            name="authorEmail"
-          />
-          <Button
-            onClick={handleButtonClick}
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Request
-          </Button>
-        </Box>
+            <TextField
+              margin="normal"
+              onChange={handleInputChange}
+              required
+              fullWidth
+              name="authorName"
+              value={formState.authorName}
+              label="Full Name"
+              id="authorName"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              onChange={handleInputChange}
+              value={formState.authorEmail}
+              required
+              fullWidth
+              id="authorEmail"
+              type="email"
+              label="Email Address"
+              name="authorEmail"
+            />
+            <Button
+              onClick={handleButtonClick}
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Request
+            </Button>
+          </Box>
+        )}
       </Paper>
     </Box>
   );
