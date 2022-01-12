@@ -19,7 +19,7 @@ struct AuthorRequest {
     bool processed;
 }
 
-abstract contract PixelMarketplace is IERC721Receiver {
+contract PixelMarketplace is IERC721Receiver {
     address _owner;
     PixelNFT NFTContract;
     PixelToken tokenContract;
@@ -53,6 +53,17 @@ abstract contract PixelMarketplace is IERC721Receiver {
         NFTContract = PixelNFT(_NFTContractAddress);
         tokenContract = PixelToken(_tokenContractAddress);
     }
+
+    function name() public pure returns (string memory) {
+        return "PixelMarketplace";
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) public override returns (bytes4) {}
 
     function requestAuthorship(
         string memory _authorName,
@@ -89,13 +100,13 @@ abstract contract PixelMarketplace is IERC721Receiver {
         );
     }
 
-    function getAuthorListings(address _authorAddress)
-        public
-        pure
-        returns (uint256[] memory)
-    {
-        uint256[] memory a = new uint256[](5);
-        // uint256[] memory tokenIds = new [1, 2];
-        return a;
-    }
+    // function getAuthorListings(address _authorAddress)
+    //     public
+    //     pure
+    //     returns (uint256[] memory)
+    // {
+    //     uint256[] memory a = new uint256[](5);
+    //     // uint256[] memory tokenIds = new [1, 2];
+    //     return a;
+    // }
 }
