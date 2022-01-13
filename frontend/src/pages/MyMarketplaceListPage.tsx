@@ -9,7 +9,6 @@ import MyMarketplaceListings from "components/MyMarketplaceListings";
 const MyMarketplaceListPage = () => {
   const [authorshipStatus, setAuthorshipStatus] = React.useState({
     isAuthor: false,
-    requestSent: false,
     loading: true,
   });
   const [dappState, _] = useDappContext();
@@ -17,21 +16,10 @@ const MyMarketplaceListPage = () => {
   const checkAuthorshipStatus = async () => {
     const contract = dappState.contracts.pixelMarketplace;
     const isAuthor = await contract.isAuthor();
-    const isRequestSent = await contract.isAuthorRequestSent();
-
-    if (isRequestSent) {
-      setAuthorshipStatus({
-        isAuthor: false,
-        requestSent: true,
-        loading: false,
-      });
-      return;
-    }
 
     if (isAuthor) {
       setAuthorshipStatus({
         isAuthor: true,
-        requestSent: false,
         loading: false,
       });
       return;
@@ -53,7 +41,7 @@ const MyMarketplaceListPage = () => {
       ) : authorshipStatus.isAuthor ? (
         <MyMarketplaceListings />
       ) : (
-        <RequestAuthorship requestSent={authorshipStatus.requestSent} />
+        <RequestAuthorship />
       )}
     </Container>
   );

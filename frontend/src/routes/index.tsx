@@ -8,7 +8,7 @@ import MarketplaceItemPage from "pages/MarketplaceItemPage";
 import CreateTokenPage from "pages/CreateTokenPage";
 import MyTokenListPage from "pages/MyTokenListPage";
 import MyMarketplaceListPage from "pages/MyMarketplaceListPage";
-import AuthorRequestsPage from "pages/AuthorRequestListPage";
+import AuthorListPage from "pages/AuthorListPage";
 
 const BaseRouter = () => {
   return (
@@ -20,7 +20,7 @@ const BaseRouter = () => {
       <Route path="/create" element={<CreateTokenPage />} />
       <Route path="/tokens" element={<MyTokenListPage />} />
       <Route path="/listings" element={<MyMarketplaceListPage />} />
-      <Route path="/author-requests" element={<AuthorRequestsPage />} />
+      <Route path="/authors" element={<AuthorListPage />} />
     </Routes>
   );
 };

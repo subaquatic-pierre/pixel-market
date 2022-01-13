@@ -1,12 +1,12 @@
 import React from "react";
 import Container from "@mui/material/Container";
 
-import AuthorRequestList from "components/AuthorRequestList";
+import AuthorList from "components/AuthorList";
 
 const AuthorRequestListPage = () => {
   return (
-    <Container maxWidth="md">
-      <AuthorRequestList />
+    <Container maxWidth="lg">
+      <AuthorList />
     </Container>
   );
 };

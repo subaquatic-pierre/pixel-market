@@ -11,9 +11,7 @@ export function useNavLinks() {
   return navLinks;
 }
 
-const adminLinks = [
-  { text: "Author Requests", link: "author-requests", icon: "author" },
-];
+const adminLinks = [{ text: "Authors", link: "authors", icon: "author" }];
 
 export function useAdminLinks() {
   return adminLinks;
