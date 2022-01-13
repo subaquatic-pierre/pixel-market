@@ -155,7 +155,7 @@ const CreateListing = () => {
     // Create token on block chain
     if (tokenId) {
       pixelNFTContract
-        .createToken(`${HOST_URL}/token-meta/${tokenId}`, 42)
+        .createToken(`${HOST_URL}/token-meta/${tokenId}`)
         .then((res) => {
           navigate(`/marketplace`);
           setSuccess(`Token successfully create, tx hash: ${res.hash}`);

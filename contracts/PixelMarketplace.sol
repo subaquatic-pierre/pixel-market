@@ -65,7 +65,7 @@ contract PixelMarketplace is IERC721Receiver {
         string memory _authorName = "Default Author";
         string memory _authorEmail = "default@email.com";
 
-        updateAuthors(_authorId, msg.sender, _authorName, _authorEmail, true);
+        _updateAuthor(_authorId, msg.sender, _authorName, _authorEmail, true);
     }
 
     function name() public pure returns (string memory) {
@@ -78,34 +78,6 @@ contract PixelMarketplace is IERC721Receiver {
         uint256 tokenId,
         bytes calldata data
     ) public override returns (bytes4) {}
-
-    function createListing(uint256 _tokenId, uint256 _value)
-        public
-        returns (uint256)
-    {
-        require(isAuthor(), "Only registered authors can create listings");
-        //         address author;
-        // uint256 tokenId;
-        // uint256 value;
-        // ListingStatus status;
-        listingIds.increment();
-        uint256 _currentListingId = listingIds.current();
-        Listing memory item = Listing(
-            msg.sender,
-            _tokenId,
-            _value,
-            ListingStatus.AVAILABLE
-        );
-        listings[_currentListingId] = item;
-
-        emit ListingCreated(msg.sender, _currentListingId, _value);
-
-        // Set contract as aprover for token
-        address _contractAddress = address(this);
-        NFTContract.approve(_contractAddress, _tokenId);
-
-        return _currentListingId;
-    }
 
     function addresstoAuthorId(address _authorAddress)
         public
@@ -140,7 +112,7 @@ contract PixelMarketplace is IERC721Receiver {
         bool _setAuthorExistsInMap = true;
         authorIds.increment();
 
-        updateAuthors(
+        _updateAuthor(
             authorIds.current(),
             msg.sender,
             _authorName,
@@ -149,13 +121,13 @@ contract PixelMarketplace is IERC721Receiver {
         );
     }
 
-    function updateAuthors(
+    function _updateAuthor(
         uint256 _authorId,
         address _authorWalletAddress,
         string memory _authorName,
         string memory _authorEmail,
         bool _isActiveStatus
-    ) public {
+    ) private {
         bool setAuthorExistsInMap = true;
 
         Author memory newAuthor = Author(
@@ -191,13 +163,37 @@ contract PixelMarketplace is IERC721Receiver {
         }
     }
 
-    // function getAuthorListings(address _authorAddress)
-    //     public
-    //     pure
-    //     returns (uint256[] memory)
-    // {
-    //     uint256[] memory a = new uint256[](5);
-    //     // uint256[] memory tokenIds = new [1, 2];
-    //     return a;
-    // }
+    function createListing(uint256 _tokenId, uint256 _value)
+        public
+        returns (uint256)
+    {
+        require(isAuthor(), "Only registered authors can create listings");
+        listingIds.increment();
+        uint256 _currentListingId = listingIds.current();
+        Listing memory item = Listing(
+            msg.sender,
+            _tokenId,
+            _value,
+            ListingStatus.AVAILABLE
+        );
+        listings[_currentListingId] = item;
+
+        emit ListingCreated(msg.sender, _currentListingId, _value);
+
+        return _currentListingId;
+    }
+
+    function getMyListingsIds() public view returns (uint256[] memory) {
+        uint256 _tokenBalance = NFTContract.balanceOf(msg.sender);
+        uint256[] memory _tokenIds = new uint256[](_tokenBalance);
+
+        for (uint256 i = 1; i <= listingIds.current(); i++) {
+            Listing memory item = listings[i];
+            if (item.author == msg.sender) {
+                _tokenIds[i] = item.tokenId;
+            }
+        }
+
+        return _tokenIds;
+    }
 }

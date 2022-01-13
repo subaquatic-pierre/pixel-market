@@ -1,5 +1,5 @@
 import React from "react";
-import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 import Paper from "@mui/material/Paper";
 import useDappContext from "hooks/useDappContext";

@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 import useDappContext from "hooks/useDappContext";
 
 import RequestAuthorship from "components/RequestAuthorship";
-import MyMarketplaceListings from "components/MyMarketplaceListings";
+import MyMarketplaceListings from "components/MyListingsList";
 
 const MyMarketplaceListPage = () => {
   const [authorshipStatus, setAuthorshipStatus] = React.useState({
