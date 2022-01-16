@@ -17,7 +17,8 @@ struct Author {
 
 enum ListingStatus {
     AVAILABLE,
-    SOLD
+    SOLD,
+    REMOVED
 }
 
 struct Listing {
@@ -168,19 +169,55 @@ contract PixelMarketplace is IERC721Receiver {
         returns (uint256)
     {
         require(isAuthor(), "Only registered authors can create listings");
+
+        // Increment token Id's
         listingIds.increment();
-        uint256 _currentListingId = listingIds.current();
+
+        // Get latest Id for new token after increment
+        uint256 _currentListingId = listingIds.current() + 1;
+
+        // Create item in memory
         Listing memory item = Listing(
             msg.sender,
             _tokenId,
             _value,
             ListingStatus.AVAILABLE
         );
+
+        // Add item to listings mapping
         listings[_currentListingId] = item;
 
         emit ListingCreated(msg.sender, _currentListingId, _value);
 
         return _currentListingId;
+    }
+
+    // function removeListing(uint256 _tokenId) public view {
+    // require(isAuthor(), "Only registered authors can create listings");
+
+    // Get token from mapping with token Id
+
+    // Require msg.sender to be owner of token
+
+    // Set listing status to removed
+
+    // Reduce listing count
+    // }
+
+    function getAllListingTokenIds() public view returns (uint256[] memory) {
+        // Create array of size listing count
+        uint256 _listingCount = listingIds.current();
+        uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
+
+        // Build token Id array by looping over listing mapping and pushing list item Id to array
+        for (uint256 i = 1; i <= _listingCount; i++) {
+            Listing memory item = listings[i];
+            if (item.status == ListingStatus.AVAILABLE) {
+                _tokenIds[i] = (item.tokenId);
+            }
+        }
+
+        return _tokenIds;
     }
 
     function getMyListingsIds() public view returns (uint256[] memory) {
@@ -197,3 +234,8 @@ contract PixelMarketplace is IERC721Receiver {
         return _tokenIds;
     }
 }
+
+// TODO:
+// - Need to improve listing count logic, listing should be deleted from mapping and
+//   token count should be updated. This improves effeciency in returning an array which
+//   will conintue growing even though items have been removed from marketplace

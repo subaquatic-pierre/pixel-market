@@ -13,6 +13,43 @@ const Marketplace: React.FC = () => {
   });
   const [dappState, _] = useDappContext();
 
+  const getMarketPlaceItems = async () => {
+    // Get contracts from dapp state
+    const NFTContract = dappState.contracts.pixelNFT;
+    const marketContract = dappState.contracts.pixelMarketplace;
+    const tokenIdToUri = [];
+
+    // Get array of Ids from marketplace contract
+    const bigNumTokenIds = await marketContract.getAllListingTokenIds();
+
+    // Get token from marketplace
+    for (let i = 1; i <= bigNumTokenIds.length; i++) {
+      // const num = Number(bigNumTokenIds[i].toString());
+      // tokenIds.push(num);
+      try {
+        // Get token Id from array
+        const tokenId = bigNumTokenIds[i].toString();
+
+        // Get token URI from NFT contract
+        const tokenUri = await NFTContract.tokenURI(tokenId);
+        const item = { tokenId, tokenUri };
+
+        console.log(item);
+      } catch {
+        continue;
+      }
+    }
+
+    // Get token URI from NFT contract
+    // Loop over Ids to get token Uri, set state list items
+    for (let i = 0; i < bigNumTokenIds.length; i++) {
+      const tokenId = tokenIds[i];
+      console.log(item);
+    }
+
+    // console.log(tokenIds);
+  };
+
   const getListItems = async () => {
     const contract = dappState.contracts.pixelNFT;
     const bigNumTotalSupply = await contract.totalSupply();
@@ -39,7 +76,7 @@ const Marketplace: React.FC = () => {
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
-      getListItems();
+      getMarketPlaceItems();
     }
   }, [dappState]);
 
