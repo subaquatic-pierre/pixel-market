@@ -58,7 +58,6 @@ const MyTokenListItem: React.FC<IMyTokenListItemProps> = ({ listItem }) => {
       marketplaceContract.address,
       listItem.tokenId
     );
-    // console.log(resHash);
     const bigNumListingId = await marketplaceContract.createListing(
       listItem.tokenId,
       42

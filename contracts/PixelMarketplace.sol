@@ -174,7 +174,7 @@ contract PixelMarketplace is IERC721Receiver {
         listingIds.increment();
 
         // Get latest Id for new token after increment
-        uint256 _currentListingId = listingIds.current() + 1;
+        uint256 _currentListingId = listingIds.current();
 
         // Create item in memory
         Listing memory item = Listing(
@@ -213,7 +213,7 @@ contract PixelMarketplace is IERC721Receiver {
         for (uint256 i = 1; i <= _listingCount; i++) {
             Listing memory item = listings[i];
             if (item.status == ListingStatus.AVAILABLE) {
-                _tokenIds[i] = (item.tokenId);
+                _tokenIds[i] = item.tokenId;
             }
         }
 
@@ -221,10 +221,12 @@ contract PixelMarketplace is IERC721Receiver {
     }
 
     function getMyListingsIds() public view returns (uint256[] memory) {
-        uint256 _tokenBalance = NFTContract.balanceOf(msg.sender);
-        uint256[] memory _tokenIds = new uint256[](_tokenBalance);
+        // Create array of size listing count
+        uint256 _listingCount = listingIds.current();
+        uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
 
-        for (uint256 i = 1; i <= listingIds.current(); i++) {
+        // Build token Id array by looping over listing mapping and pushing list item Id to array
+        for (uint256 i = 1; i <= _listingCount; i++) {
             Listing memory item = listings[i];
             if (item.author == msg.sender) {
                 _tokenIds[i] = item.tokenId;
