@@ -241,3 +241,7 @@ contract PixelMarketplace is IERC721Receiver {
 // - Need to improve listing count logic, listing should be deleted from mapping and
 //   token count should be updated. This improves effeciency in returning an array which
 //   will conintue growing even though items have been removed from marketplace
+
+// - Limit token creation time to avoid duplicate URI on token creation
+
+// - Window reload on account change

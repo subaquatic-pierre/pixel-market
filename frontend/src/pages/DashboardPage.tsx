@@ -5,7 +5,7 @@ import Dashboard from "components/Dashboard";
 
 const DashboardPage: React.FC = ({ children }) => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <Dashboard />
     </Container>
   );

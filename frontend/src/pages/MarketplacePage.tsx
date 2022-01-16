@@ -6,7 +6,7 @@ import Marketplace from "components/Marketplace";
 
 const MarketPlacePage = () => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <Marketplace />
     </Container>
   );

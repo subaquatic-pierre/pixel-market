@@ -6,7 +6,7 @@ import MyTokensList from "components/MyTokensList";
 
 const MyTokenListPage = () => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <MyTokensList />
     </Container>
   );
