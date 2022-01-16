@@ -13,14 +13,14 @@ const MyListingsList = () => {
   });
   const [dappState, _] = useDappContext();
 
-  const getMarketPlaceItems = async () => {
+  const getMyListings = async () => {
     // Get contracts from dapp state
     const NFTContract = dappState.contracts.pixelNFT;
     const marketContract = dappState.contracts.pixelMarketplace;
     const tokenIdToUri = [];
 
     // Get array of Ids from marketplace contract
-    const bigNumTokenIds = await marketContract.getAllListingTokenIds();
+    const bigNumTokenIds = await marketContract.getMyListingsIds();
 
     // Get token from marketplace
     for (let i = 1; i <= bigNumTokenIds.length; i++) {
@@ -43,7 +43,7 @@ const MyListingsList = () => {
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
-      getMarketPlaceItems();
+      getMyListings();
     }
   }, [dappState]);
 

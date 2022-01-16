@@ -14,15 +14,19 @@ const MyTokensList = () => {
   const [dappState, _] = useDappContext();
 
   const getListItems = async () => {
+    const currentWalletAddress = dappState.currentAccount;
     const contract = dappState.contracts.pixelNFT;
-    const bigNumTotalSupply = await contract.totalSupply();
+    const bigNumTotalSupply = await contract.balanceOf(currentWalletAddress);
     const totalSupply = Number(bigNumTotalSupply.toString());
     const tokenIdToUri = [];
     const tokenIds = [];
 
     // Loop over total supply to get token Ids
     for (let i = 0; i < totalSupply; i++) {
-      const tokenId = await contract.tokenByIndex(i);
+      const tokenId = await contract.tokenOfOwnerByIndex(
+        currentWalletAddress,
+        i
+      );
       tokenIds.push(tokenId.toString());
     }
 
@@ -33,7 +37,6 @@ const MyTokensList = () => {
       const item = { tokenId, tokenUri };
       tokenIdToUri.push(item);
     }
-
     setState({ loading: false, listItems: tokenIdToUri });
   };
 
