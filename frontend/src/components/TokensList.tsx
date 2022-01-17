@@ -14,7 +14,7 @@ const TokenList = () => {
   });
   const [dappState, _] = useDappContext();
 
-  const getListItems = async () => {
+  const getTokens = async () => {
     const currentWalletAddress = dappState.currentAccount;
     const contract = dappState.contracts.pixelNFT;
     const bigNumTotalSupply = await contract.balanceOf(currentWalletAddress);
@@ -43,7 +43,7 @@ const TokenList = () => {
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
-      getListItems();
+      getTokens();
     }
   }, [dappState]);
 
@@ -54,7 +54,7 @@ const TokenList = () => {
         {!state.loading &&
           state.listItems.map((item, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
-              <TokenListItem listItem={item} />
+              <TokenListItem listItem={item} isListing={index % 2 === 0} />
             </Grid>
           ))}
       </Grid>

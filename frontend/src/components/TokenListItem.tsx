@@ -2,15 +2,14 @@ import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 
+import CardHeader from "@mui/material/CardHeader";
+
 import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
+import CardActionAreaFooter from "components/CardActionAreaFooter";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
@@ -21,10 +20,30 @@ interface TokenIdToUri {
 
 interface ITokenListItemProps {
   listItem: TokenIdToUri;
+  isListing: boolean;
 }
 
-const TokenListItem: React.FC<ITokenListItemProps> = ({ listItem }) => {
+interface ICardHeadingProps {
+  title: string;
+  subtitle: string;
+}
+
+const CardHeading: React.FC<ICardHeadingProps> = ({ title, subtitle }) => {
+  return (
+    <CardHeader
+      title={title}
+      titleTypographyProps={{ variant: "h6" }}
+      subheader={subtitle}
+    />
+  );
+};
+
+const TokenListItem: React.FC<ITokenListItemProps> = ({
+  listItem,
+  isListing,
+}) => {
   const [item, setItem] = React.useState<any>(null);
+  const [listingInfo, setListingInfo] = React.useState<any>(null);
   const [_n, { setWarning }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
@@ -51,7 +70,14 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({ listItem }) => {
       });
   };
 
-  const submitContractRequest = async () => {
+  const getListingInfo = () => {
+    const listItemId = 1;
+    // Query pixelMarketPlace contract for listing info
+
+    // Set listing info
+  };
+
+  const submitContractCreateRequest = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const NFTContract = dappState.contracts.pixelNFT;
     const resHash = await NFTContract.approve(
@@ -67,8 +93,32 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({ listItem }) => {
     console.log(listingId);
   };
 
-  const handleCreateListingClick = () => {
-    submitContractRequest();
+  const submitContractDeleteRequest = async () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const NFTContract = dappState.contracts.pixelNFT;
+
+    // Change to remove approve
+    const resHash = await NFTContract.approve(
+      marketplaceContract.address,
+      listItem.tokenId
+    );
+
+    // Change to remove listing method
+    const bigNumListingId = await marketplaceContract.createListing(
+      listItem.tokenId,
+      42
+    );
+    const listingId = Number(bigNumListingId.toString());
+    console.log(bigNumListingId);
+    console.log(listingId);
+  };
+
+  const handleActionAreaButtonClick = (method: string) => {
+    if (method == "create") {
+      submitContractCreateRequest();
+    } else if (method === "delete") {
+      submitContractDeleteRequest();
+    }
   };
 
   React.useEffect(() => {
@@ -77,11 +127,19 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({ listItem }) => {
     }
   }, [dappState]);
 
+  React.useEffect(() => {
+    if (isListing) getListingInfo();
+  }, [isListing]);
+
   return (
     <div>
       {loading && <MarketplaceItemSkeleton />}
       {item && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
+          <CardHeading
+            title={item.name}
+            subtitle={isListing ? "100 PIX" : "NOT LISTED"}
+          />
           <Link
             style={{ textDecoration: "none" }}
             to={`/marketplace/${listItem.tokenId}`}
@@ -95,22 +153,11 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({ listItem }) => {
               />
             </CardActionArea>
           </Link>
-          <CardContent sx={{ flexGrow: 1 }}>
-            <Typography gutterBottom variant="h5" component="h2">
-              {item.name}
-            </Typography>
-            <Typography>{item.description}</Typography>
-          </CardContent>
-          <CardActions sx={{ p: 2 }}>
-            <Button
-              sx={{ mr: 1 }}
-              color="success"
-              variant="contained"
-              onClick={handleCreateListingClick}
-            >
-              Create Listing
-            </Button>
-          </CardActions>
+          <CardActionAreaFooter
+            handleActionAreaButtonClick={handleActionAreaButtonClick}
+            isListing={isListing}
+            itemDescription={item.description}
+          />
         </Card>
       )}
     </div>
