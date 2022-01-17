@@ -3,7 +3,6 @@ const navLinks = [
   { text: "Wallet", link: "wallet", icon: "wallet" },
   { text: "Marketplace", link: "marketplace", icon: "market" },
   { text: "My Tokens", link: "tokens", icon: "token" },
-  { text: "My Listings", link: "listings", icon: "listings" },
 ];
 
 export function useNavLinks() {

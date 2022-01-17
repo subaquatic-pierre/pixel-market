@@ -12,7 +12,29 @@ const TokenList = () => {
     loading: true,
     listItems: [{ tokenId: null, tokenUri: null }],
   });
+  const [listingIds, setListingIds] = React.useState<string[]>([]);
   const [dappState, _] = useDappContext();
+
+  const getListings = async () => {
+    const marketContract = dappState.contracts.pixelMarketplace;
+    const listingIds = [];
+
+    // Get array of Ids from marketplace contract
+    const bigNumTokenIds = await marketContract.getMyListingsIds();
+
+    // Get token from marketplace
+    for (let i = 1; i <= bigNumTokenIds.length; i++) {
+      try {
+        // Get token Id from array
+        const tokenId = bigNumTokenIds[i].toString();
+        if (tokenId !== "0") listingIds.push(tokenId);
+      } catch {
+        continue;
+      }
+    }
+
+    setListingIds(listingIds);
+  };
 
   const getTokens = async () => {
     const currentWalletAddress = dappState.currentAccount;
@@ -41,9 +63,20 @@ const TokenList = () => {
     setState({ loading: false, listItems: tokenIdToUri });
   };
 
+  const checkIfListing = (tokenId: string) => {
+    let _isListing = false;
+    listingIds.forEach((_listingId) => {
+      if (tokenId === _listingId) {
+        _isListing = true;
+      }
+    });
+    return _isListing;
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) {
       getTokens();
+      getListings();
     }
   }, [dappState]);
 
@@ -54,7 +87,10 @@ const TokenList = () => {
         {!state.loading &&
           state.listItems.map((item, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
-              <TokenListItem listItem={item} isListing={index % 2 === 0} />
+              <TokenListItem
+                listItem={item}
+                isListing={checkIfListing(item.tokenId)}
+              />
             </Grid>
           ))}
       </Grid>
