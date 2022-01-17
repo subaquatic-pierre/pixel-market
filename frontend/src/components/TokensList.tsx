@@ -1,21 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import CreateIcon from "@mui/icons-material/Create";
-import Button from "@mui/material/Button";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
 
-import MyTokenListItem from "components/MyTokenListItem";
+import MyTokenListItem from "components/TokenListItem";
 import useDappContext from "hooks/useDappContext";
 
-const MyTokensList = () => {
+const TokenListToolbar = () => {
   const [state, setState] = React.useState({
     loading: true,
     listItems: [{ tokenId: null, tokenUri: null }],
@@ -57,32 +48,7 @@ const MyTokensList = () => {
 
   return (
     <Box>
-      <Grid item>
-        <Toolbar disableGutters sx={{ mb: 1 }}>
-          <Link
-            style={{ textDecoration: "none", color: "inherit" }}
-            to="/create"
-          >
-            <Button variant="contained" sx={{ mr: 2 }}>
-              <ListItemIcon sx={{ color: "inherit", minWidth: "40px" }}>
-                <CreateIcon />
-              </ListItemIcon>
-              <ListItemText primary="New Token" />
-            </Button>
-          </Link>
-          <Link
-            style={{ textDecoration: "none", color: "inherit" }}
-            to="create-token"
-          >
-            <Button variant="contained" sx={{ mr: 2 }}>
-              <ListItemIcon sx={{ color: "inherit", minWidth: "40px" }}>
-                <HowToRegIcon />
-              </ListItemIcon>
-              <ListItemText primary="Register" />
-            </Button>
-          </Link>
-        </Toolbar>
-      </Grid>
+      {/* <TokenListToolbar /> */}
       <Grid container spacing={4}>
         {!state.loading &&
           state.listItems.map((item, index) => (
@@ -95,4 +61,4 @@ const MyTokensList = () => {
   );
 };
 
-export default MyTokensList;
+export default TokenListToolbar;

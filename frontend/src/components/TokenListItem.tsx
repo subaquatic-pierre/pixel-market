@@ -19,11 +19,11 @@ interface TokenIdToUri {
   tokenUri: string;
 }
 
-interface IMyTokenListItemProps {
+interface ITokenListItemProps {
   listItem: TokenIdToUri;
 }
 
-const MyTokenListItem: React.FC<IMyTokenListItemProps> = ({ listItem }) => {
+const TokenListItem: React.FC<ITokenListItemProps> = ({ listItem }) => {
   const [item, setItem] = React.useState<any>(null);
   const [_n, { setWarning }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
@@ -117,4 +117,4 @@ const MyTokenListItem: React.FC<IMyTokenListItemProps> = ({ listItem }) => {
   );
 };
 
-export default MyTokenListItem;
+export default TokenListItem;
