@@ -3,10 +3,11 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
-import MyTokenListItem from "components/TokenListItem";
+import TokenListItem from "components/TokenListItem";
+import TokenListToolbar from "components/TokenListToolbar";
 import useDappContext from "hooks/useDappContext";
 
-const TokenListToolbar = () => {
+const TokenList = () => {
   const [state, setState] = React.useState({
     loading: true,
     listItems: [{ tokenId: null, tokenUri: null }],
@@ -48,12 +49,12 @@ const TokenListToolbar = () => {
 
   return (
     <Box>
-      {/* <TokenListToolbar /> */}
+      <TokenListToolbar />
       <Grid container spacing={4}>
         {!state.loading &&
           state.listItems.map((item, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
-              <MyTokenListItem listItem={item} />
+              <TokenListItem listItem={item} />
             </Grid>
           ))}
       </Grid>
@@ -61,4 +62,4 @@ const TokenListToolbar = () => {
   );
 };
 
-export default TokenListToolbar;
+export default TokenList;

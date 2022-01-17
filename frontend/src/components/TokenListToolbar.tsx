@@ -15,32 +15,32 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import useDappContext from "hooks/useDappContext";
 
 const TokenListToolbar = () => {
-  // const [authorshipStatus, setAuthorshipStatus] = React.useState({
-  //   isAuthor: false,
-  //   loading: true,
-  // });
-  // const [dappState, _] = useDappContext();
+  const [authorshipStatus, setAuthorshipStatus] = React.useState({
+    isAuthor: false,
+    loading: true,
+  });
+  const [dappState, _] = useDappContext();
 
-  // const checkAuthorshipStatus = async () => {
-  //   const contract = dappState.contracts.pixelMarketplace;
-  //   const isAuthor = await contract.isAuthor();
+  const checkAuthorshipStatus = async () => {
+    const contract = dappState.contracts.pixelMarketplace;
+    const isAuthor = await contract.isAuthor();
 
-  //   if (isAuthor) {
-  //     setAuthorshipStatus({
-  //       isAuthor: true,
-  //       loading: false,
-  //     });
-  //     return;
-  //   }
+    if (isAuthor) {
+      setAuthorshipStatus({
+        isAuthor: true,
+        loading: false,
+      });
+      return;
+    }
 
-  //   setAuthorshipStatus((oldStatus) => ({ ...oldStatus, loading: false }));
-  // };
+    setAuthorshipStatus((oldStatus) => ({ ...oldStatus, loading: false }));
+  };
 
-  // React.useEffect(() => {
-  //   if (dappState.isInitialized) {
-  //     checkAuthorshipStatus();
-  //   }
-  // }, [dappState]);
+  React.useEffect(() => {
+    if (dappState.isInitialized) {
+      checkAuthorshipStatus();
+    }
+  }, [dappState]);
 
   return (
     <Grid item>
@@ -53,10 +53,10 @@ const TokenListToolbar = () => {
             <ListItemText primary="New Token" />
           </Button>
         </Link>
-        {/* {!authorshipStatus.isAuthor && (
+        {!authorshipStatus.loading && !authorshipStatus.isAuthor && (
           <Link
             style={{ textDecoration: "none", color: "inherit" }}
-            to="create-token"
+            to="/register-author"
           >
             <Button variant="contained" sx={{ mr: 2 }}>
               <ListItemIcon sx={{ color: "inherit", minWidth: "40px" }}>
@@ -65,7 +65,7 @@ const TokenListToolbar = () => {
               <ListItemText primary="Register" />
             </Button>
           </Link>
-        )} */}
+        )}
       </Toolbar>
     </Grid>
   );
