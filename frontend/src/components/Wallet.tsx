@@ -43,8 +43,6 @@ const Wallet = () => {
 
   const getTokenBalance = () => {
     const token = dappState.contracts.pixelToken;
-    console.log(dappState);
-    console.log(token);
     const address = dappState.currentAccount;
     token.balanceOf(address).then((res) => {
       const num = res.toNumber();

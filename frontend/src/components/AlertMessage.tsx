@@ -15,7 +15,6 @@ const AlertMessage: React.FC = () => {
     }
     clearNotification();
   };
-  console.log();
   return (
     <>
       <Snackbar

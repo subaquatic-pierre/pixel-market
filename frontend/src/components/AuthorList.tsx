@@ -34,7 +34,6 @@ const AuthorRequestList = () => {
 
     for (let i = 1; i <= authorCount; i++) {
       const authorRes = await contract.authors(i);
-      console.log(authorRes);
       try {
         const _author: IAuthor = {
           id: i,
@@ -55,10 +54,6 @@ const AuthorRequestList = () => {
   React.useEffect(() => {
     if (dappState.isInitialized) getAuthors();
   }, [dappState]);
-
-  React.useEffect(() => {
-    console.log(authors);
-  }, [authors]);
 
   return (
     <Paper sx={{ height: 500, width: "100%" }}>

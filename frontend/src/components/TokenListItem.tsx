@@ -43,7 +43,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
   listingInfo,
 }) => {
   const [item, setItem] = React.useState<any>(null);
-  const [_n, { setWarning }] = useNotificationContext();
+  const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
 
@@ -69,15 +69,6 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       });
   };
 
-  // const loadListItemInfo = async () => {
-  //   const marketplaceContract = dappState.contracts.pixelMarketplace;
-  //   const listItemInfo = await marketplaceContract.listings(listItem.tokenId);
-  //   // console.log(listItemInfo);
-  //   if (listItemInfo.status !== 2) {
-  //     setListingInfo(listItemInfo);
-  //   }
-  // };
-
   const submitContractCreateRequest = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const NFTContract = dappState.contracts.pixelNFT;
@@ -93,8 +84,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     );
 
     const listingId = Number(bigNumListingId.toString());
-    console.log(bigNumListingId);
-    console.log(listingId);
+    setSuccess("Listing created with ID: ", listingId);
   };
 
   const submitContractDeleteRequest = async () => {
@@ -110,8 +100,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       listingInfo.listingId
     );
     const listingId = Number(bigNumListingId.toString());
-    console.log(bigNumListingId);
-    console.log(listingId);
+    setSuccess("Listing removed with ID: ", listingId);
   };
 
   const handleActionAreaButtonClick = (method: string) => {
@@ -122,18 +111,9 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     }
   };
 
-  const checkApprove = async () => {
-    const NFTContract = dappState.contracts.pixelNFT;
-    const res = await NFTContract.getApproved(token.tokenId);
-    console.log(res);
-  };
-
   React.useEffect(() => {
     if (dappState.isInitialized) {
       loadItemMeta();
-      if (listingInfo) {
-        checkApprove();
-      }
     }
   }, [dappState]);
 

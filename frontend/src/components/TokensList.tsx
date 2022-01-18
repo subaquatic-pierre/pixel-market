@@ -84,7 +84,6 @@ const TokenList = () => {
   const checkIfListing = (tokenId: string) => {
     let _listingInfo = null;
     const _listings = state.listings;
-    console.log(_listings);
     _listings.forEach((listing) => {
       if (tokenId === listing.tokenId && listing.status !== 2) {
         _listingInfo = listing;
