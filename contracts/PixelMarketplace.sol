@@ -192,7 +192,7 @@ contract PixelMarketplace is IERC721Receiver {
 
         // Add listing to author listings
         uint256[] storage authorListingIds = addressToListingIds[msg.sender];
-        authorListingIds.push(listing.tokenId);
+        authorListingIds.push(_currentListingId);
 
         emit ListingCreated(msg.sender, _currentListingId, _value);
 
