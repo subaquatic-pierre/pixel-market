@@ -30,10 +30,11 @@ const Marketplace: React.FC = () => {
         const tokenId = bigNumTokenIds[i].toString();
 
         // Get token URI from NFT contract
-        const tokenUri = await NFTContract.tokenURI(tokenId);
-        const item = { tokenId, tokenUri };
-
-        tokenIdToUri.push(item);
+        if (tokenId !== "0") {
+          const tokenUri = await NFTContract.tokenURI(tokenId);
+          const item = { tokenId, tokenUri };
+          tokenIdToUri.push(item);
+        }
       } catch {
         continue;
       }
