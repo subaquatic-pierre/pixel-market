@@ -38,6 +38,7 @@ const TokenList = () => {
     listingIds.forEach(async (listingId) => {
       const listingRes = await marketContract.listings(listingId);
       const listing = {
+        listingId: listingId,
         author: listingRes.author,
         status: listingRes.status,
         tokenId: listingRes.tokenId.toString(),

@@ -97,35 +97,43 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     console.log(listingId);
   };
 
-  // const submitContractDeleteRequest = async () => {
-  //   const marketplaceContract = dappState.contracts.pixelMarketplace;
-  //   const NFTContract = dappState.contracts.pixelNFT;
+  const submitContractDeleteRequest = async () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const NFTContract = dappState.contracts.pixelNFT;
 
-  //   // Change to remove approve
-  //   const resHash = await NFTContract.approve();
+    // Remove any operators
+    const addr = "0x0000000000000000000000000000000000000000";
+    const resHash = await NFTContract.approve(addr, token.tokenId);
 
-  //   // Change to remove listing method
-  //   const bigNumListingId = await marketplaceContract.createListing(
-  //     listItem.tokenId,
-  //     item.value
-  //   );
-  //   const listingId = Number(bigNumListingId.toString());
-  //   console.log(bigNumListingId);
-  //   console.log(listingId);
-  // };
+    // Change to remove listing method
+    const bigNumListingId = await marketplaceContract.removeListing(
+      listingInfo.listingId
+    );
+    const listingId = Number(bigNumListingId.toString());
+    console.log(bigNumListingId);
+    console.log(listingId);
+  };
 
   const handleActionAreaButtonClick = (method: string) => {
     if (method === "create") {
       submitContractCreateRequest();
     } else if (method === "delete") {
-      // submitContractDeleteRequest();
+      submitContractDeleteRequest();
     }
+  };
+
+  const checkApprove = async () => {
+    const NFTContract = dappState.contracts.pixelNFT;
+    const res = await NFTContract.getApproved(token.tokenId);
+    console.log(res);
   };
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
       loadItemMeta();
-      console.log(listingInfo);
+      if (listingInfo) {
+        checkApprove();
+      }
     }
   }, [dappState]);
 
