@@ -9,7 +9,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import CardHeader from "@mui/material/CardHeader";
 
 import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
-import CardActionAreaFooter from "components/CardActionAreaFooter";
+import TokenListItemFooter from "components/TokenListItemFooter";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
@@ -153,7 +153,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
               />
             </CardActionArea>
           </Link>
-          <CardActionAreaFooter
+          <TokenListItemFooter
             handleActionAreaButtonClick={handleActionAreaButtonClick}
             isListing={isListing}
             itemDescription={item.description}

@@ -31,7 +31,7 @@ interface ICardActionAreaFooter {
   itemDescription: string;
 }
 
-const CardActionAreaFooter: React.FC<ICardActionAreaFooter> = ({
+const TokenListItemFooter: React.FC<ICardActionAreaFooter> = ({
   handleActionAreaButtonClick,
   isListing,
   itemDescription,
@@ -82,4 +82,4 @@ const CardActionAreaFooter: React.FC<ICardActionAreaFooter> = ({
   );
 };
 
-export default CardActionAreaFooter;
+export default TokenListItemFooter;

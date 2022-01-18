@@ -23,7 +23,7 @@ const TokenList = () => {
     const bigNumTokenIds = await marketContract.getMyListingsIds();
 
     // Get token from marketplace
-    for (let i = 1; i <= bigNumTokenIds.length; i++) {
+    for (let i = 0; i < bigNumTokenIds.length; i++) {
       try {
         // Get token Id from array
         const tokenId = bigNumTokenIds[i].toString();

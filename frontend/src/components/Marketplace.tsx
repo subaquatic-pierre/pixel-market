@@ -20,7 +20,8 @@ const Marketplace: React.FC = () => {
     const tokenIdToUri = [];
 
     // Get array of Ids from marketplace contract
-    const bigNumTokenIds = await marketContract.getAllListingTokenIds();
+    const bigNumTokenIds =
+      await marketContract.getAllAvailableListingTokenIds();
 
     // Get token from marketplace
     for (let i = 1; i <= bigNumTokenIds.length; i++) {

@@ -43,6 +43,9 @@ contract PixelMarketplace is IERC721Receiver {
     Counters.Counter public authorIds;
     mapping(uint256 => Author) public authors;
 
+    // Author listing IDs
+    mapping(address => uint256[]) addressToListingIds;
+
     event AuthorUpdate(
         uint256 _authorId,
         address _authorWalletAddress,
@@ -177,7 +180,7 @@ contract PixelMarketplace is IERC721Receiver {
         uint256 _currentListingId = listingIds.current();
 
         // Create item in memory
-        Listing memory item = Listing(
+        Listing memory listing = Listing(
             msg.sender,
             _tokenId,
             _value,
@@ -185,7 +188,11 @@ contract PixelMarketplace is IERC721Receiver {
         );
 
         // Add item to listings mapping
-        listings[_currentListingId] = item;
+        listings[_currentListingId] = listing;
+
+        // Add listing to author listings
+        uint256[] storage authorListingIds = addressToListingIds[msg.sender];
+        authorListingIds.push(listing.tokenId);
 
         emit ListingCreated(msg.sender, _currentListingId, _value);
 
@@ -204,7 +211,11 @@ contract PixelMarketplace is IERC721Receiver {
     // Reduce listing count
     // }
 
-    function getAllListingTokenIds() public view returns (uint256[] memory) {
+    function getAllAvailableListingTokenIds()
+        public
+        view
+        returns (uint256[] memory)
+    {
         // Create array of size listing count
         uint256 _listingCount = listingIds.current();
         uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
@@ -221,19 +232,7 @@ contract PixelMarketplace is IERC721Receiver {
     }
 
     function getMyListingsIds() public view returns (uint256[] memory) {
-        // Create array of size listing count
-        uint256 _listingCount = listingIds.current();
-        uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
-
-        // Build token Id array by looping over listing mapping and pushing list item Id to array
-        for (uint256 i = 1; i <= _listingCount; i++) {
-            Listing memory item = listings[i];
-            if (item.author == msg.sender) {
-                _tokenIds[i] = item.tokenId;
-            }
-        }
-
-        return _tokenIds;
+        return addressToListingIds[msg.sender];
     }
 }
 
