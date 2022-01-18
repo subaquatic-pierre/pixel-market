@@ -10,7 +10,8 @@ import useDappContext from "hooks/useDappContext";
 const TokenList = () => {
   const [state, setState] = React.useState({
     loading: true,
-    listItems: [{ tokenId: null, tokenUri: null }],
+    tokens: [{ tokenId: null, tokenUri: null }],
+    listings: [],
   });
   const [listingIds, setListingIds] = React.useState<string[]>([]);
   const [dappState, _] = useDappContext();
@@ -18,6 +19,7 @@ const TokenList = () => {
   const getListings = async () => {
     const marketContract = dappState.contracts.pixelMarketplace;
     const listingIds = [];
+    const listings = [];
 
     // Get array of Ids from marketplace contract
     const bigNumTokenIds = await marketContract.getMyListingsIds();
@@ -33,7 +35,17 @@ const TokenList = () => {
       }
     }
 
-    setListingIds(listingIds);
+    listingIds.forEach(async (listingId) => {
+      const listingRes = await marketContract.listings(listingId);
+      const listing = {
+        author: listingRes.author,
+        status: listingRes.status,
+        tokenId: listingRes.tokenId.toString(),
+        value: listingRes.value.toString(),
+      };
+      listings.push(listing);
+    });
+    setState((oldState) => ({ ...oldState, listings }));
   };
 
   const getTokens = async () => {
@@ -60,17 +72,23 @@ const TokenList = () => {
       const item = { tokenId, tokenUri };
       tokenIdToUri.push(item);
     }
-    setState({ loading: false, listItems: tokenIdToUri });
+
+    setState((oldState) => ({
+      ...oldState,
+      loading: false,
+      tokens: tokenIdToUri,
+    }));
   };
 
   const checkIfListing = (tokenId: string) => {
-    let _isListing = false;
-    listingIds.forEach((_listingId) => {
-      if (tokenId === _listingId) {
-        _isListing = true;
+    let _listingInfo = null;
+    const _listings = state.listings;
+    _listings.forEach((listing) => {
+      if (tokenId === listing.tokenId && listing.status !== 2) {
+        _listingInfo = listing;
       }
     });
-    return _isListing;
+    return _listingInfo;
   };
 
   React.useEffect(() => {
@@ -85,11 +103,11 @@ const TokenList = () => {
       <TokenListToolbar />
       <Grid container spacing={4}>
         {!state.loading &&
-          state.listItems.map((item, index) => (
+          state.tokens.map((token, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
               <TokenListItem
-                listItem={item}
-                isListing={checkIfListing(item.tokenId)}
+                token={token}
+                listingInfo={checkIfListing(token.tokenId)}
               />
             </Grid>
           ))}

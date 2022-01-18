@@ -27,13 +27,13 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 interface ICardActionAreaFooter {
   handleActionAreaButtonClick: (method: string) => void;
-  isListing: boolean;
+  listingInfo?: any;
   itemDescription: string;
 }
 
 const TokenListItemFooter: React.FC<ICardActionAreaFooter> = ({
   handleActionAreaButtonClick,
-  isListing,
+  listingInfo,
   itemDescription,
 }) => {
   const [expanded, setExpanded] = React.useState(false);
@@ -44,11 +44,11 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooter> = ({
   return (
     <div>
       <CardActions sx={{ p: 2 }} disableSpacing>
-        {isListing ? (
+        {listingInfo ? (
           <Button
             color="warning"
             variant="contained"
-            onClick={() => handleActionAreaButtonClick("create")}
+            onClick={() => handleActionAreaButtonClick("delete")}
           >
             Remove Listing
           </Button>
@@ -56,7 +56,7 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooter> = ({
           <Button
             color="success"
             variant="contained"
-            onClick={() => handleActionAreaButtonClick("delete")}
+            onClick={() => handleActionAreaButtonClick("create")}
           >
             Post Listing
           </Button>

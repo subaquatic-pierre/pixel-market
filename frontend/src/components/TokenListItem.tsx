@@ -19,8 +19,8 @@ interface TokenIdToUri {
 }
 
 interface ITokenListItemProps {
-  listItem: TokenIdToUri;
-  isListing: boolean;
+  token: TokenIdToUri;
+  listingInfo?: any;
 }
 
 interface ICardHeadingProps {
@@ -39,18 +39,17 @@ const CardHeading: React.FC<ICardHeadingProps> = ({ title, subtitle }) => {
 };
 
 const TokenListItem: React.FC<ITokenListItemProps> = ({
-  listItem,
-  isListing,
+  token,
+  listingInfo,
 }) => {
   const [item, setItem] = React.useState<any>(null);
-  const [listingInfo, setListingInfo] = React.useState<any>(null);
   const [_n, { setWarning }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
 
-  const loadItem = () => {
+  const loadItemMeta = () => {
     axios
-      .get(listItem.tokenUri)
+      .get(token.tokenUri)
       .then((res) => {
         const attrs = res.data.attributes;
         const itemRes = {
@@ -58,7 +57,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
           imageUrl: res.data.imageUrl,
           name: res.data.name,
           description: res.data.description,
-          value: attrs[0].value,
+          value: attrs[0].amount,
           dateCreated: "some date",
         };
         setItem(itemRes);
@@ -70,66 +69,65 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       });
   };
 
-  const getListingInfo = () => {
-    const listItemId = 1;
-    // Query pixelMarketPlace contract for listing info
-
-    // Set listing info
-  };
+  // const loadListItemInfo = async () => {
+  //   const marketplaceContract = dappState.contracts.pixelMarketplace;
+  //   const listItemInfo = await marketplaceContract.listings(listItem.tokenId);
+  //   // console.log(listItemInfo);
+  //   if (listItemInfo.status !== 2) {
+  //     setListingInfo(listItemInfo);
+  //   }
+  // };
 
   const submitContractCreateRequest = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const NFTContract = dappState.contracts.pixelNFT;
+
     const resHash = await NFTContract.approve(
       marketplaceContract.address,
-      listItem.tokenId
+      token.tokenId
     );
+
     const bigNumListingId = await marketplaceContract.createListing(
-      listItem.tokenId,
-      42
+      token.tokenId,
+      item.value
     );
+
     const listingId = Number(bigNumListingId.toString());
     console.log(bigNumListingId);
     console.log(listingId);
   };
 
-  const submitContractDeleteRequest = async () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const NFTContract = dappState.contracts.pixelNFT;
+  // const submitContractDeleteRequest = async () => {
+  //   const marketplaceContract = dappState.contracts.pixelMarketplace;
+  //   const NFTContract = dappState.contracts.pixelNFT;
 
-    // Change to remove approve
-    const resHash = await NFTContract.approve(
-      marketplaceContract.address,
-      listItem.tokenId
-    );
+  //   // Change to remove approve
+  //   const resHash = await NFTContract.approve();
 
-    // Change to remove listing method
-    const bigNumListingId = await marketplaceContract.createListing(
-      listItem.tokenId,
-      42
-    );
-    const listingId = Number(bigNumListingId.toString());
-    console.log(bigNumListingId);
-    console.log(listingId);
-  };
+  //   // Change to remove listing method
+  //   const bigNumListingId = await marketplaceContract.createListing(
+  //     listItem.tokenId,
+  //     item.value
+  //   );
+  //   const listingId = Number(bigNumListingId.toString());
+  //   console.log(bigNumListingId);
+  //   console.log(listingId);
+  // };
 
   const handleActionAreaButtonClick = (method: string) => {
-    if (method == "create") {
+    if (method === "create") {
       submitContractCreateRequest();
     } else if (method === "delete") {
-      submitContractDeleteRequest();
+      // submitContractDeleteRequest();
     }
   };
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
-      loadItem();
+      loadItemMeta();
+      console.log(listingInfo);
     }
   }, [dappState]);
-
-  React.useEffect(() => {
-    if (isListing) getListingInfo();
-  }, [isListing]);
 
   return (
     <div>
@@ -138,11 +136,15 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
         <Card sx={{ display: "flex", flexDirection: "column" }}>
           <CardHeading
             title={item.name}
-            subtitle={isListing ? "100 PIX" : "NOT LISTED"}
+            subtitle={
+              listingInfo && listingInfo
+                ? `${listingInfo.value.toString()} PIX`
+                : "NOT LISTED"
+            }
           />
           <Link
             style={{ textDecoration: "none" }}
-            to={`/marketplace/${listItem.tokenId}`}
+            to={`/marketplace/${token.tokenId}`}
           >
             <CardActionArea>
               <CardMedia
@@ -155,7 +157,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
           </Link>
           <TokenListItemFooter
             handleActionAreaButtonClick={handleActionAreaButtonClick}
-            isListing={isListing}
+            listingInfo={listingInfo}
             itemDescription={item.description}
           />
         </Card>

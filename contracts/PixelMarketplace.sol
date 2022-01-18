@@ -199,17 +199,12 @@ contract PixelMarketplace is IERC721Receiver {
         return _currentListingId;
     }
 
-    // function removeListing(uint256 _tokenId) public view {
-    // require(isAuthor(), "Only registered authors can create listings");
+    function removeListing(uint256 _tokenId) public view {
+        require(isAuthor(), "Only registered authors can create listings");
 
-    // Get token from mapping with token Id
-
-    // Require msg.sender to be owner of token
-
-    // Set listing status to removed
-
-    // Reduce listing count
-    // }
+        Listing memory listing = listings[_tokenId];
+        listing.status = ListingStatus.REMOVED;
+    }
 
     function getAllAvailableListingTokenIds()
         public
