@@ -10,6 +10,9 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+
 export interface IMarketplaceItem {
   id: number;
   imageUrl: string;
@@ -43,21 +46,30 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
               alt={name}
               height={500}
             />
-            <CardContent sx={{ flexGrow: 1 }}>
-              <Typography gutterBottom variant="h5" component="h2">
-                {name}
-              </Typography>
-              <Typography>{description}</Typography>
-            </CardContent>
-            <CardActions sx={{ p: 2 }}>
-              <Button color="primary" variant="contained">
-                Purchase
-              </Button>
-            </CardActions>
           </Card>
         </Grid>
-        <Grid item sm={12} md={6}>
-          <Box sx={{ p: 2 }}>right side</Box>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            p: 2,
+            minHeight: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box>
+            <Typography gutterBottom variant="h4" component="h2">
+              {name}
+            </Typography>
+            <Typography>{description}</Typography>
+          </Box>
+          <Box sx={{ alignSelf: "end", mt: "auto" }}>
+            <Button variant="contained" component="label" color="secondary">
+              Purchase
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </Paper>

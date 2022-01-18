@@ -18,11 +18,6 @@ interface ICreateTokenFormProps {
   fileError: boolean;
 }
 
-// image: "",
-// name: "",
-// description: "",
-// value: "",
-
 const CreateTokenForm: React.FC<ICreateTokenFormProps> = ({
   formState,
   setFileError,
