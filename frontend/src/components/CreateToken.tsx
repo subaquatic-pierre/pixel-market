@@ -8,13 +8,12 @@ import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
-import FileInput from "components/FileInput";
+import CreateTokenForm from "components/CreateTokenForm";
 
 import { HOST_URL } from "const";
 
@@ -99,6 +98,7 @@ const CreateListing = () => {
 
   // Handle file change to display image on card
   const handleFileChange = () => {
+    setFileError(false);
     const reader = new FileReader();
     reader.onload = (e) => {
       setImageSrc(reader.result);
@@ -123,14 +123,29 @@ const CreateListing = () => {
       });
   };
 
+  const isValidForm = () => {
+    console.log(formState);
+    if (
+      formState.name === "" ||
+      formState.value === "" ||
+      formState.description === ""
+    ) {
+      return false;
+    }
+    return true;
+  };
+
   const handleMetaDataSave = (): boolean => {
     const url = `${HOST_URL}/save-meta`;
     const data: TokenMeta = {
       tokenId: tokenId,
-      name: "Cool NFT",
-      description: "This is the first description of an NFT",
+      name: formState.name,
+      description: formState.description,
       imageUrl: `${HOST_URL}/token-image/${tokenId}.jpg`,
-      attributes: [{ amount: "42" }, { author: "The Amazing Creator" }],
+      attributes: [
+        { amount: formState.value },
+        { author: dappState.currentAccount },
+      ],
     };
 
     axios.post(url, data).catch((err) => {
@@ -145,6 +160,10 @@ const CreateListing = () => {
       handleImageSave();
     } else {
       setWarning("No image uploaded");
+      return;
+    }
+    if (!isValidForm()) {
+      setWarning("Form data is not valid");
       return;
     }
     if (!handleMetaDataSave()) {
@@ -198,47 +217,26 @@ const CreateListing = () => {
           >
             {file ? (
               <CardMedia
+                sx={{ p: 2 }}
                 component="img"
                 image={imageSrc}
                 alt="random"
                 height={500}
               />
             ) : (
-              <Skeleton variant="rectangular" height={500} />
+              <Skeleton variant="rectangular" height={480} sx={{ m: 2 }} />
             )}
-            <Box sx={{ p: 2 }}>
-              <Button variant="contained" component="label">
-                Upload File
-                <FileInput setFile={setFile} setFileError={setFileError} />
-              </Button>
-              {setFileError && (
-                <Typography sx={{ mt: 2 }} color="red">
-                  {fileError}
-                </Typography>
-              )}
-            </Box>
           </Card>
           <Grid />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Box sx={{ p: 2 }}>
-            {/* <Button
-              sx={{ mr: 3 }}
-              variant="contained"
-              onClick={handleImageSave}
-              component="label"
-            >
-              Save Image
-            </Button> */}
-            <Button
-              variant="contained"
-              onClick={handleCreateToken}
-              component="label"
-            >
-              Create Token
-            </Button>
-          </Box>
-        </Grid>
+        <CreateTokenForm
+          formState={formState}
+          setFileError={setFileError}
+          handleInputChange={handleInputChange}
+          setFile={setFile}
+          handleCreateToken={handleCreateToken}
+          fileError={fileError}
+        />
       </Grid>
     </Paper>
   );
