@@ -5,10 +5,8 @@ import axios from "axios";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Skeleton from "@mui/material/Skeleton";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
