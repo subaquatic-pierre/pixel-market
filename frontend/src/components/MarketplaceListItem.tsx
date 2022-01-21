@@ -21,10 +21,12 @@ interface TokenIdToUri {
 
 interface IMarketplaceListItemProps {
   listItem: TokenIdToUri;
+  isMyListing: any;
 }
 
 const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   listItem,
+  isMyListing,
 }) => {
   const [item, setItem] = React.useState<any>(null);
   const [_n, { setWarning }] = useNotificationContext();
@@ -92,9 +94,11 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
                 View
               </Button>
             </Link>
-            <Button sx={{ mr: 1 }} color="secondary" variant="contained">
-              Purchase
-            </Button>
+            {!isMyListing && (
+              <Button sx={{ mr: 1 }} color="secondary" variant="contained">
+                Purchase
+              </Button>
+            )}
           </CardActions>
         </Card>
       )}

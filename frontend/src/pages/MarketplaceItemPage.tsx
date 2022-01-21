@@ -40,7 +40,8 @@ const MarketplaceItemPage = () => {
           imageUrl: res.data.imageUrl,
           name: res.data.name,
           description: res.data.description,
-          value: attrs[0].value,
+          value: attrs[0].amount,
+          author: attrs[1].author,
           dateCreated: "somedate",
         };
         setItem(itemRes);

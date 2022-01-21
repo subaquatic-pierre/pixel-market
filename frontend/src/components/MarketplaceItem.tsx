@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import useDappContext from "hooks/useDappContext";
 
 export interface IMarketplaceItem {
   id: number;
@@ -19,6 +20,7 @@ export interface IMarketplaceItem {
   name: string;
   description?: string;
   value: number;
+  author: string;
   dateCreated: string;
 }
 
@@ -27,8 +29,26 @@ interface IMarketplaceItemProps {
 }
 
 const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  item: { id, imageUrl, name, description, value, dateCreated },
+  item: { id, imageUrl, name, description, value, dateCreated, author },
 }) => {
+  const [isOwner, setIsOwner] = React.useState(false);
+  const [dappState, _] = useDappContext();
+
+  const checkOwner = () => {
+    if (author === dappState.currentAccount) {
+      setIsOwner(true);
+      console.log(author);
+      console.log(dappState);
+    }
+  };
+
+  React.useEffect(() => {
+    if (dappState.isInitialized) {
+      checkOwner();
+    }
+    console.log(dappState);
+    console.log(author);
+  }, [dappState]);
   return (
     <Paper>
       <Grid container spacing={0}>
@@ -66,9 +86,11 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             <Typography>{description}</Typography>
           </Box>
           <Box sx={{ alignSelf: "end", mt: "auto" }}>
-            <Button variant="contained" component="label" color="secondary">
-              Purchase
-            </Button>
+            {!isOwner && (
+              <Button variant="contained" component="label" color="secondary">
+                Purchase
+              </Button>
+            )}
           </Box>
         </Grid>
       </Grid>

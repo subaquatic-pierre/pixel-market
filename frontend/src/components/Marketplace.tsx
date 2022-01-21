@@ -81,6 +81,18 @@ const Marketplace: React.FC = () => {
     }
   };
 
+  const checkIsMyListing = (item: any, state: any) => {
+    const myListings = state.myListings;
+    let listingInfo = null;
+    for (let i = 0; i < myListings.length; i++) {
+      const listing = myListings[i];
+      if (item.tokenId === listing.tokenId && listing.status !== 2) {
+        listingInfo = listing;
+      }
+    }
+    return listingInfo;
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) {
       getMarketPlaceItems();
@@ -94,7 +106,10 @@ const Marketplace: React.FC = () => {
         {!state.loading &&
           state.listItems.map((item, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
-              <MarketplaceListItem listItem={item} />
+              <MarketplaceListItem
+                listItem={item}
+                isMyListing={checkIsMyListing(item, state)}
+              />
             </Grid>
           ))}
       </Grid>

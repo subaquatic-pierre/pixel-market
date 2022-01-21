@@ -12,12 +12,14 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
+import { useNavigate } from "react-router";
 
 const RequestAuthorship: React.FC = () => {
   const [formState, setFormState] = React.useState<any>({
     authorName: "",
     authorEmail: "",
   });
+  const navigate = useNavigate();
   const [_n, { setSuccess, setWarning }] = useNotificationContext();
   const [dappState, _d] = useDappContext();
   const [contract, setContract] = React.useState<any>(null);
@@ -44,6 +46,7 @@ const RequestAuthorship: React.FC = () => {
       );
       setFormState({ authorName: "", authorEmail: "" });
       setSuccess("Your request has been submitted");
+      navigate("/tokens");
     } catch (err) {
       setWarning(err.message);
     }
