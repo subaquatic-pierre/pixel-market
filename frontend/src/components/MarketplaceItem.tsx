@@ -37,8 +37,6 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   const checkOwner = () => {
     if (author === dappState.currentAccount) {
       setIsOwner(true);
-      console.log(author);
-      console.log(dappState);
     }
   };
 
@@ -46,8 +44,6 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
     if (dappState.isInitialized) {
       checkOwner();
     }
-    console.log(dappState);
-    console.log(author);
   }, [dappState]);
   return (
     <Paper>

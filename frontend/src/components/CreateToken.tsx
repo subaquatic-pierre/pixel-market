@@ -122,7 +122,6 @@ const CreateListing = () => {
   };
 
   const isValidForm = () => {
-    console.log(formState);
     if (
       formState.name === "" ||
       formState.value === "" ||
