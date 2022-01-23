@@ -9,10 +9,15 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-
 import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
+
 import TextField from "@mui/material/TextField";
 import useDappContext from "hooks/useDappContext";
+
+const Item = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+}));
 
 export interface IMarketplaceItem {
   id: number;
@@ -56,7 +61,6 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             elevation={0}
           >
             <CardMedia
-              sx={{ p: 2 }}
               component="img"
               image={imageUrl}
               alt={name}
@@ -64,32 +68,36 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             />
           </Card>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}
-          sx={{
-            p: 2,
-            minHeight: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box>
-            <Typography gutterBottom variant="h4" component="h2">
-              {name}
-            </Typography>
-            <Typography>{description}</Typography>
-          </Box>
-          <Card sx={{ minWidth: 275 }}>
+        <Grid item xs={12} md={6}>
+          <Card
+            sx={{
+              minHeight: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <CardContent>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.secondary"
-                gutterBottom
-              >
-                Word of the Day
-              </Typography>
+              <Stack spacing={2}>
+                <Item>
+                  <Typography gutterBottom variant="h4">
+                    {name}
+                  </Typography>
+                  <Typography color="text.secondary">
+                    Owned by: {name}
+                  </Typography>
+                  <Typography>{description}</Typography>
+                  <Typography
+                    sx={{ fontSize: 14 }}
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    Word of the Day
+                  </Typography>
+                </Item>
+                <Item>Item 2</Item>
+                <Item>Item 3</Item>
+              </Stack>
+
               <Typography variant="h5" component="div">
                 bullet
               </Typography>
@@ -102,17 +110,29 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
                 {'"a benevolent smile"'}
               </Typography>
             </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
+            <Box sx={{ mt: "auto", alignSelf: "end", p: 1 }}>
+              <CardActions>
+                <Button size="medium" variant="contained">
+                  Share
+                </Button>
+                <Button size="medium" variant="contained">
+                  Learn More
+                </Button>
+                <Button size="medium" variant="contained">
+                  Learn More
+                </Button>
+                {!isOwner && (
+                  <Button
+                    variant="contained"
+                    component="label"
+                    color="secondary"
+                  >
+                    Purchase
+                  </Button>
+                )}
+              </CardActions>
+            </Box>
           </Card>
-          <Box sx={{ alignSelf: "end", mt: "auto" }}>
-            {!isOwner && (
-              <Button variant="contained" component="label" color="secondary">
-                Purchase
-              </Button>
-            )}
-          </Box>
         </Grid>
       </Grid>
     </Paper>
