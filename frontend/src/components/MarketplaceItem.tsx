@@ -3,21 +3,11 @@ import React from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
 
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-import TextField from "@mui/material/TextField";
 import useDappContext from "hooks/useDappContext";
 
 import MarketPlaceItemInfo from "./MarketPlaceItemInfo";
@@ -47,11 +37,25 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
     }
   };
 
+  const transferNFTToken = async () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const NFTContract = dappState.contracts.pixelNFT;
+    const ownerAddress = await NFTContract.ownerOf(item.id);
+    console.log(ownerAddress);
+    // const resHash = await marketplaceContract.transferTokenFrom;
+  };
+
+  const handlePurchaseButtonClick = (event: any) => {
+    transferNFTToken();
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) {
       checkOwner();
+      // console.log(dappState);
     }
-  }, [dappState]);
+  }, _[dappState]);
+
   return (
     <Paper>
       <Grid container spacing={0}>
@@ -83,20 +87,12 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
             <MarketPlaceItemInfo item={item} />
             <Box sx={{ mt: "auto", alignSelf: "end", p: 1 }}>
               <CardActions>
-                <Button size="medium" variant="contained">
-                  Share
-                </Button>
-                <Button size="medium" variant="contained">
-                  Learn More
-                </Button>
-                <Button size="medium" variant="contained">
-                  Learn More
-                </Button>
                 {!isOwner && (
                   <Button
                     variant="contained"
                     component="label"
                     color="secondary"
+                    onClick={handlePurchaseButtonClick}
                   >
                     Purchase
                   </Button>
