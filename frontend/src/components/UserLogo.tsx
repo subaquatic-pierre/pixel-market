@@ -4,16 +4,11 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 
+import formatWalletAddress from "utils/formatWalletAddress";
+
 interface IWalletAddress {
   walletAddress: string;
 }
-
-const formatWalletAddress = (walletAddress: string) => {
-  const start = walletAddress.slice(0, 5);
-  const end = walletAddress.slice(walletAddress.length - 4);
-  const text = start + "...." + end;
-  return text;
-};
 
 const UserLogo: React.FC<IWalletAddress> = ({ walletAddress }) => {
   return (
