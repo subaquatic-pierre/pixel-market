@@ -230,6 +230,27 @@ contract PixelMarketplace is IERC721Receiver {
     function getMyListingsIds() public view returns (uint256[] memory) {
         return addressToListingIds[msg.sender];
     }
+
+    function transferToken(
+        address authorAddress,
+        address receiverAddress,
+        uint256 tokenId,
+        uint256 tokenValue
+    ) public payable returns (bool) {
+        // Get 10% of item value, send to owner of marketplace for commission
+        uint256 ownerCommission = (tokenValue * 10) / 100;
+        uint256 authorShare = tokenValue - ownerCommission;
+
+        // Transfer to marketplace owner / contract owner
+        tokenContract.transfer(_owner, ownerCommission);
+
+        // Transfer to tokens to author of listing
+        tokenContract.transfer(authorAddress, authorShare);
+
+        // Transfer NFT token to the caller
+        NFTContract.safeTransferFrom(authorAddress, receiverAddress, tokenId);
+        return true;
+    }
 }
 
 // TODO:

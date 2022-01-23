@@ -36,7 +36,7 @@ const Wallet = () => {
   const [walletState, setWalletState] =
     React.useState<IWalletState>(initialWalletState);
   const [formState, setFormState] = React.useState<any>({
-    amount: "",
+    value: "",
     toAddress: "",
   });
   const [_n, { setSuccess, setWarning }] = useNotificationContext();

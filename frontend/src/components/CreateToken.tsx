@@ -140,7 +140,7 @@ const CreateListing = () => {
       description: formState.description,
       imageUrl: `${HOST_URL}/token-image/${tokenId}.jpg`,
       attributes: [
-        { amount: formState.value },
+        { value: formState.value },
         { author: dappState.currentAccount },
       ],
     };

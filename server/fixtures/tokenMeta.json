@@ -1,0 +1,11 @@
+{
+    "tokenId": 1,
+    "name": "Super Cool",
+    "description": "This is a super cool token",
+    "imageUrl": "http://localhost:8080/token-image/1.jpg",
+    "attributes": [{
+        "value": "600"
+    }, {
+        "author": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+    }]
+}
