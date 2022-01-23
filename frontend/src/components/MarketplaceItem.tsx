@@ -46,18 +46,28 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
     // Get item details
     const tokenId = item.id;
     const itemValue = item.value;
+    console.log(itemValue);
 
     // Get owner of token address, and receiver of NFT
     const ownerAddress = await NFTContract.ownerOf(item.id);
     const receiverAddress = dappState.currentAccount;
 
     // Set allowance for marketplace contract to spend tokens
-    const approveTokenSpendRes = tokenContract.approve(
+    const approveTokenSpendRes = await tokenContract.approve(
       marketplaceContract.address,
       itemValue
     );
 
-    // const resHash = await marketplaceContract.transferToken(ownerAddress, receiverAddress,tokenId);/
+    console.log(approveTokenSpendRes);
+
+    const resHash = await marketplaceContract.transferToken(
+      ownerAddress,
+      receiverAddress,
+      tokenId,
+      itemValue
+    );
+
+    console.log(resHash);
 
     console.log(dappState);
   };
