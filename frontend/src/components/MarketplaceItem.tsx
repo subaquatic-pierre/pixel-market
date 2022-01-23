@@ -5,19 +5,22 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import TextField from "@mui/material/TextField";
 import useDappContext from "hooks/useDappContext";
 
-const Item = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(1),
-}));
+import MarketPlaceItemInfo from "./MarketPlaceItemInfo";
 
 export interface IMarketplaceItem {
   id: number;
@@ -33,9 +36,8 @@ interface IMarketplaceItemProps {
   item: IMarketplaceItem;
 }
 
-const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  item: { id, imageUrl, name, description, value, dateCreated, author },
-}) => {
+const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
+  const { id, imageUrl, name, author } = item;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
 
@@ -74,42 +76,11 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
               minHeight: "100%",
               display: "flex",
               flexDirection: "column",
+              border: "none",
             }}
+            elevation={0}
           >
-            <CardContent>
-              <Stack spacing={2}>
-                <Item>
-                  <Typography gutterBottom variant="h4">
-                    {name}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    Owned by: {name}
-                  </Typography>
-                  <Typography>{description}</Typography>
-                  <Typography
-                    sx={{ fontSize: 14 }}
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Word of the Day
-                  </Typography>
-                </Item>
-                <Item>Item 2</Item>
-                <Item>Item 3</Item>
-              </Stack>
-
-              <Typography variant="h5" component="div">
-                bullet
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                adjective
-              </Typography>
-              <Typography variant="body2">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
-              </Typography>
-            </CardContent>
+            <MarketPlaceItemInfo item={item} />
             <Box sx={{ mt: "auto", alignSelf: "end", p: 1 }}>
               <CardActions>
                 <Button size="medium" variant="contained">
