@@ -12,22 +12,17 @@ import useDappContext from "hooks/useDappContext";
 
 import MarketPlaceItemInfo from "./MarketPlaceItemInfo";
 
-export interface IMarketplaceItem {
-  id: number;
-  imageUrl: string;
-  name: string;
-  description?: string;
-  value: number;
-  author: string;
-  dateCreated: string;
-}
-
 interface IMarketplaceItemProps {
-  item: IMarketplaceItem;
+  itemMeta: IMarketplaceItemMeta;
+  listingInfo: IMarketplaceListingInfo;
 }
 
-const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
-  const { id, imageUrl, name, author } = item;
+const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
+  itemMeta,
+  listingInfo,
+}) => {
+  console.log(listingInfo);
+  const { imageUrl, name, author } = itemMeta;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
 
@@ -44,12 +39,12 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
     const NFTContract = dappState.contracts.pixelNFT;
 
     // Get item details
-    const tokenId = item.id;
-    const itemValue = item.value;
+    const tokenId = listingInfo.tokenId;
+    const itemValue = listingInfo.value;
     console.log(itemValue);
 
     // Get owner of token address, and receiver of NFT
-    const ownerAddress = await NFTContract.ownerOf(item.id);
+    const ownerAddress = await NFTContract.ownerOf(tokenId);
     const receiverAddress = dappState.currentAccount;
 
     // Set allowance for marketplace contract to spend tokens
@@ -111,7 +106,10 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({ item }) => {
             }}
             elevation={0}
           >
-            <MarketPlaceItemInfo item={item} />
+            <MarketPlaceItemInfo
+              itemMeta={itemMeta}
+              listingInfo={listingInfo}
+            />
             <Box sx={{ mt: "auto", alignSelf: "end", p: 1 }}>
               <CardActions>
                 {!isOwner && (

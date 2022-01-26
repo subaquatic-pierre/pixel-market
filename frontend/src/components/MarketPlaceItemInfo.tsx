@@ -14,23 +14,17 @@ import formatWalletAddress from "utils/formatWalletAddress";
 import useDappContext from "hooks/useDappContext";
 import { Link } from "react-router-dom";
 
-export interface IMarketplaceItem {
-  id: number;
-  imageUrl: string;
-  name: string;
-  description?: string;
-  value: number;
-  author: string;
-  dateCreated: string;
-}
-
 interface IMarketplaceItemProps {
-  item: IMarketplaceItem;
+  itemMeta: IMarketplaceItemMeta;
+  listingInfo: IMarketplaceListingInfo;
 }
 
 const MarketPlaceItemInfo: React.FC<IMarketplaceItemProps> = ({
-  item: { id, imageUrl, name, description, value, dateCreated, author },
+  itemMeta,
+  listingInfo,
 }) => {
+  const { name, description, dateCreated, author } = itemMeta;
+  const { value } = listingInfo;
   const [dappState, _] = useDappContext();
   const [expanded, setExpanded] = React.useState<string | false>("panel1");
   const [contractAddress, setContractAddress] = React.useState<string>("");

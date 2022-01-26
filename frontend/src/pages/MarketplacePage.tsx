@@ -58,6 +58,7 @@ const MarketPlacePage = () => {
       getMyListings();
     }
   }, [dappState]);
+
   return (
     <Container maxWidth="lg">
       {myListingsLoaded && <Marketplace myListings={myListings} />}

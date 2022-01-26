@@ -16,7 +16,6 @@ async function main() {
     }
 
     console.log(tokenCreateRes);
-    // console.log(listingCreateRes);
   }
 }
 

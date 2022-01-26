@@ -13,7 +13,6 @@ const TokenList = () => {
     tokens: [{ tokenId: null, tokenUri: null }],
     listings: [],
   });
-  const [listingIds, setListingIds] = React.useState<string[]>([]);
   const [dappState, _] = useDappContext();
 
   const getListings = async () => {

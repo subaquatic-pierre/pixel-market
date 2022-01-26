@@ -30,27 +30,40 @@ const MarketplaceItemPage = () => {
       });
   };
 
-  const loadItem = () => {
-    axios
-      .get(tokenUri)
-      .then((res) => {
-        const attrs = res.data.attributes;
-        const itemRes = {
-          id: res.data.tokenId,
-          imageUrl: res.data.imageUrl,
-          name: res.data.name,
-          description: res.data.description,
-          value: attrs[0].value,
-          author: attrs[1].author,
-          dateCreated: "somedate",
-        };
-        setItem(itemRes);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setWarning(err.message);
-        return;
-      });
+  const loadItem = async () => {
+    const marketContract = dappState.contracts.pixelMarketplace;
+
+    try {
+      // Get metadata from server
+      const itemMetaRes = await axios.get(tokenUri);
+      const attrs = itemMetaRes.data.attributes;
+      const itemMeta = {
+        tokenId: itemMetaRes.data.tokenId,
+        imageUrl: itemMetaRes.data.imageUrl,
+        name: itemMetaRes.data.name,
+        description: itemMetaRes.data.description,
+        value: attrs[0].value,
+        author: attrs[1].author,
+        dateCreated: "somedate",
+      };
+
+      // Get listing info from blockChain
+      const listingInfoRes = await marketContract.listings(id);
+
+      const listingInfo = {
+        listingId: id,
+        author: listingInfoRes.author,
+        status: listingInfoRes.status,
+        tokenId: listingInfoRes.tokenId.toString(),
+        value: listingInfoRes.value.toString(),
+      };
+
+      setItem({ itemMeta, listingInfo });
+      setLoading(false);
+    } catch (err) {
+      setWarning(err.message);
+      return;
+    }
   };
 
   // Set loading state true until request from blockchain is complete
@@ -66,7 +79,14 @@ const MarketplaceItemPage = () => {
 
   return (
     <Container maxWidth="lg">
-      {loading ? <MarketplaceItemSkeleton /> : <MarketplaceItem item={item} />}
+      {loading ? (
+        <MarketplaceItemSkeleton />
+      ) : (
+        <MarketplaceItem
+          itemMeta={item.itemMeta}
+          listingInfo={item.listingInfo}
+        />
+      )}
     </Container>
   );
 };

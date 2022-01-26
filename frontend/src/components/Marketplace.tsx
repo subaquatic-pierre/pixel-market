@@ -21,7 +21,7 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
     // Get contracts from dapp state
     const NFTContract = dappState.contracts.pixelNFT;
     const marketContract = dappState.contracts.pixelMarketplace;
-    const tokenIdToUri = [];
+    const listingData = [];
 
     // Get array of Ids from marketplace contract
     const bigNumListingId = await marketContract.getAllAvailableListingIds();
@@ -34,11 +34,28 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
 
         // Get token URI from NFT contract
         if (listingId !== "0") {
-          const listingInfo = await marketContract.listings(listingId);
-          const tokenId = await marketContract.listingIdToTokenId(listingId);
+          const listingInfoRes = await marketContract.listings(listingId);
+
+          const listingInfo = {
+            listingId: listingId,
+            author: listingInfoRes.author,
+            status: listingInfoRes.status,
+            tokenId: listingInfoRes.tokenId.toString(),
+            value: listingInfoRes.value.toString(),
+          };
+
+          // Get token Id
+          const bigNumTokenId = await marketContract.listingIdToTokenId(
+            listingId
+          );
+          const tokenId = bigNumTokenId.toString();
+
+          // Get token URI
           const tokenUri = await NFTContract.tokenURI(tokenId);
-          const item = { tokenId, tokenUri, listingInfo };
-          tokenIdToUri.push(item);
+
+          // Set item data
+          const itemData = { tokenId, tokenUri, listingInfo };
+          listingData.push(itemData);
         }
       } catch {
         continue;
@@ -47,7 +64,7 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
       setState((oldState) => ({
         ...oldState,
         loading: false,
-        listItems: tokenIdToUri,
+        listItems: listingData,
       }));
     }
   };

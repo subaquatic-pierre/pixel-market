@@ -209,26 +209,6 @@ contract PixelMarketplace is IERC721Receiver {
         listings[_listingId] = listing;
     }
 
-    // function getAllAvailableListingTokenIds()
-    //     public
-    //     view
-    //     returns (uint256[] memory)
-    // {
-    //     // Create array of size listing count
-    //     uint256 _listingCount = listingIds.current();
-    //     uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
-
-    //     // Build token Id array by looping over listing mapping and pushing list item Id to array
-    //     for (uint256 i = 1; i <= _listingCount; i++) {
-    //         Listing memory item = listings[i];
-    //         if (item.status == ListingStatus.AVAILABLE) {
-    //             _tokenIds[i] = item.tokenId;
-    //         }
-    //     }
-
-    //     return _tokenIds;
-    // }
-
     function getAllAvailableListingIds()
         public
         view

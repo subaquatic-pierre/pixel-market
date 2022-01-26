@@ -60,7 +60,6 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
     if (dappState.isInitialized) {
       loadItem();
     }
-    console.log(listItem);
   }, [dappState]);
 
   return (

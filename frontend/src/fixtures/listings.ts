@@ -1,5 +1,3 @@
-import { IMarketplaceItem } from "components/MarketplaceItem";
-
 const listings = [
   {
     id: 1,
