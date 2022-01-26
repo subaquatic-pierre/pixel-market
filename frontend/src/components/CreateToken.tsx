@@ -71,7 +71,7 @@ const CreateListing = () => {
       .then((res) => {
         const bigNum = res;
         const strNum = bigNum.toString();
-        setTokenId(Number(strNum) + 1);
+        setTokenId(Number(strNum));
       })
       .catch((err) => {
         setWarning(err);

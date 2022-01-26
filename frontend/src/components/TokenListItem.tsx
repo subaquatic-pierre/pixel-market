@@ -48,6 +48,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
   const [dappState, _] = useDappContext();
 
   const loadItemMeta = () => {
+    console.log(token);
     axios
       .get(token.tokenUri)
       .then((res) => {

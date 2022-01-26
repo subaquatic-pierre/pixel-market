@@ -19,8 +19,10 @@ const TokenListToolbar = () => {
   const [dappState, _] = useDappContext();
 
   const checkAuthorshipStatus = async () => {
-    const contract = dappState.contracts.pixelMarketplace;
-    const isAuthor = await contract.isAuthor();
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const isAuthor = await marketplaceContract.isAuthor(
+      dappState.currentAccount
+    );
 
     if (isAuthor) {
       setAuthorshipStatus({
