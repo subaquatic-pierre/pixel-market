@@ -27,13 +27,14 @@ const AuthorRequestList = () => {
   const [_n, { setWarning }] = useNotificationContext();
 
   const getAuthors = async () => {
-    const contract = dappState.contracts.pixelMarketplace;
-    const bigNumAuthorCount = await contract.authorIds();
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const bigNumAuthorCount = await marketplaceContract.authorCount();
     const authorCount = Number(bigNumAuthorCount.toString());
     const _authors = [];
 
-    for (let i = 1; i <= authorCount; i++) {
-      const authorRes = await contract.authors(i);
+    for (let i = 0; i < authorCount; i++) {
+      const authorAddress = await marketplaceContract.authorAddressList(i);
+      const authorRes = await marketplaceContract.authors(authorAddress);
       try {
         const _author: IAuthor = {
           id: i,

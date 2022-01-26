@@ -41,14 +41,15 @@ contract PixelMarketplace is IERC721Receiver {
     mapping(uint256 => Listing) public listings;
 
     // Marketplace authors
-    Counters.Counter public authorIds;
-    mapping(uint256 => Author) public authors;
+    Counters.Counter public authorCount;
+    address[] public authorAddressList;
+    mapping(address => Author) public authors;
 
     // Author listing IDs
     mapping(address => uint256[]) addressToListingIds;
 
     event AuthorUpdate(
-        uint256 _authorId,
+        uint256 authorCount,
         address _authorWalletAddress,
         string _authorName,
         string _authorEmail,
@@ -62,15 +63,11 @@ contract PixelMarketplace is IERC721Receiver {
         NFTContract = PixelNFT(_NFTContractAddress);
         tokenContract = PixelToken(_tokenContractAddress);
 
-        // Create default author on contract create
-        authorIds.increment();
-
         // Default author
-        uint256 _authorId = authorIds.current();
         string memory _authorName = "Default Author";
         string memory _authorEmail = "default@email.com";
 
-        _updateAuthor(_authorId, msg.sender, _authorName, _authorEmail, true);
+        _updateAuthor(msg.sender, _authorName, _authorEmail, true);
     }
 
     function name() public pure returns (string memory) {
@@ -84,26 +81,14 @@ contract PixelMarketplace is IERC721Receiver {
         bytes calldata data
     ) public override returns (bytes4) {}
 
-    function addresstoAuthorId(address _authorAddress)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 _authorId = 0;
-        for (uint256 i = 1; i <= authorIds.current(); i++) {
-            Author memory author = authors[i];
-            if (author.authorWallet == _authorAddress) {
-                _authorId = i;
-                break;
-            }
+    function isAuthor(address _walletAddress) public view returns (bool) {
+        Author memory _author = authors[_walletAddress];
+
+        if (_author.exists == true) {
+            return true;
+        } else {
+            return false;
         }
-
-        return _authorId;
-    }
-
-    function getMyId() public view returns (uint256) {
-        uint256 _authorId = addresstoAuthorId(msg.sender);
-        return _authorId;
     }
 
     function requestAuthorship(
@@ -111,14 +96,12 @@ contract PixelMarketplace is IERC721Receiver {
         string memory _authorEmail
     ) public {
         // Check if author already exists
-        bool _isAuthor = isAuthor();
+        bool _isAuthor = isAuthor(msg.sender);
         require(!_isAuthor, "Author already exists");
 
         bool _setAuthorExistsInMap = true;
-        authorIds.increment();
 
         _updateAuthor(
-            authorIds.current(),
             msg.sender,
             _authorName,
             _authorEmail,
@@ -127,8 +110,7 @@ contract PixelMarketplace is IERC721Receiver {
     }
 
     function _updateAuthor(
-        uint256 _authorId,
-        address _authorWalletAddress,
+        address _walletAddress,
         string memory _authorName,
         string memory _authorEmail,
         bool _isActiveStatus
@@ -136,18 +118,20 @@ contract PixelMarketplace is IERC721Receiver {
         bool setAuthorExistsInMap = true;
 
         Author memory newAuthor = Author(
-            _authorWalletAddress,
+            _walletAddress,
             _authorName,
             _authorEmail,
             _isActiveStatus,
             setAuthorExistsInMap
         );
 
-        authors[_authorId] = newAuthor;
+        authors[_walletAddress] = newAuthor;
+        authorAddressList.push(_walletAddress);
+        authorCount.increment();
 
         emit AuthorUpdate(
-            _authorId,
-            _authorWalletAddress,
+            authorCount.current(),
+            _walletAddress,
             _authorName,
             _authorEmail,
             _isActiveStatus
@@ -158,21 +142,24 @@ contract PixelMarketplace is IERC721Receiver {
         return msg.sender == _owner;
     }
 
-    function isAuthor() public view returns (bool) {
-        uint256 _authorId = addresstoAuthorId(msg.sender);
-
-        if (_authorId == 0) {
-            return false;
-        } else {
-            return true;
-        }
+    function _listingExists() private pure returns (bool) {
+        // check listing does not exist with tokenId and is available
+        return false;
     }
 
     function createListing(uint256 _tokenId, uint256 _value)
         public
         returns (uint256)
     {
-        require(isAuthor(), "Only registered authors can create listings");
+        require(
+            isAuthor(msg.sender),
+            "Only registered authors can create listings"
+        );
+
+        require(
+            !_listingExists(),
+            "Cannot create new listing with that token ID"
+        );
 
         // Increment token Id's
         listingIds.increment();
@@ -202,7 +189,10 @@ contract PixelMarketplace is IERC721Receiver {
     }
 
     function removeListing(uint256 _listingId) public {
-        require(isAuthor(), "Only registered authors can remove listings");
+        require(
+            isAuthor(msg.sender),
+            "Only registered authors can remove listings"
+        );
 
         Listing memory listing = listings[_listingId];
         listing.status = ListingStatus.REMOVED;
