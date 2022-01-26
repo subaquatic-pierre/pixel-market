@@ -22,6 +22,7 @@ enum ListingStatus {
 }
 
 struct Listing {
+    uint256 id;
     address author;
     uint256 tokenId;
     uint256 value;
@@ -181,6 +182,7 @@ contract PixelMarketplace is IERC721Receiver {
 
         // Create item in memory
         Listing memory listing = Listing(
+            _currentListingId,
             msg.sender,
             _tokenId,
             _value,
@@ -207,33 +209,65 @@ contract PixelMarketplace is IERC721Receiver {
         listings[_listingId] = listing;
     }
 
-    function getAllAvailableListingTokenIds()
+    // function getAllAvailableListingTokenIds()
+    //     public
+    //     view
+    //     returns (uint256[] memory)
+    // {
+    //     // Create array of size listing count
+    //     uint256 _listingCount = listingIds.current();
+    //     uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
+
+    //     // Build token Id array by looping over listing mapping and pushing list item Id to array
+    //     for (uint256 i = 1; i <= _listingCount; i++) {
+    //         Listing memory item = listings[i];
+    //         if (item.status == ListingStatus.AVAILABLE) {
+    //             _tokenIds[i] = item.tokenId;
+    //         }
+    //     }
+
+    //     return _tokenIds;
+    // }
+
+    function getAllAvailableListingIds()
         public
         view
         returns (uint256[] memory)
     {
         // Create array of size listing count
         uint256 _listingCount = listingIds.current();
-        uint256[] memory _tokenIds = new uint256[](_listingCount + 1);
+        uint256[] memory _listingIds = new uint256[](_listingCount + 1);
 
         // Build token Id array by looping over listing mapping and pushing list item Id to array
         for (uint256 i = 1; i <= _listingCount; i++) {
             Listing memory item = listings[i];
             if (item.status == ListingStatus.AVAILABLE) {
-                _tokenIds[i] = item.tokenId;
+                _listingIds[i] = item.id;
             }
         }
 
-        return _tokenIds;
+        return _listingIds;
+    }
+
+    function listingIdToTokenId(uint256 listingId)
+        public
+        view
+        returns (uint256)
+    {
+        Listing memory listing = listings[listingId];
+        return listing.tokenId;
     }
 
     function getMyListingsIds() public view returns (uint256[] memory) {
         return addressToListingIds[msg.sender];
     }
 
+    function _setListingSold() private {}
+
     function transferToken(
         address authorAddress,
         address receiverAddress,
+        // uint256 listingId,
         uint256 tokenId,
         uint256 tokenValue
     ) public payable returns (bool) {

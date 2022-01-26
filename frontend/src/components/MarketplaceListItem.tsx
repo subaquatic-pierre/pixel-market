@@ -14,13 +14,14 @@ import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
-interface TokenIdToUri {
+interface MarketItem {
   tokenId: number;
   tokenUri: string;
+  listingInfo: any;
 }
 
 interface IMarketplaceListItemProps {
-  listItem: TokenIdToUri;
+  listItem: MarketItem;
   isMyListing: any;
 }
 
@@ -59,6 +60,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
     if (dappState.isInitialized) {
       loadItem();
     }
+    console.log(listItem);
   }, [dappState]);
 
   return (

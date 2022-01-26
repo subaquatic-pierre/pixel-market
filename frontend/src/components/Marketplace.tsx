@@ -13,53 +13,9 @@ interface IMaketPlaceProps {
 const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
   const [state, setState] = React.useState({
     loading: true,
-    listItems: [{ tokenId: null, tokenUri: null }],
+    listItems: [{ tokenId: null, tokenUri: null, listingInfo: null }],
   });
   const [dappState, _] = useDappContext();
-  // const [myListings, setMyListings] = React.useState<any>([]);
-  // const [myListingsLoaded, setMyListingsLoaded] =
-  //   React.useState<boolean>(false);
-
-  // const getMyListings = async () => {
-  //   try {
-  //     const marketContract = dappState.contracts.pixelMarketplace;
-  //     const listingIds = [];
-  //     const listings = [];
-
-  //     // Get array of Ids from marketplace contract
-  //     const bigNumTokenIds = await marketContract.getMyListingsIds();
-
-  //     // Get token from marketplace
-  //     for (let i = 0; i < bigNumTokenIds.length; i++) {
-  //       try {
-  //         // Get token Id from array
-  //         const tokenId = bigNumTokenIds[i].toString();
-  //         if (tokenId !== "0") listingIds.push(tokenId);
-  //       } catch {
-  //         continue;
-  //       }
-  //     }
-
-  //     listingIds.forEach(async (listingId) => {
-  //       const listingRes = await marketContract.listings(listingId);
-  //       const listing = {
-  //         listingId: listingId,
-  //         author: listingRes.author,
-  //         status: listingRes.status,
-  //         tokenId: listingRes.tokenId.toString(),
-  //         value: listingRes.value.toString(),
-  //       };
-  //       listings.push(listing);
-  //     });
-
-  //     setMyListings((oldState) => {
-  //       setMyListingsLoaded(true);
-  //       return listings;
-  //     });
-  //   } catch (err) {
-  //     return;
-  //   }
-  // };
 
   const getMarketPlaceItems = async () => {
     // Get contracts from dapp state
@@ -68,19 +24,20 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
     const tokenIdToUri = [];
 
     // Get array of Ids from marketplace contract
-    const bigNumTokenIds =
-      await marketContract.getAllAvailableListingTokenIds();
+    const bigNumListingId = await marketContract.getAllAvailableListingIds();
 
     // Get token from marketplace
-    for (let i = 1; i <= bigNumTokenIds.length; i++) {
+    for (let i = 1; i <= bigNumListingId.length; i++) {
       try {
         // Get token Id from array
-        const tokenId = bigNumTokenIds[i].toString();
+        const listingId = bigNumListingId[i].toString();
 
         // Get token URI from NFT contract
-        if (tokenId !== "0") {
+        if (listingId !== "0") {
+          const listingInfo = await marketContract.listings(listingId);
+          const tokenId = await marketContract.listingIdToTokenId(listingId);
           const tokenUri = await NFTContract.tokenURI(tokenId);
-          const item = { tokenId, tokenUri };
+          const item = { tokenId, tokenUri, listingInfo };
           tokenIdToUri.push(item);
         }
       } catch {
@@ -112,10 +69,6 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
       getMarketPlaceItems();
     }
   }, [dappState]);
-
-  // React.useEffect(() => {
-  //   if (!myListingsLoaded) getMyListings();
-  // }, [myListingsLoaded, dappState]);
 
   return (
     <Box>
