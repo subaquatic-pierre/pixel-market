@@ -23,6 +23,31 @@ async function saveFrontendFiles(contracts) {
   }
 }
 
+async function saveScriptFiles(contracts) {
+  for (let i = 0; i < contracts.length; i++) {
+    const contract = contracts[i];
+    const contractName = await contract.name();
+    const fs = require("fs");
+    const contractsDir = __dirname + "/contracts";
+
+    if (!fs.existsSync(contractsDir)) {
+      fs.mkdirSync(contractsDir);
+    }
+
+    fs.writeFileSync(
+      `${contractsDir}/${contractName}-contract-address.json`,
+      JSON.stringify({ [contractName]: contract.address }, undefined, 2)
+    );
+
+    const ContractArtifact = artifacts.readArtifactSync(contractName);
+
+    fs.writeFileSync(
+      `${contractsDir}/${contractName}.json`,
+      JSON.stringify(ContractArtifact, null, 2)
+    );
+  }
+}
+
 async function deployPixelToken() {
   const PixelToken = await ethers.getContractFactory("PixelToken");
   const pixelToken = await PixelToken.deploy();
@@ -80,6 +105,7 @@ async function main() {
   );
 
   await saveFrontendFiles([pixelNFT, pixelToken, pixelMarketplace]);
+  await saveScriptFiles([pixelNFT, pixelToken, pixelMarketplace]);
 }
 
 main()

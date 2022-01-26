@@ -1,38 +1,23 @@
-async function deployPixelMarketplace(NFTAddress, tokenAddress) {
-  const PixelMarketplace = await ethers.getContractFactory("PixelMarketplace");
-  const marketplace = await PixelMarketplace.deploy(NFTAddress, tokenAddress);
-  await marketplace.deployed();
-
-  console.log("PixelMarketplace address:", marketplace.address);
-
-  return marketplace;
-}
+const buildContracts = require("./buildContracts");
 
 async function main() {
   // This is just a convenience check
-  if (network.name === "hardhat") {
-    console.warn(
-      "You are trying to deploy a contract to the Hardhat Network, which" +
-        "gets automatically created and destroyed every time. Use the Hardhat" +
-        " option '--network localhost'"
-    );
+  const { pixelNFT, pixelMarketplace } = await buildContracts();
+
+  for (let i = 1; i < 6; i++) {
+    const tokenUri = `http://localhost:8080/token-meta/${i}`;
+
+    // Create Token
+    const tokenCreateRes = await pixelNFT.createToken(tokenUri);
+
+    // Create listings
+    if (i % 2 == 0) {
+      const listingCreateRes = await pixelMarketplace.createListing(i, i * 100);
+    }
+
+    console.log(tokenCreateRes);
+    // console.log(listingCreateRes);
   }
-
-  // ethers is avaialble in the global scope
-  const [deployer] = await ethers.getSigners();
-  console.log(
-    "Deploying the contracts with the account:",
-    await deployer.getAddress()
-  );
-
-  console.log("Account balance:", (await deployer.getBalance()).toString());
-
-  const pixelMarketplace = await deployPixelMarketplace(
-    pixelNFT.address,
-    pixelToken.address
-  );
-
-  await saveFrontendFiles([pixelNFT, pixelToken, pixelMarketplace]);
 }
 
 main()
