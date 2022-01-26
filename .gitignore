@@ -8,3 +8,5 @@ artifacts
 
 server/images
 server/meta
+
+scripts/contracts
