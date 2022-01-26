@@ -37,7 +37,7 @@ const MarketplaceItemPage = () => {
       // Get metadata from server
       const itemMetaRes = await axios.get(tokenUri);
       const attrs = itemMetaRes.data.attributes;
-      const itemMeta = {
+      const tokenMeta = {
         tokenId: itemMetaRes.data.tokenId,
         imageUrl: itemMetaRes.data.imageUrl,
         name: itemMetaRes.data.name,
@@ -58,7 +58,7 @@ const MarketplaceItemPage = () => {
         value: listingInfoRes.value.toString(),
       };
 
-      setItem({ itemMeta, listingInfo });
+      setItem({ tokenMeta, listingInfo });
       setLoading(false);
     } catch (err) {
       setWarning(err.message);
@@ -83,7 +83,7 @@ const MarketplaceItemPage = () => {
         <MarketplaceItemSkeleton />
       ) : (
         <MarketplaceItem
-          itemMeta={item.itemMeta}
+          tokenMeta={item.tokenMeta}
           listingInfo={item.listingInfo}
         />
       )}

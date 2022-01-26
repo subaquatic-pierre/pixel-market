@@ -1,9 +1,6 @@
 import React from "react";
 
-import {
-  initialNotificationState,
-  INotificationState,
-} from "context/initialState";
+import { initialNotificationState } from "context/initialState";
 
 export const NotificationContext = React.createContext([]);
 

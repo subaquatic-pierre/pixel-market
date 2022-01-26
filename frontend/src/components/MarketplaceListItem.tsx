@@ -14,15 +14,9 @@ import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
-interface MarketItem {
-  tokenId: number;
-  tokenUri: string;
-  listingInfo: any;
-}
-
 interface IMarketplaceListItemProps {
-  listItem: MarketItem;
-  isMyListing: any;
+  listItem: IListingItem;
+  isMyListing: boolean | undefined;
 }
 
 const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({

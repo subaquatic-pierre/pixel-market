@@ -1,27 +1,3 @@
-import { Contract } from "ethers";
-
-import { AlertColor } from "@mui/material/Alert";
-import { BaseProvider } from "@ethersproject/providers";
-
-export interface INotificationState {
-  isOpen: boolean;
-  message: string;
-  color: AlertColor;
-}
-
-export interface IDappState {
-  isInitialized: boolean;
-  loading: boolean;
-  currentAccount: string | undefined;
-  chainId: string | undefined;
-  contracts:
-    | {
-        [name: string]: Contract;
-      }
-    | undefined;
-  provider: BaseProvider | undefined;
-}
-
 export const initialDappState: IDappState = {
   isInitialized: false,
   loading: true,

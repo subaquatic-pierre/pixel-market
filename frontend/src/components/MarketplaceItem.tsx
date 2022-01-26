@@ -13,16 +13,15 @@ import useDappContext from "hooks/useDappContext";
 import MarketPlaceItemInfo from "./MarketPlaceItemInfo";
 
 interface IMarketplaceItemProps {
-  itemMeta: IMarketplaceItemMeta;
-  listingInfo: IMarketplaceListingInfo;
+  tokenMeta: ITokenMeta;
+  listingInfo: IListingInfo;
 }
 
 const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  itemMeta,
+  tokenMeta,
   listingInfo,
 }) => {
-  console.log(listingInfo);
-  const { imageUrl, name, author } = itemMeta;
+  const { imageUrl, name, author } = tokenMeta;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
 
@@ -76,7 +75,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
       checkOwner();
       // console.log(dappState);
     }
-  }, _[dappState]);
+  }, [dappState]);
 
   return (
     <Paper>
@@ -107,7 +106,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             elevation={0}
           >
             <MarketPlaceItemInfo
-              itemMeta={itemMeta}
+              tokenMeta={tokenMeta}
               listingInfo={listingInfo}
             />
             <Box sx={{ mt: "auto", alignSelf: "end", p: 1 }}>

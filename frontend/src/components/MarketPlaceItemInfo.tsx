@@ -15,15 +15,15 @@ import useDappContext from "hooks/useDappContext";
 import { Link } from "react-router-dom";
 
 interface IMarketplaceItemProps {
-  itemMeta: IMarketplaceItemMeta;
-  listingInfo: IMarketplaceListingInfo;
+  tokenMeta: ITokenMeta;
+  listingInfo: IListingInfo;
 }
 
 const MarketPlaceItemInfo: React.FC<IMarketplaceItemProps> = ({
-  itemMeta,
+  tokenMeta,
   listingInfo,
 }) => {
-  const { name, description, dateCreated, author } = itemMeta;
+  const { name, description, dateCreated, author } = tokenMeta;
   const { value } = listingInfo;
   const [dappState, _] = useDappContext();
   const [expanded, setExpanded] = React.useState<string | false>("panel1");

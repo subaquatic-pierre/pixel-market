@@ -4,11 +4,13 @@ import { ethers } from "ethers";
 // Import state variables
 import { buildContracts } from "./initialContracts";
 import { CHAIN_ID } from "const";
-import { initialDappState, IDappState } from "context/initialState";
+import { initialDappState } from "context/initialState";
 
 import useNotificationContext from "hooks/useNotificationContext";
 
-export const DappContext = React.createContext([]);
+export const DappContext = React.createContext<
+  [IDappState, React.Dispatch<any>]
+>([initialDappState, {} as any]);
 
 const DappContextProvider: React.FC = ({ children }) => {
   // Set initial app state
