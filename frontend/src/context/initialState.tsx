@@ -1,4 +1,4 @@
-export const initialDappState: IDappState = {
+const initialDappState: IDappState = {
   isInitialized: false,
   loading: true,
   currentAccount: undefined,
@@ -7,8 +7,10 @@ export const initialDappState: IDappState = {
   contracts: undefined,
 };
 
-export const initialNotificationState: INotificationState = {
+const initialNotificationState: INotificationState = {
   isOpen: false,
   message: "",
   color: "success",
 };
+
+export { initialDappState, initialNotificationState };

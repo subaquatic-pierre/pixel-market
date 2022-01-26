@@ -117,7 +117,7 @@ const CreateListing = () => {
         },
       })
       .catch((err) => {
-        console.error(setWarning(err.message));
+        setWarning(err.message);
       });
   };
 
@@ -146,7 +146,7 @@ const CreateListing = () => {
     };
 
     axios.post(url, data).catch((err) => {
-      console.error(setWarning(err.message));
+      setWarning(err.message);
       return false;
     });
     return true;
@@ -163,23 +163,23 @@ const CreateListing = () => {
       setWarning("Form data is not valid");
       return;
     }
+
     if (!handleMetaDataSave()) {
       setWarning("There was an error saving meta data");
       return;
     }
 
     // Create token on block chain
-    if (tokenId) {
-      pixelNFTContract
-        .createToken(`${HOST_URL}/token-meta/${tokenId}`)
-        .then((res) => {
-          navigate(`/marketplace`);
-          setSuccess(`Token successfully create, tx hash: ${res.hash}`);
-        })
-        .catch((err) => {
-          setWarning(err.message);
-        });
-    }
+    pixelNFTContract
+      .createToken(`${HOST_URL}/token-meta/${tokenId}`)
+      .then((res) => {
+        navigate(`/marketplace`);
+        console.log("here");
+        setSuccess(`Token successfully create, tx hash: ${res.hash}`);
+      })
+      .catch((err) => {
+        setWarning(err.message);
+      });
   };
 
   // Handle file input change

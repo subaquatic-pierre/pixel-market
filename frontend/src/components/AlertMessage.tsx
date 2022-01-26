@@ -30,9 +30,7 @@ const AlertMessage: React.FC = () => {
           sx={{ minWidth: "600px" }}
           variant="filled"
         >
-          {notificationState.message.message
-            ? notificationState.message.message
-            : notificationState.message}
+          {notificationState.message && notificationState.message}
         </Alert>
       </Snackbar>
     </>

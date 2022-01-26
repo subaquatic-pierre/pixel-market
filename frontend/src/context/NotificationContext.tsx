@@ -2,7 +2,17 @@ import React from "react";
 
 import { initialNotificationState } from "context/initialState";
 
-export const NotificationContext = React.createContext([]);
+interface INotificationMethods {
+  setError: (message: string) => void;
+  setSuccess: (message: string) => void;
+  setInfo: (message: string) => void;
+  setWarning: (message: string) => void;
+  clearNotification: () => void;
+}
+
+export const NotificationContext = React.createContext<
+  [INotificationState, INotificationMethods]
+>([initialNotificationState, null]);
 
 const NotificationContextProvider: React.FC = ({ children }) => {
   const [notificationState, setNotificationState] =
@@ -46,7 +56,7 @@ const NotificationContextProvider: React.FC = ({ children }) => {
     );
   };
 
-  const notificationMethods = {
+  const notificationMethods: INotificationMethods = {
     setError,
     setSuccess,
     setInfo,

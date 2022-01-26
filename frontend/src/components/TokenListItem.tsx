@@ -48,7 +48,6 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
   const [dappState, _] = useDappContext();
 
   const loadItemMeta = () => {
-    console.log(token);
     axios
       .get(token.tokenUri)
       .then((res) => {
@@ -85,7 +84,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     );
 
     const listingId = Number(bigNumListingId.toString());
-    setSuccess("Listing created with ID: ", listingId);
+    setSuccess(`Listing created with ID: ${listingId}`);
   };
 
   const submitContractDeleteRequest = async () => {
@@ -101,7 +100,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       listingInfo.listingId
     );
     const listingId = Number(bigNumListingId.toString());
-    setSuccess("Listing removed with ID: ", listingId);
+    setSuccess(`Listing removed with ID: ${listingId}`);
   };
 
   const handleActionAreaButtonClick = (method: string) => {
