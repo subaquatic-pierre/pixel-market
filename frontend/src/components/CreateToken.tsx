@@ -15,18 +15,6 @@ import CreateTokenForm from "components/CreateTokenForm";
 
 import { HOST_URL } from "const";
 
-export interface TokenMetaAttributes {
-  [key: string]: string;
-}
-
-export interface TokenMeta {
-  tokenId: number;
-  name: string;
-  description: string;
-  imageUrl: string;
-  attributes: TokenMetaAttributes[];
-}
-
 interface IFormData {
   image: any;
   url: string;
@@ -48,12 +36,7 @@ const initialFormState: IFormData = {
 const CreateListing = () => {
   const navigate = useNavigate();
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
-  // Get pixel NFT contract from dapp state
   const [dappState, _] = useDappContext();
-  const [pixelNFTContract, setPixelNFTContract] = React.useState<any>();
-
-  // Get latest token Id from query to the blockchain
-  const [tokenId, setTokenId] = React.useState<number>();
 
   // Handle file input state
   const [file, setFile] = React.useState<any>();
@@ -64,21 +47,17 @@ const CreateListing = () => {
 
   const [formState, setFormState] = React.useState(initialFormState);
 
-  // Query contract for total token supply, set latest token Id
-  const getLatestTokenId = async () => {
-    pixelNFTContract
-      .totalSupply()
-      .then((res) => {
-        const bigNum = res;
-        const strNum = bigNum.toString();
-        setTokenId(Number(strNum));
-      })
-      .catch((err) => {
-        setWarning(err);
-      });
+  const getLatestTokenId = async (): Promise<string> => {
+    const pixelNFTContract = dappState.contracts.pixelNFT;
+
+    try {
+      const bigNumTokenId = await pixelNFTContract.totalSupply();
+      return bigNumTokenId.toString();
+    } catch (err) {
+      setWarning(err);
+    }
   };
 
-  // Handle text input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const field = event.target.name;
     const value = event.target.value;
@@ -86,7 +65,6 @@ const CreateListing = () => {
     updateFormState(field, value);
   };
 
-  // Call update form state if text input changes
   const updateFormState = (field: string, value: string) => {
     setFormState((oldState) => ({
       ...oldState,
@@ -94,7 +72,6 @@ const CreateListing = () => {
     }));
   };
 
-  // Handle file change to display image on card
   const handleFileChange = () => {
     setFileError(false);
     const reader = new FileReader();
@@ -104,21 +81,23 @@ const CreateListing = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleImageSave = () => {
+  const handleImageSave = async (newTokenId: string): Promise<boolean> => {
     const url = `${HOST_URL}/save-image`;
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("tokenId", `${tokenId}`);
+    formData.append("tokenId", `${newTokenId}`);
 
-    axios
-      .post(url, formData, {
+    try {
+      await axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
-      .catch((err) => {
-        setWarning(err.message);
       });
+      return true;
+    } catch (err) {
+      setWarning(err.message);
+      return false;
+    }
   };
 
   const isValidForm = () => {
@@ -132,54 +111,68 @@ const CreateListing = () => {
     return true;
   };
 
-  const handleMetaDataSave = (): boolean => {
+  const handleMetaDataSave = async (newTokenId: string): Promise<boolean> => {
     const url = `${HOST_URL}/save-meta`;
-    const data: TokenMeta = {
-      tokenId: tokenId,
+    const data: ITokenFormMeta = {
+      tokenId: Number(newTokenId),
       name: formState.name,
       description: formState.description,
-      imageUrl: `${HOST_URL}/token-image/${tokenId}.jpg`,
+      imageUrl: `${HOST_URL}/token-image/${newTokenId}.jpg`,
       attributes: [
         { value: formState.value },
         { author: dappState.currentAccount },
       ],
     };
 
-    axios.post(url, data).catch((err) => {
+    try {
+      await axios.post(url, data);
+      return true;
+    } catch (err) {
       setWarning(err.message);
       return false;
-    });
-    return true;
+    }
   };
 
-  const handleCreateToken = () => {
+  const handleCreateToken = async () => {
+    const pixelNFTContract = dappState.contracts.pixelNFT;
+    const newTokenId = await getLatestTokenId();
+
+    // Check file exists and save image
     if (file) {
-      handleImageSave();
+      const imageSaved = await handleImageSave(newTokenId);
+      if (!imageSaved) {
+        setWarning("An error occurred during image save");
+        return;
+      }
     } else {
       setWarning("No image uploaded");
       return;
     }
-    if (!isValidForm()) {
+
+    // Check form is valid
+    const validForm = isValidForm();
+    if (!validForm) {
       setWarning("Form data is not valid");
       return;
     }
 
-    if (!handleMetaDataSave()) {
+    // Save meta data
+    const metaSaved = await handleMetaDataSave(newTokenId);
+    if (!metaSaved) {
       setWarning("There was an error saving meta data");
       return;
     }
 
     // Create token on block chain
-    pixelNFTContract
-      .createToken(`${HOST_URL}/token-meta/${tokenId}`)
-      .then((res) => {
-        navigate(`/marketplace`);
-        console.log("here");
-        setSuccess(`Token successfully create, tx hash: ${res.hash}`);
-      })
-      .catch((err) => {
-        setWarning(err.message);
-      });
+    try {
+      const res = await pixelNFTContract.createToken(
+        `${HOST_URL}/token-meta/${newTokenId}`
+      );
+      navigate(`/marketplace`);
+      setSuccess(`Token successfully create, tx hash: ${res.hash}`);
+    } catch (err) {
+      setWarning(err.message);
+    }
   };
 
   // Handle file input change
@@ -188,20 +181,6 @@ const CreateListing = () => {
       handleFileChange();
     }
   }, [file]);
-
-  // Get the latest tokenId on render
-  React.useEffect(() => {
-    if (pixelNFTContract) {
-      getLatestTokenId();
-    }
-  }, [pixelNFTContract]);
-
-  // Set NFT contract to interact with blockchain
-  React.useEffect(() => {
-    if (dappState.isInitialized) {
-      setPixelNFTContract(dappState.contracts.pixelNFT);
-    }
-  }, [dappState]);
 
   return (
     <Paper>
@@ -214,7 +193,6 @@ const CreateListing = () => {
           >
             {file ? (
               <CardMedia
-                sx={{ p: 2 }}
                 component="img"
                 image={imageSrc}
                 alt="random"

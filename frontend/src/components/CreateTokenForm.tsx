@@ -38,8 +38,8 @@ const CreateTokenForm: React.FC<ICreateTokenFormProps> = ({
         flexDirection: "column",
       }}
     >
-      <Box>
-        <Typography sx={{ mb: 2 }} variant="h4" textAlign="center">
+      <Box sx={{ mb: 2 }}>
+        <Typography gutterBottom variant="h4" textAlign="center">
           Token Meta
         </Typography>
         <Stack sx={{ mt: 1 }} spacing={2}>
@@ -73,9 +73,7 @@ const CreateTokenForm: React.FC<ICreateTokenFormProps> = ({
           />
           {fileError && (
             <Box>
-              <Typography sx={{ mt: 2 }} color="red">
-                {fileError}
-              </Typography>
+              <Typography color="red">{fileError}</Typography>
             </Box>
           )}
         </Stack>

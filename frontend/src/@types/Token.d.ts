@@ -7,3 +7,15 @@ interface ITokenMeta {
   author: string;
   dateCreated: string;
 }
+
+interface ITokenMetaAttributes {
+  [key: string]: string;
+}
+
+interface ITokenFormMeta {
+  tokenId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  attributes: ITokenMetaAttributes[];
+}
