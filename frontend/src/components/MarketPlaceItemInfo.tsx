@@ -40,6 +40,7 @@ const MarketPlaceItemInfo: React.FC<IMarketplaceItemProps> = ({
         formatWalletAddress(dappState.contracts.pixelMarketplace.address)
       );
     }
+    console.log(listingInfo);
   }, [dappState]);
   return (
     <CardContent>

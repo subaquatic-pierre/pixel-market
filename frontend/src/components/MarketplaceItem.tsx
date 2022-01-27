@@ -73,7 +73,6 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   React.useEffect(() => {
     if (dappState.isInitialized) {
       checkOwner();
-      // console.log(dappState);
     }
   }, [dappState]);
 

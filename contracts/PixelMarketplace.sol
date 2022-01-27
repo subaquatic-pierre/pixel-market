@@ -162,7 +162,6 @@ contract PixelMarketplace is IERC721Receiver {
         );
 
         // Increment token Id's
-        listingIds.increment();
 
         // Get latest Id for new token after increment
         uint256 _currentListingId = listingIds.current();
@@ -178,6 +177,7 @@ contract PixelMarketplace is IERC721Receiver {
 
         // Add item to listings mapping
         listings[_currentListingId] = listing;
+        listingIds.increment();
 
         // Add listing to author listings
         uint256[] storage authorListingIds = addressToListingIds[msg.sender];
@@ -199,21 +199,15 @@ contract PixelMarketplace is IERC721Receiver {
         listings[_listingId] = listing;
     }
 
-    function getAllAvailableListingIds()
-        public
-        view
-        returns (uint256[] memory)
-    {
+    function getAllListingIds() public view returns (uint256[] memory) {
         // Create array of size listing count
         uint256 _listingCount = listingIds.current();
-        uint256[] memory _listingIds = new uint256[](_listingCount + 1);
+        uint256[] memory _listingIds = new uint256[](_listingCount);
 
         // Build token Id array by looping over listing mapping and pushing list item Id to array
-        for (uint256 i = 1; i <= _listingCount; i++) {
+        for (uint256 i = 0; i < _listingCount; i++) {
             Listing memory item = listings[i];
-            if (item.status == ListingStatus.AVAILABLE) {
-                _listingIds[i] = item.id;
-            }
+            _listingIds[i] = item.id;
         }
 
         return _listingIds;

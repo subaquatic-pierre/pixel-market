@@ -85,7 +85,6 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
     if (dappState.isInitialized) {
       getTokens();
     }
-    console.log(myListings);
   }, [dappState]);
 
   return (

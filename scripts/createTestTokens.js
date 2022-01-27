@@ -4,14 +4,14 @@ async function main() {
   // This is just a convenience check
   const { pixelNFT, pixelMarketplace } = await buildContracts();
 
-  for (let i = 1; i < 6; i++) {
+  for (let i = 0; i < 6; i++) {
     const tokenUri = `http://localhost:8080/token-meta/${i}`;
 
     // Create Token
     const tokenCreateRes = await pixelNFT.createToken(tokenUri);
 
     // Create listings
-    if (i % 2 == 0) {
+    if (i % 2 == 0 && i !== 0) {
       const listingCreateRes = await pixelMarketplace.createListing(i, i * 100);
     }
 

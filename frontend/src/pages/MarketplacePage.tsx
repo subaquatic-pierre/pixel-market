@@ -6,51 +6,47 @@ import Marketplace from "components/Marketplace";
 
 import useDappContext from "hooks/useDappContext";
 
+interface IMarketplacePageState {
+  myListings: IListingInfo[];
+  listingsLoaded: boolean;
+}
+
+const initialMarketplacePageState: IMarketplacePageState = {
+  myListings: [],
+  listingsLoaded: false,
+};
+
 const MarketPlacePage = () => {
-  const [myListings, setMyListings] = React.useState<any>([]);
-  const [myListingsLoaded, setMyListingsLoaded] =
-    React.useState<boolean>(false);
+  const [state, setState] = React.useState<IMarketplacePageState>(
+    initialMarketplacePageState
+  );
   const [dappState, _] = useDappContext();
 
   const getMyListings = async () => {
-    try {
-      const marketContract = dappState.contracts.pixelMarketplace;
-      const listingIds = [];
-      const listings = [];
+    const marketContract = dappState.contracts.pixelMarketplace;
+    const listingIds: string[] = [];
+    const listings: IListingInfo[] = [];
 
-      // Get array of Ids from marketplace contract
-      const bigNumTokenIds = await marketContract.getMyListingsIds();
+    // Get array of Ids from marketplace contract
+    const bigNumTokenIds = await marketContract.getMyListingsIds();
 
-      // Get token from marketplace
-      for (let i = 0; i < bigNumTokenIds.length; i++) {
-        try {
-          // Get token Id from array
-          const tokenId = bigNumTokenIds[i].toString();
-          if (tokenId !== "0") listingIds.push(tokenId);
-        } catch {
-          continue;
-        }
-      }
-
-      listingIds.forEach(async (listingId) => {
-        const listingRes = await marketContract.listings(listingId);
-        const listing = {
-          listingId: listingId,
-          author: listingRes.author,
-          status: listingRes.status,
-          tokenId: listingRes.tokenId.toString(),
-          value: listingRes.value.toString(),
-        };
-        listings.push(listing);
-      });
-
-      setMyListings((oldState) => {
-        setMyListingsLoaded(true);
-        return listings;
-      });
-    } catch (err) {
-      return;
+    for (let i = 0; i < bigNumTokenIds.length; i++) {
+      const tokenId = bigNumTokenIds[i].toString();
+      listingIds.push(tokenId);
     }
+
+    listingIds.forEach(async (listingId) => {
+      const listingRes = await marketContract.listings(listingId);
+      const listing: IListingInfo = {
+        listingId: listingId,
+        author: listingRes.author,
+        status: listingRes.status,
+        tokenId: listingRes.tokenId.toString(),
+        value: listingRes.value.toString(),
+      };
+      listings.push(listing);
+    });
+    setState({ myListings: listings, listingsLoaded: true });
   };
 
   React.useEffect(() => {
@@ -61,7 +57,7 @@ const MarketPlacePage = () => {
 
   return (
     <Container maxWidth="lg">
-      {myListingsLoaded && <Marketplace myListings={myListings} />}
+      {state.listingsLoaded && <Marketplace myListings={state.myListings} />}
     </Container>
   );
 };

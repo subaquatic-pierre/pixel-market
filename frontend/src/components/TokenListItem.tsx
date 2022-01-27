@@ -12,6 +12,7 @@ import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import TokenListItemFooter from "components/TokenListItemFooter";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
+import { emptyAddress } from "const";
 
 interface TokenIdToUri {
   tokenId: number;
@@ -20,7 +21,7 @@ interface TokenIdToUri {
 
 interface ITokenListItemProps {
   token: TokenIdToUri;
-  listingInfo?: any;
+  listingInfo: IListingInfo | null;
 }
 
 interface ICardHeadingProps {
@@ -92,8 +93,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     const NFTContract = dappState.contracts.pixelNFT;
 
     // Remove any operators
-    const addr = "0x0000000000000000000000000000000000000000";
-    const resHash = await NFTContract.approve(addr, token.tokenId);
+    const resHash = await NFTContract.approve(emptyAddress, token.tokenId);
 
     // Change to remove listing method
     const bigNumListingId = await marketplaceContract.removeListing(
