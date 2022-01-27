@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import TokenListItem from "components/TokenListItem";
 import TokenListToolbar from "components/TokenListToolbar";
 import useDappContext from "hooks/useDappContext";
-import checkIfMyListing from "utils/checkIfMyListing";
 
 interface ITokenListProps {
   myListings: IListingInfo[];
@@ -81,6 +80,19 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
     }));
   };
 
+  const checkIfListing = (
+    tokenId: string,
+    myListings: IListingInfo[]
+  ): IListingInfo | null => {
+    let _listingInfo: IListingInfo | null = null;
+    myListings.forEach((listing) => {
+      if (tokenId === listing.tokenId && listing.status !== 2) {
+        _listingInfo = listing;
+      }
+    });
+    return _listingInfo;
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) {
       getTokens();
@@ -96,7 +108,7 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
             <Grid item key={index} xs={12} sm={6} md={4}>
               <TokenListItem
                 token={token}
-                listingInfo={checkIfMyListing(token.tokenId, myListings)}
+                listingInfo={checkIfListing(token.tokenId, myListings)}
               />
             </Grid>
           ))}

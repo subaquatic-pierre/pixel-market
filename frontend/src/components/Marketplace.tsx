@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 
 import MarketplaceListItem from "components/MarketplaceListItem";
 import useDappContext from "hooks/useDappContext";
-import checkIfMyListing from "utils/checkIfMyListing";
 
 interface IMarketPlaceProps {
   myListings: IListingInfo[];
@@ -13,12 +12,12 @@ interface IMarketPlaceProps {
 
 interface IMarketplaceState {
   loading: boolean;
-  listItems: IMarketplaceItem[];
+  marketplaceItems: IMarketplaceItem[];
 }
 
 const initialMarketplaceState = {
   loading: true,
-  listItems: [],
+  marketplaceItems: [],
 };
 
 const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
@@ -47,17 +46,28 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
     listingIds: number[]
   ): Promise<IListingInfo[]> => {
     const listingInfoList: IListingInfo[] = [];
-    listingIds.forEach(async (listingId) => {
+    for (let i = 0; i < listingIds.length; i++) {
+      const listingId = listingIds[i];
       const listingInfo = await getListingInfo(listingId);
       listingInfoList.push(listingInfo);
-    });
+    }
     return listingInfoList;
   };
 
-  const buildListingData = (
+  const buildListingData = async (
     availableListings: IListingInfo[]
-  ): IMarketplaceItem[] => {
-    return [];
+  ): Promise<IMarketplaceItem[]> => {
+    const NFTContract = dappState.contracts.pixelNFT;
+    const marketplaceItems: IMarketplaceItem[] = [];
+
+    for (let i = 0; i < availableListings.length; i++) {
+      const listingInfo = availableListings[i];
+      const tokenId = listingInfo.tokenId;
+      const tokenUri = await NFTContract.tokenURI(tokenId);
+      const itemData = { tokenId, tokenUri, listingInfo };
+      marketplaceItems.push(itemData);
+    }
+    return marketplaceItems;
   };
 
   const getMarketPlaceItems = async () => {
@@ -68,53 +78,26 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
     const listingIds = bigNumListingId.map((bigNum) => bigNum.toString());
 
     const allListings = await buildListingInfoList(listingIds);
-    console.log(allListings);
 
     const availableListings = allListings.filter(
       (listing) => listing.status === 0
     );
 
-    const listingData = buildListingData(availableListings);
+    const marketplaceData = await buildListingData(availableListings);
+    setState({ loading: false, marketplaceItems: marketplaceData });
+  };
 
-    // Get token from marketplace
-    // for (let i = 0; i < bigNumListingId.length; i++) {
-    //   try {
-    //     // Get token Id from array
-    //     const listingId = bigNumListingId[i].toString();
-
-    //     // Get token URI from NFT contract
-    //     const listingInfoRes = await marketContract.listings(listingId);
-
-    //     const listingInfo = {
-    //       listingId: listingId,
-    //       author: listingInfoRes.author,
-    //       status: listingInfoRes.status,
-    //       tokenId: listingInfoRes.tokenId.toString(),
-    //       value: listingInfoRes.value.toString(),
-    //     };
-
-    //     // Get token Id
-    //     const bigNumTokenId = await marketContract.listingIdToTokenId(
-    //       listingId
-    //     );
-    //     const tokenId = bigNumTokenId.toString();
-
-    //     // Get token URI
-    //     const tokenUri = await NFTContract.tokenURI(tokenId);
-
-    //     // Set item data
-    //     const itemData = { tokenId, tokenUri, listingInfo };
-    //     listingData.push(itemData);
-    //   } catch {
-    //     continue;
-    //   }
-
-    //   setState((oldState) => ({
-    //     ...oldState,
-    //     loading: false,
-    //     listItems: listingData,
-    //   }));
-    // }
+  const checkIsMyListing = (
+    marketplaceItem: IMarketplaceItem
+  ): IListingInfo => {
+    if (
+      dappState.currentAccount ===
+      marketplaceItem.listingInfo.author.toLowerCase()
+    ) {
+      return marketplaceItem.listingInfo;
+    } else {
+      return null;
+    }
   };
 
   React.useEffect(() => {
@@ -127,11 +110,11 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
     <Box>
       <Grid container spacing={4}>
         {!state.loading &&
-          state.listItems.map((item, index) => (
+          state.marketplaceItems.map((item, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
               <MarketplaceListItem
                 listItem={item}
-                isMyListing={checkIfMyListing(item.tokenId, myListings)}
+                isMyListing={checkIsMyListing(item)}
               />
             </Grid>
           ))}
