@@ -111,6 +111,14 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     }
   };
 
+  const getLinkAddress = (): string => {
+    if (listingInfo) {
+      return `/marketplace/${listingInfo.listingId}`;
+    } else {
+      return `/token/${token.tokenId}`;
+    }
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) {
       loadItemMeta();
@@ -130,10 +138,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
                 : "NOT LISTED"
             }
           />
-          <Link
-            style={{ textDecoration: "none" }}
-            to={`/marketplace/${token.tokenId}`}
-          >
+          <Link style={{ textDecoration: "none" }} to={getLinkAddress()}>
             <CardActionArea>
               <CardMedia
                 component="img"

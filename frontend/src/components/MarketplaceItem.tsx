@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 
 import useDappContext from "hooks/useDappContext";
 
-import MarketPlaceItemInfo from "./MarketPlaceItemInfo";
+import MarketPlaceItemInfo from "components/MarketPlaceItemInfo";
 
 interface IMarketplaceItemProps {
   tokenMeta: ITokenMeta;

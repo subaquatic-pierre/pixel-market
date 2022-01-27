@@ -9,6 +9,7 @@ import CreateTokenPage from "pages/CreateTokenPage";
 import TokenListPage from "pages/TokenListPage";
 import AuthorListPage from "pages/AuthorListPage";
 import RegisterAuthorPage from "pages/RegisterAuthorPage";
+import TokenPage from "pages/TokenPage";
 
 const BaseRouter = () => {
   return (
@@ -21,6 +22,7 @@ const BaseRouter = () => {
       <Route path="/tokens" element={<TokenListPage />} />
       <Route path="/authors" element={<AuthorListPage />} />
       <Route path="/register-author" element={<RegisterAuthorPage />} />
+      <Route path="/token/:id" element={<TokenPage />} />
     </Routes>
   );
 };
