@@ -66,7 +66,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
         <Card sx={{ display: "flex", flexDirection: "column" }}>
           <Link
             style={{ textDecoration: "none" }}
-            to={`/marketplace/${listItem.tokenId}`}
+            to={`/marketplace/${listItem.listingInfo.listingId}`}
           >
             <CardActionArea>
               <CardMedia
@@ -86,7 +86,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
           <CardActions sx={{ p: 2 }}>
             <Link
               style={{ textDecoration: "none" }}
-              to={`/marketplace/${listItem.tokenId}`}
+              to={`/marketplace/${listItem.listingInfo.listingId}`}
             >
               <Button sx={{ mr: 1 }} color="primary" variant="contained">
                 View
