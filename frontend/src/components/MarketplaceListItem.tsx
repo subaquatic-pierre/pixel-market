@@ -15,15 +15,17 @@ import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
 interface IMarketplaceListItemProps {
-  listItem: IListingItem;
+  listItem: IMarketplaceItem;
   isMyListing: IListingInfo | null;
 }
+
+type TokenMeta = ITokenMeta | null;
 
 const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   listItem,
   isMyListing,
 }) => {
-  const [item, setItem] = React.useState<any>(null);
+  const [tokenMeta, setTokenMeta] = React.useState<TokenMeta>(null);
   const [_n, { setWarning }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
@@ -33,15 +35,16 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
       .get(listItem.tokenUri)
       .then((res) => {
         const attrs = res.data.attributes;
-        const itemRes = {
-          id: res.data.tokenId,
+        const itemRes: ITokenMeta = {
+          tokenId: res.data.tokenId,
           imageUrl: res.data.imageUrl,
+          author: res.data.author,
           name: res.data.name,
           description: res.data.description,
           value: attrs[0].value,
           dateCreated: "some date",
         };
-        setItem(itemRes);
+        setTokenMeta(itemRes);
         setLoading(false);
       })
       .catch((err) => {
@@ -59,7 +62,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   return (
     <div>
       {loading && <MarketplaceItemSkeleton />}
-      {item && (
+      {tokenMeta && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
           <Link
             style={{ textDecoration: "none" }}
@@ -68,17 +71,17 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
             <CardActionArea>
               <CardMedia
                 component="img"
-                image={item.imageUrl}
-                alt={item.name}
+                image={tokenMeta.imageUrl}
+                alt={tokenMeta.name}
                 height={300}
               />
             </CardActionArea>
           </Link>
           <CardContent sx={{ flexGrow: 1 }}>
             <Typography gutterBottom variant="h5" component="h2">
-              {item.name}
+              {tokenMeta.name}
             </Typography>
-            <Typography>{item.description}</Typography>
+            <Typography>{tokenMeta.description}</Typography>
           </CardContent>
           <CardActions sx={{ p: 2 }}>
             <Link

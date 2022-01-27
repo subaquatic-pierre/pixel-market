@@ -1,5 +1,3 @@
-// import { Contract } from "ethers";
-
 interface IDappState {
   isInitialized: boolean;
   loading: boolean;

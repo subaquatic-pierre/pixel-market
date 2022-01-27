@@ -6,29 +6,26 @@ import Box from "@mui/material/Box";
 import MarketplaceListItem from "components/MarketplaceListItem";
 import useDappContext from "hooks/useDappContext";
 import checkIfMyListing from "utils/checkIfMyListing";
-import { emptyAddress } from "const";
 
-interface IMaketPlaceProps {
+interface IMarketPlaceProps {
   myListings: IListingInfo[];
 }
 
-const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
-  const [state, setState] = React.useState({
-    loading: true,
-    listItems: [{ tokenId: null, tokenUri: null, listingInfo: null }],
-  });
-  const [dappState, _] = useDappContext();
+interface IMarketplaceState {
+  loading: boolean;
+  listItems: IMarketplaceItem[];
+}
 
-  const checkFirstListingExists = async (listingIds: number[]) => {
-    const marketContract = dappState.contracts.pixelMarketplace;
-    try {
-      const listingId = listingIds[0];
-      const listingInfoRes = await marketContract.listings(listingId);
-      if (listingInfoRes.author === emptyAddress) return false;
-    } catch (err) {
-      return;
-    }
-  };
+const initialMarketplaceState = {
+  loading: true,
+  listItems: [],
+};
+
+const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
+  const [state, setState] = React.useState<IMarketplaceState>(
+    initialMarketplaceState
+  );
+  const [dappState, _] = useDappContext();
 
   const getListingInfo = async (listingId: number): Promise<IListingInfo> => {
     const marketContract = dappState.contracts.pixelMarketplace;
@@ -36,7 +33,7 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
     const listingInfoRes = await marketContract.listings(listingId);
 
     const listingInfo: IListingInfo = {
-      listingId: listingInfoRes.listingId,
+      listingId: listingInfoRes.id.toString(),
       author: listingInfoRes.author,
       status: listingInfoRes.status,
       tokenId: listingInfoRes.tokenId.toString(),
@@ -57,6 +54,12 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
     return listingInfoList;
   };
 
+  const buildListingData = (
+    availableListings: IListingInfo[]
+  ): IMarketplaceItem[] => {
+    return [];
+  };
+
   const getMarketPlaceItems = async () => {
     const marketContract = dappState.contracts.pixelMarketplace;
 
@@ -64,11 +67,14 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
     const bigNumListingId = await marketContract.getAllListingIds();
     const listingIds = bigNumListingId.map((bigNum) => bigNum.toString());
 
-    const firstListingExists = await checkFirstListingExists(listingIds);
-    if (!firstListingExists) return;
-
     const allListings = await buildListingInfoList(listingIds);
     console.log(allListings);
+
+    const availableListings = allListings.filter(
+      (listing) => listing.status === 0
+    );
+
+    const listingData = buildListingData(availableListings);
 
     // Get token from marketplace
     // for (let i = 0; i < bigNumListingId.length; i++) {
