@@ -19,3 +19,8 @@ interface ITokenFormMeta {
   imageUrl: string;
   attributes: ITokenMetaAttributes[];
 }
+
+interface ITokenIdToUriMap {
+  tokenId: string;
+  tokenUri: string;
+}

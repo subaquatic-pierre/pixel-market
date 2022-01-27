@@ -5,9 +5,10 @@ import Box from "@mui/material/Box";
 
 import MarketplaceListItem from "components/MarketplaceListItem";
 import useDappContext from "hooks/useDappContext";
+import checkIfMyListing from "utils/checkIfMyListing";
 
 interface IMaketPlaceProps {
-  myListings: any[];
+  myListings: IListingInfo[];
 }
 
 const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
@@ -69,18 +70,6 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
     }
   };
 
-  const checkIsMyListing = (item: any) => {
-    let listingInfo = null;
-
-    myListings.forEach((listing) => {
-      if (item.tokenId === listing.tokenId && listing.status !== 2) {
-        listingInfo = listing;
-      }
-    });
-
-    return listingInfo;
-  };
-
   React.useEffect(() => {
     if (dappState.isInitialized) {
       getMarketPlaceItems();
@@ -95,7 +84,7 @@ const Marketplace: React.FC<IMaketPlaceProps> = ({ myListings }) => {
             <Grid item key={index} xs={12} sm={6} md={4}>
               <MarketplaceListItem
                 listItem={item}
-                isMyListing={checkIsMyListing(item)}
+                isMyListing={checkIfMyListing(item.tokenId, myListings)}
               />
             </Grid>
           ))}

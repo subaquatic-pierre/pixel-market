@@ -6,52 +6,18 @@ import Box from "@mui/material/Box";
 import TokenListItem from "components/TokenListItem";
 import TokenListToolbar from "components/TokenListToolbar";
 import useDappContext from "hooks/useDappContext";
+import checkIfMyListing from "utils/checkIfMyListing";
 
-interface ITokenIdToUriMap {
-  tokenId: string;
-  tokenUri: string;
+interface ITokenListProps {
+  myListings: IListingInfo[];
 }
 
-const TokenList = () => {
+const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
   const [state, setState] = React.useState({
     loading: true,
     tokens: [],
-    listings: [],
   });
   const [dappState, _] = useDappContext();
-
-  // const getListings = async () => {
-  //   const marketContract = dappState.contracts.pixelMarketplace;
-  //   const listingIds = [];
-  //   const listings = [];
-
-  //   // Get array of Ids from marketplace contract
-  //   const bigNumTokenIds = await marketContract.getMyListingsIds();
-
-  //   // Get token from marketplace
-  //   for (let i = 0; i < bigNumTokenIds.length; i++) {
-  //     try {
-  //       // Get token Id from array
-  //       const tokenId = bigNumTokenIds[i].toString();
-  //       if (tokenId !== "0") listingIds.push(tokenId);
-  //     } catch {
-  //       continue;
-  //     }
-  //   }
-
-  //   listingIds.forEach(async (listingId) => {
-  //     const listingRes = await marketContract.listings(listingId);
-  //     const listing = {
-  //       listingId: listingId,
-  //       author: listingRes.author,
-  //       status: listingRes.status,
-  //       tokenId: listingRes.tokenId.toString(),
-  //       value: listingRes.value.toString(),
-  //     };
-  //     listings.push(listing);
-  //   });
-  //   setState((oldState) => ({ ...oldState, listings }));
-  // };
 
   const getUserTokenSupply = async (): Promise<number> => {
     // Get current user and contract
@@ -115,22 +81,11 @@ const TokenList = () => {
     }));
   };
 
-  const checkIfListing = (tokenId: string) => {
-    let _listingInfo = null;
-    const _listings = state.listings;
-    _listings.forEach((listing) => {
-      if (tokenId === listing.tokenId && listing.status !== 2) {
-        _listingInfo = listing;
-      }
-    });
-    return _listingInfo;
-  };
-
   React.useEffect(() => {
     if (dappState.isInitialized) {
       getTokens();
-      // getListings();
     }
+    console.log(myListings);
   }, [dappState]);
 
   return (
@@ -142,7 +97,7 @@ const TokenList = () => {
             <Grid item key={index} xs={12} sm={6} md={4}>
               <TokenListItem
                 token={token}
-                listingInfo={checkIfListing(token.tokenId)}
+                listingInfo={checkIfMyListing(token.tokenId, myListings)}
               />
             </Grid>
           ))}

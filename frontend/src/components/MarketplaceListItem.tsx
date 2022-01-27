@@ -16,7 +16,7 @@ import useNotificationContext from "hooks/useNotificationContext";
 
 interface IMarketplaceListItemProps {
   listItem: IListingItem;
-  isMyListing: boolean | undefined;
+  isMyListing: IListingInfo | null;
 }
 
 const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({

@@ -4,8 +4,6 @@ import Card from "@mui/material/Card";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 
 const MarketplaceListItemSkeleton: React.FC = () => {
   return (
