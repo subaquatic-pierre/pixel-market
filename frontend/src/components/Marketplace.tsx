@@ -74,6 +74,7 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
     const marketContract = dappState.contracts.pixelMarketplace;
 
     // Get array of Ids from marketplace contract
+    // TODO: Add pagination option here, also update contract to take range of ID queries
     const bigNumListingId = await marketContract.getAllListingIds();
     const listingIds = bigNumListingId.map((bigNum) => bigNum.toString());
 
@@ -87,16 +88,14 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
     setState({ loading: false, marketplaceItems: marketplaceData });
   };
 
-  const checkIsMyListing = (
-    marketplaceItem: IMarketplaceItem
-  ): IListingInfo => {
+  const checkIsMyListing = (marketplaceItem: IMarketplaceItem): boolean => {
     if (
       dappState.currentAccount ===
       marketplaceItem.listingInfo.author.toLowerCase()
     ) {
-      return marketplaceItem.listingInfo;
+      return true;
     } else {
-      return null;
+      return false;
     }
   };
 

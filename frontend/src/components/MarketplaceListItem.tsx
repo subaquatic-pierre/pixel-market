@@ -16,7 +16,7 @@ import useNotificationContext from "hooks/useNotificationContext";
 
 interface IMarketplaceListItemProps {
   listItem: IMarketplaceItem;
-  isMyListing: IListingInfo | null;
+  isMyListing: boolean;
 }
 
 type TokenMeta = ITokenMeta | null;
