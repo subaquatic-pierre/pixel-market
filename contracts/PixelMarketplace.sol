@@ -188,15 +188,17 @@ contract PixelMarketplace is IERC721Receiver {
         return _currentListingId;
     }
 
-    function removeListing(uint256 _listingId) public {
-        require(
-            isAuthor(msg.sender),
-            "Only registered authors can remove listings"
-        );
+    function listingIdToTokenId(uint256 listingId)
+        public
+        view
+        returns (uint256)
+    {
+        Listing memory listing = listings[listingId];
+        return listing.tokenId;
+    }
 
-        Listing memory listing = listings[_listingId];
-        listing.status = ListingStatus.REMOVED;
-        listings[_listingId] = listing;
+    function getMyListingsIds() public view returns (uint256[] memory) {
+        return addressToListingIds[msg.sender];
     }
 
     function getAllListingIds() public view returns (uint256[] memory) {
@@ -213,25 +215,38 @@ contract PixelMarketplace is IERC721Receiver {
         return _listingIds;
     }
 
-    function listingIdToTokenId(uint256 listingId)
-        public
-        view
-        returns (uint256)
-    {
-        Listing memory listing = listings[listingId];
-        return listing.tokenId;
+    function removeListing(uint256 _listingId) public {
+        require(
+            isAuthor(msg.sender),
+            "Only registered authors can remove listings"
+        );
+
+        _updateListingStatus(_listingId, ListingStatus.REMOVED);
     }
 
-    function getMyListingsIds() public view returns (uint256[] memory) {
-        return addressToListingIds[msg.sender];
+    function setListingSold(uint256 listingId) public {
+        require(
+            msg.sender == _owner,
+            "Only the contract owner can set listing as sold"
+        );
+        _updateListingStatus(listingId, ListingStatus.SOLD);
     }
 
-    function _setListingSold() private {}
+    function _updateListingStatus(
+        uint256 listingId,
+        ListingStatus _listingStatus
+    ) private {
+        Listing memory updateListing = listings[listingId];
+
+        // update listing
+        updateListing.status = _listingStatus;
+        listings[listingId] = updateListing;
+    }
 
     function transferToken(
         address authorAddress,
         address receiverAddress,
-        // uint256 listingId,
+        uint256 listingId,
         uint256 tokenId,
         uint256 tokenValue
     ) public payable returns (bool) {
@@ -247,6 +262,9 @@ contract PixelMarketplace is IERC721Receiver {
 
         // Transfer NFT token to the caller
         NFTContract.safeTransferFrom(authorAddress, receiverAddress, tokenId);
+
+        setListingSold(listingId);
+
         return true;
     }
 }

@@ -7,7 +7,7 @@ async function main() {
     ethers.provider
   );
 
-  const { pixelNFT, pixelMarketplace } = await buildContracts();
+  const { pixelNFT, pixelMarketplace } = await buildContracts(testWallet1);
 
   for (let i = 0; i < 6; i++) {
     const tokenUri = `http://localhost:8080/token-meta/${i}`;
@@ -16,7 +16,7 @@ async function main() {
     const tokenCreateRes = await pixelNFT.createToken(tokenUri);
 
     // Create listings
-    if (i % 2 == 0 && i !== 0) {
+    if (i % 2 != 0) {
       const listingCreateRes = await pixelMarketplace.createListing(i, i * 100);
     }
   }
