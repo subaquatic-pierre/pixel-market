@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router";
 
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -9,8 +10,10 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 
 import useDappContext from "hooks/useDappContext";
+import transferNFTToken from "utils/transferNFTToken";
 
 import MarketPlaceItemInfo from "components/MarketPlaceItemInfo";
+import useNotificationContext from "hooks/useNotificationContext";
 
 interface IMarketplaceItemProps {
   tokenMeta: ITokenMeta;
@@ -24,6 +27,8 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   const { imageUrl, name, author } = tokenMeta;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
+  const [_n, { setSuccess, setWarning }] = useNotificationContext();
+  const navigate = useNavigate();
 
   const checkOwner = () => {
     if (author === dappState.currentAccount) {
@@ -31,43 +36,16 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
     }
   };
 
-  const transferNFTToken = async () => {
-    // Get contracts
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const tokenContract = dappState.contracts.pixelToken;
-    const NFTContract = dappState.contracts.pixelNFT;
-
-    // Get item details
-    const tokenId = listingInfo.tokenId;
-    const itemValue = listingInfo.value;
-    console.log(itemValue);
-
-    // Get owner of token address, and receiver of NFT
-    const ownerAddress = await NFTContract.ownerOf(tokenId);
-    const receiverAddress = dappState.currentAccount;
-
-    // Set allowance for marketplace contract to spend tokens
-    const approveTokenSpendRes = await tokenContract.approve(
-      marketplaceContract.address,
-      itemValue
-    );
-
-    console.log(approveTokenSpendRes);
-
-    const resHash = await marketplaceContract.transferToken(
-      ownerAddress,
-      receiverAddress,
-      tokenId,
-      itemValue
-    );
-
-    console.log(resHash);
-
-    console.log(dappState);
-  };
-
-  const handlePurchaseButtonClick = (event: any) => {
-    transferNFTToken();
+  const handlePurchaseButtonClick = async (event: any) => {
+    try {
+      const transferRes = await transferNFTToken(dappState, listingInfo);
+      console.log(transferRes);
+      navigate("/marketplace");
+      setSuccess("Token successfully purchased");
+    } catch (err) {
+      setWarning(`There was an error transferring your token, ${err.message}`);
+      console.log(err.message);
+    }
   };
 
   React.useEffect(() => {

@@ -61,7 +61,7 @@ const TokenPage = () => {
         imageUrl: itemMetaRes.data.imageUrl,
         name: itemMetaRes.data.name,
         description: itemMetaRes.data.description,
-        value: attrs[0].amount,
+        value: attrs[0].value,
         author: attrs[1].author,
         dateCreated: "somedate",
       };

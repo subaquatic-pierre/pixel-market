@@ -70,7 +70,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       });
   };
 
-  const submitContractCreateRequest = async () => {
+  const submitCreateListing = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const NFTContract = dappState.contracts.pixelNFT;
 
@@ -88,7 +88,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     setSuccess(`Listing created with ID: ${listingId}`);
   };
 
-  const submitContractDeleteRequest = async () => {
+  const submitRemoveListing = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const NFTContract = dappState.contracts.pixelNFT;
 
@@ -105,9 +105,9 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
 
   const handleActionAreaButtonClick = (method: string) => {
     if (method === "create") {
-      submitContractCreateRequest();
+      submitCreateListing();
     } else if (method === "delete") {
-      submitContractDeleteRequest();
+      submitRemoveListing();
     }
   };
 

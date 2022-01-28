@@ -224,11 +224,7 @@ contract PixelMarketplace is IERC721Receiver {
         _updateListingStatus(_listingId, ListingStatus.REMOVED);
     }
 
-    function setListingSold(uint256 listingId) public {
-        require(
-            msg.sender == _owner,
-            "Only the contract owner can set listing as sold"
-        );
+    function _setListingSold(uint256 listingId) private {
         _updateListingStatus(listingId, ListingStatus.SOLD);
     }
 
@@ -251,7 +247,7 @@ contract PixelMarketplace is IERC721Receiver {
         uint256 tokenValue
     ) public payable returns (bool) {
         // Get 10% of item value, send to owner of marketplace for commission
-        uint256 ownerCommission = (tokenValue * 10) / 100;
+        uint256 ownerCommission = ((tokenValue * 10) / 100);
         uint256 authorShare = tokenValue - ownerCommission;
 
         // Transfer to marketplace owner / contract owner
@@ -263,7 +259,7 @@ contract PixelMarketplace is IERC721Receiver {
         // Transfer NFT token to the caller
         NFTContract.safeTransferFrom(authorAddress, receiverAddress, tokenId);
 
-        setListingSold(listingId);
+        _setListingSold(listingId);
 
         return true;
     }

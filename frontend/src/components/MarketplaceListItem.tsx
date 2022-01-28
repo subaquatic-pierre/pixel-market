@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -14,6 +15,8 @@ import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
+import transferNFTToken from "utils/transferNFTToken";
+
 interface IMarketplaceListItemProps {
   listItem: IMarketplaceItem;
   isMyListing: boolean;
@@ -26,9 +29,10 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   isMyListing,
 }) => {
   const [tokenMeta, setTokenMeta] = React.useState<TokenMeta>(null);
-  const [_n, { setWarning }] = useNotificationContext();
+  const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
+  const navigate = useNavigate();
 
   const loadItem = () => {
     axios
@@ -51,6 +55,21 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
         setWarning(err.message);
         return;
       });
+  };
+
+  const handlePurchaseButtonClick = async (event: any) => {
+    try {
+      const transferRes = await transferNFTToken(
+        dappState,
+        listItem.listingInfo
+      );
+      console.log(transferRes);
+      navigate("/marketplace");
+      setSuccess("Token successfully purchased");
+    } catch (err) {
+      setWarning(`There was an error transferring your token, ${err.message}`);
+      console.log(err.message);
+    }
   };
 
   React.useEffect(() => {
@@ -93,7 +112,12 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
               </Button>
             </Link>
             {!isMyListing && (
-              <Button sx={{ mr: 1 }} color="secondary" variant="contained">
+              <Button
+                sx={{ mr: 1 }}
+                color="secondary"
+                variant="contained"
+                onClick={handlePurchaseButtonClick}
+              >
                 Purchase
               </Button>
             )}

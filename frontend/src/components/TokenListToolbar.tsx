@@ -11,6 +11,10 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 
 import useDappContext from "hooks/useDappContext";
 
+interface ITokenListToolbar {
+  isAuthor: boolean;
+}
+
 const TokenListToolbar = () => {
   const [authorshipStatus, setAuthorshipStatus] = React.useState({
     isAuthor: false,
