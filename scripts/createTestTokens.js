@@ -2,6 +2,11 @@ const buildContracts = require("./buildContracts");
 
 async function main() {
   // This is just a convenience check
+  const testWallet1 = await new ethers.Wallet(
+    "ba0048fb158346e9926aa3ac000c3e7bed6ee15ee13bfd70f68ef794e7f8aaef",
+    ethers.provider
+  );
+
   const { pixelNFT, pixelMarketplace } = await buildContracts();
 
   for (let i = 0; i < 6; i++) {
@@ -14,8 +19,6 @@ async function main() {
     if (i % 2 == 0 && i !== 0) {
       const listingCreateRes = await pixelMarketplace.createListing(i, i * 100);
     }
-
-    console.log(tokenCreateRes);
   }
 }
 

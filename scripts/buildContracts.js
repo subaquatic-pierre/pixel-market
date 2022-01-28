@@ -5,25 +5,31 @@ const pixelTokenAddress = require("./contracts/PixelToken-contract-address.json"
 const PixelMarketplaceArtifact = require("./contracts/PixelMarketplace.json");
 const pixelMarketplaceAddress = require("./contracts/PixelMarketplace-contract-address.json");
 
-async function buildContracts() {
-  const [deployer] = await ethers.getSigners();
+async function buildContracts(wallet) {
+  let signer;
+  if (wallet) {
+    signer = wallet;
+  } else {
+    const [deployer] = await ethers.getSigners();
+    signer = deployer;
+  }
 
   const pixelNFT = new ethers.Contract(
     pixelNFTAddress.PixelNFT,
     PixelNFTArtifact.abi,
-    deployer
+    signer
   );
 
   const pixelToken = new ethers.Contract(
     pixelTokenAddress.PixelToken,
     PixelTokenArtifact.abi,
-    deployer
+    signer
   );
 
   const pixelMarketplace = new ethers.Contract(
     pixelMarketplaceAddress.PixelMarketplace,
     PixelMarketplaceArtifact.abi,
-    deployer
+    signer
   );
 
   const contracts = { pixelNFT, pixelToken, pixelMarketplace };
