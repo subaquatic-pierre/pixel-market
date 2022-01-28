@@ -9,6 +9,7 @@ async function createPrimaryTokens() {
 
     // Create listings
     if (i % 2 === 0) {
+      await pixelNFT.approve(pixelMarketplace.address, i);
       await pixelMarketplace.createListing(i, i * 100);
     }
   }
@@ -32,6 +33,7 @@ async function createSecondaryTokens() {
 
     // Create listings
     if (i === 3 || i === 4) {
+      await pixelNFT.approve(pixelMarketplace.address, i);
       await pixelMarketplace.createListing(i, i * 100);
     }
   }
