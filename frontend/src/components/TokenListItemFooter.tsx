@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import Popover from "@mui/material/Popover";
+import Box from "@mui/material/Box";
 
 import Collapse from "@mui/material/Collapse";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
@@ -38,11 +40,23 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooterProps> = ({
   itemDescription,
   isAuthor,
 }) => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const open = Boolean(anchorEl);
   return (
     <div>
       <CardActions sx={{ p: 2 }} disableSpacing>
@@ -64,9 +78,45 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooterProps> = ({
             Post Listing
           </Button>
         ) : (
-          <Typography variant="overline" color="text.secondary">
-            Not Registered
-          </Typography>
+          <>
+            <Typography variant="overline" color="text.secondary">
+              Not Registered
+              <span
+                style={{ marginLeft: 2, fontSize: 8 }}
+                onMouseEnter={handlePopoverOpen}
+                onMouseLeave={handlePopoverClose}
+              >
+                &#9432;
+              </span>
+            </Typography>
+            <Popover
+              id="mouse-over-popover"
+              sx={{
+                pointerEvents: "none",
+              }}
+              open={open}
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              onClose={handlePopoverClose}
+              disableRestoreFocus
+            >
+              <Box sx={{ p: 1 }}>
+                <Typography color="text.secondary" fontSize={12}>
+                  You need to register as an author to
+                </Typography>
+                <Typography color="text.secondary" fontSize={12}>
+                  post a token to the marketplace
+                </Typography>
+              </Box>
+            </Popover>
+          </>
         )}
         <ExpandMore
           expand={expanded}

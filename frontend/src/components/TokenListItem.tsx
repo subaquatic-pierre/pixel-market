@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
-
-import CardHeader from "@mui/material/CardHeader";
+import TokenListItemHeading from "components/TokenListItemHeading";
 
 import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import TokenListItemFooter from "components/TokenListItemFooter";
@@ -24,21 +23,6 @@ interface ITokenListItemProps {
   listingInfo: IListingInfo | null;
   isAuthor: boolean;
 }
-
-interface ICardHeadingProps {
-  title: string;
-  subtitle: string;
-}
-
-const CardHeading: React.FC<ICardHeadingProps> = ({ title, subtitle }) => {
-  return (
-    <CardHeader
-      title={title}
-      titleTypographyProps={{ variant: "h6" }}
-      subheader={subtitle}
-    />
-  );
-};
 
 const TokenListItem: React.FC<ITokenListItemProps> = ({
   token,
@@ -95,7 +79,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     const NFTContract = dappState.contracts.pixelNFT;
 
     // Remove any operators
-    const resHash = await NFTContract.approve(emptyAddress, token.tokenId);
+    await NFTContract.approve(emptyAddress, token.tokenId);
 
     // Change to remove listing method
     const bigNumListingId = await marketplaceContract.removeListing(
@@ -132,13 +116,14 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       {loading && <MarketplaceItemSkeleton />}
       {item && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
-          <CardHeading
+          <TokenListItemHeading
             title={item.name}
             subtitle={
               listingInfo && listingInfo
                 ? `${listingInfo.value.toString()} PIX`
-                : "NOT LISTED"
+                : "Unlisted"
             }
+            listed={listingInfo !== null}
           />
           <Link style={{ textDecoration: "none" }} to={getLinkAddress()}>
             <CardActionArea>
