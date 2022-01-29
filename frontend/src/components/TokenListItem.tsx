@@ -11,10 +11,9 @@ import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import TokenListItemFooter from "components/TokenListItemFooter";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
-import { emptyAddress } from "const";
 
 interface TokenIdToUri {
-  tokenId: number;
+  tokenId: string;
   tokenUri: string;
 }
 
@@ -27,25 +26,26 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
   token,
   listingInfo,
 }) => {
-  const [item, setItem] = React.useState<any>(null);
+  const [tokenMeta, setTokenMeta] = React.useState<ITokenMeta>(null);
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
 
-  const loadItemMeta = () => {
+  const loadTokenMeta = () => {
     axios
       .get(token.tokenUri)
       .then((res) => {
         const attrs = res.data.attributes;
-        const itemRes = {
-          id: res.data.tokenId,
+        const itemRes: ITokenMeta = {
+          tokenId: res.data.tokenId,
+          author: res.data.author,
           imageUrl: res.data.imageUrl,
           name: res.data.name,
           description: res.data.description,
           value: attrs[0].value,
           dateCreated: "some date",
         };
-        setItem(itemRes);
+        setTokenMeta(itemRes);
         setLoading(false);
       })
       .catch((err) => {
@@ -54,68 +54,27 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       });
   };
 
-  const submitCreateListing = async () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const NFTContract = dappState.contracts.pixelNFT;
-
-    const resHash = await NFTContract.approve(
-      marketplaceContract.address,
-      token.tokenId
-    );
-
-    const bigNumListingId = await marketplaceContract.createListing(
-      token.tokenId,
-      item.value
-    );
-
-    const listingId = Number(bigNumListingId.toString());
-    setSuccess(`Listing created with ID: ${listingId}`);
-  };
-
-  const submitRemoveListing = async () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const NFTContract = dappState.contracts.pixelNFT;
-
-    // Remove any operators
-    await NFTContract.approve(emptyAddress, token.tokenId);
-
-    // Change to remove listing method
-    const bigNumListingId = await marketplaceContract.removeListing(
-      listingInfo.listingId
-    );
-    const listingId = Number(bigNumListingId.toString());
-    setSuccess(`Listing removed with ID: ${listingId}`);
-  };
-
-  const handleActionAreaButtonClick = (method: string) => {
-    if (method === "create") {
-      submitCreateListing();
-    } else if (method === "delete") {
-      submitRemoveListing();
-    }
-  };
-
   const getLinkAddress = (): string => {
     if (listingInfo) {
       return `/marketplace/${listingInfo.listingId}`;
     } else {
-      return `/token/${token.tokenId}`;
+      return ``;
     }
   };
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
-      loadItemMeta();
+      loadTokenMeta();
     }
   }, [dappState]);
 
   return (
     <div>
       {loading && <MarketplaceItemSkeleton />}
-      {item && (
+      {tokenMeta && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
           <TokenListItemHeading
-            title={item.name}
+            title={tokenMeta.name}
             subtitle={
               listingInfo && listingInfo
                 ? `${listingInfo.value.toString()} PIX`
@@ -123,21 +82,20 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
             }
             listed={listingInfo !== null}
           />
-          <Link style={{ textDecoration: "none" }} to={getLinkAddress()}>
+          <Link
+            style={{ textDecoration: "none" }}
+            to={`/token/${token.tokenId}`}
+          >
             <CardActionArea>
               <CardMedia
                 component="img"
-                image={item.imageUrl}
-                alt={item.name}
+                image={tokenMeta.imageUrl}
+                alt={tokenMeta.name}
                 height={300}
               />
             </CardActionArea>
           </Link>
-          <TokenListItemFooter
-            handleActionAreaButtonClick={handleActionAreaButtonClick}
-            listingInfo={listingInfo}
-            itemDescription={item.description}
-          />
+          <TokenListItemFooter tokenId={token.tokenId} tokenMeta={tokenMeta} />
         </Card>
       )}
     </div>

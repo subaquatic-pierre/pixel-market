@@ -7,7 +7,9 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 
+import useNotificationContext from "hooks/useNotificationContext";
 import useDappContext from "hooks/useDappContext";
+import { emptyAddress } from "const";
 
 import TokenInfo from "components/TokenInfo";
 
@@ -18,10 +20,52 @@ interface IMarketplaceItemProps {
 const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
   const { imageUrl, name, author } = tokenMeta;
   const [dappState, _] = useDappContext();
+  const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [authorState, setAuthorState] = React.useState<any>({
     loading: true,
     isAuthor: true,
   });
+
+  const submitCreateListing = async () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const NFTContract = dappState.contracts.pixelNFT;
+
+    const resHash = await NFTContract.approve(
+      marketplaceContract.address,
+      tokenMeta.tokenId
+    );
+
+    const bigNumListingId = await marketplaceContract.createListing(
+      tokenMeta.tokenId,
+      tokenMeta.value
+    );
+
+    const listingId = Number(bigNumListingId.toString());
+    setSuccess(`Listing created with ID: ${listingId}`);
+  };
+
+  // const submitRemoveListing = async () => {
+  //   const marketplaceContract = dappState.contracts.pixelMarketplace;
+  //   const NFTContract = dappState.contracts.pixelNFT;
+
+  //   // Remove any operators
+  //   await NFTContract.approve(emptyAddress, token.tokenId);
+
+  //   // Change to remove listing method
+  //   const bigNumListingId = await marketplaceContract.removeListing(
+  //     listingInfo.listingId
+  //   );
+  //   const listingId = Number(bigNumListingId.toString());
+  //   setSuccess(`Listing removed with ID: ${listingId}`);
+  // };
+
+  const handleActionAreaButtonClick = (method: string) => {
+    if (method === "create") {
+      submitCreateListing();
+    } else if (method === "delete") {
+      // submitRemoveListing();
+    }
+  };
 
   const checkAuthorshipStatus = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;

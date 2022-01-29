@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Collapse from "@mui/material/Collapse";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useNavigate } from "react-router";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -26,16 +27,15 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 interface ICardActionAreaFooterProps {
-  handleActionAreaButtonClick: (method: string) => void;
-  listingInfo?: any;
-  itemDescription: string;
+  tokenId: string;
+  tokenMeta: ITokenMeta;
 }
 
 const TokenListItemFooter: React.FC<ICardActionAreaFooterProps> = ({
-  handleActionAreaButtonClick,
-  listingInfo,
-  itemDescription,
+  tokenId,
+  tokenMeta,
 }) => {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -57,7 +57,7 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooterProps> = ({
         <Button
           color="success"
           variant="contained"
-          onClick={() => handleActionAreaButtonClick("create")}
+          onClick={() => navigate(`/token/${tokenId}`)}
         >
           View Token
         </Button>
@@ -74,7 +74,7 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooterProps> = ({
         <CardContent>
           <Typography sx={{ mb: 1 }}>Description:</Typography>
           <Typography variant="body2" color="text.secondary">
-            {itemDescription}
+            {tokenMeta.description}
           </Typography>
         </CardContent>
       </Collapse>
