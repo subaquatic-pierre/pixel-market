@@ -5,7 +5,7 @@ import CardActions from "@mui/material/CardActions";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import useDappContext from "hooks/useDappContext";
 
@@ -77,6 +77,15 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
             elevation={0}
           >
             <TokenInfo tokenMeta={tokenMeta} />
+            <CardActions sx={{ mt: "auto", px: 2, pb: 2, alignSelf: "end" }}>
+              <Button
+                color="warning"
+                variant="contained"
+                // onClick={() => handleActionAreaButtonClick("delete")}
+              >
+                Remove Listing
+              </Button>
+            </CardActions>
           </Card>
         </Grid>
       </Grid>
