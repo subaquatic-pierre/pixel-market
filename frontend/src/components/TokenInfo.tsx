@@ -4,6 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import Popover from "@mui/material/Popover";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -28,6 +29,18 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({ tokenMeta }) => {
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
     };
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
@@ -60,6 +73,48 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({ tokenMeta }) => {
           <Typography color="text.secondary" variant="h5">
             {value} PIX
           </Typography>
+          <>
+            <Typography variant="overline" color="text.secondary">
+              Unlisted
+              <span
+                style={{ marginLeft: 2, fontSize: 8 }}
+                onMouseEnter={handlePopoverOpen}
+                onMouseLeave={handlePopoverClose}
+              >
+                &#9432;
+              </span>
+            </Typography>
+            <Popover
+              id="mouse-over-popover"
+              sx={{
+                pointerEvents: "none",
+              }}
+              open={open}
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              onClose={handlePopoverClose}
+              disableRestoreFocus
+            >
+              <Box sx={{ p: 1 }}>
+                <Typography color="text.secondary" fontSize={12}>
+                  Token not listed in the marketplace,
+                </Typography>
+                <Typography color="text.secondary" fontSize={12}>
+                  register as an author and post listing
+                </Typography>
+                <Typography color="text.secondary" fontSize={12}>
+                  to see the value here
+                </Typography>
+              </Box>
+            </Popover>
+          </>
         </Box>
       </Stack>
       <Box>

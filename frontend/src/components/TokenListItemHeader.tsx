@@ -10,7 +10,7 @@ interface ICardHeadingProps {
   listed: boolean;
 }
 
-const TokenListItemHeading: React.FC<ICardHeadingProps> = ({
+const TokenListItemHeader: React.FC<ICardHeadingProps> = ({
   title,
   subtitle,
   listed,
@@ -77,4 +77,4 @@ const TokenListItemHeading: React.FC<ICardHeadingProps> = ({
   );
 };
 
-export default TokenListItemHeading;
+export default TokenListItemHeader;

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
-import TokenListItemHeading from "components/TokenListItemHeading";
+import TokenListItemHeading from "components/TokenListItemHeader";
 
 import MarketplaceItemSkeleton from "components/MarketplaceListItemSkeleton";
 import TokenListItemFooter from "components/TokenListItemFooter";
@@ -21,13 +21,11 @@ interface TokenIdToUri {
 interface ITokenListItemProps {
   token: TokenIdToUri;
   listingInfo: IListingInfo | null;
-  isAuthor: boolean;
 }
 
 const TokenListItem: React.FC<ITokenListItemProps> = ({
   token,
   listingInfo,
-  isAuthor,
 }) => {
   const [item, setItem] = React.useState<any>(null);
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
@@ -139,7 +137,6 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
             handleActionAreaButtonClick={handleActionAreaButtonClick}
             listingInfo={listingInfo}
             itemDescription={item.description}
-            isAuthor={isAuthor}
           />
         </Card>
       )}

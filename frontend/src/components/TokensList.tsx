@@ -104,8 +104,6 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
       dappState.currentAccount
     );
 
-    console.log(authorState);
-
     if (isAuthor) {
       setAuthorState({
         isAuthor: true,
@@ -136,7 +134,6 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
           state.tokens.map((token, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
               <TokenListItem
-                isAuthor={authorState.isAuthor}
                 token={token}
                 listingInfo={checkIfListing(token.tokenId, myListings)}
               />

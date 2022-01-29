@@ -18,6 +18,35 @@ interface IMarketplaceItemProps {
 const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
   const { imageUrl, name, author } = tokenMeta;
   const [dappState, _] = useDappContext();
+  const [authorState, setAuthorState] = React.useState<any>({
+    loading: true,
+    isAuthor: true,
+  });
+
+  const checkAuthorshipStatus = async () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const isAuthor = await marketplaceContract.isAuthor(
+      dappState.currentAccount
+    );
+
+    if (isAuthor) {
+      setAuthorState({
+        isAuthor: true,
+        loading: false,
+      });
+    } else {
+      setAuthorState({
+        isAuthor: false,
+        loading: false,
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    if (dappState.isInitialized) {
+      checkAuthorshipStatus();
+    }
+  }, [dappState]);
 
   return (
     <Paper>
