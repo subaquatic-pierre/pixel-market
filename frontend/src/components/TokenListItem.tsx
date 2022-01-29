@@ -22,6 +22,7 @@ interface TokenIdToUri {
 interface ITokenListItemProps {
   token: TokenIdToUri;
   listingInfo: IListingInfo | null;
+  isAuthor: boolean;
 }
 
 interface ICardHeadingProps {
@@ -42,6 +43,7 @@ const CardHeading: React.FC<ICardHeadingProps> = ({ title, subtitle }) => {
 const TokenListItem: React.FC<ITokenListItemProps> = ({
   token,
   listingInfo,
+  isAuthor,
 }) => {
   const [item, setItem] = React.useState<any>(null);
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
@@ -152,6 +154,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
             handleActionAreaButtonClick={handleActionAreaButtonClick}
             listingInfo={listingInfo}
             itemDescription={item.description}
+            isAuthor={isAuthor}
           />
         </Card>
       )}

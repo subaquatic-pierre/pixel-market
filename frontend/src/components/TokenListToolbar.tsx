@@ -15,35 +15,8 @@ interface ITokenListToolbar {
   isAuthor: boolean;
 }
 
-const TokenListToolbar = () => {
-  const [authorshipStatus, setAuthorshipStatus] = React.useState({
-    isAuthor: false,
-    loading: true,
-  });
+const TokenListToolbar: React.FC<ITokenListToolbar> = ({ isAuthor }) => {
   const [dappState, _] = useDappContext();
-
-  const checkAuthorshipStatus = async () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const isAuthor = await marketplaceContract.isAuthor(
-      dappState.currentAccount
-    );
-
-    if (isAuthor) {
-      setAuthorshipStatus({
-        isAuthor: true,
-        loading: false,
-      });
-      return;
-    }
-
-    setAuthorshipStatus((oldStatus) => ({ ...oldStatus, loading: false }));
-  };
-
-  React.useEffect(() => {
-    if (dappState.isInitialized) {
-      checkAuthorshipStatus();
-    }
-  }, [dappState]);
 
   return (
     <Grid item>
@@ -56,7 +29,7 @@ const TokenListToolbar = () => {
             <ListItemText primary="New Token" />
           </Button>
         </Link>
-        {!authorshipStatus.loading && !authorshipStatus.isAuthor && (
+        {!isAuthor && (
           <Link
             style={{ textDecoration: "none", color: "inherit" }}
             to="/register-author"
