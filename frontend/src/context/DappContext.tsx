@@ -32,10 +32,14 @@ const DappContextProvider: React.FC = ({ children }) => {
   };
 
   // Called any time an account is connected or disconnected from the app
-  const handleAccountsChanged = async (accounts: any) => {
+  const handleAccountsChanged = async () => {
     const correctNetwork = await isCorrectNetwork();
 
     try {
+      // Get accounts off window ethereum object
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
       // Check if accounts exist
       if (accounts.length === 0) {
         setError("Please connect your wallet");
@@ -61,22 +65,17 @@ const DappContextProvider: React.FC = ({ children }) => {
   // Used to prompt user to connect wallet to app
   const connectWallet = async () => {
     const correctNetwork = await isCorrectNetwork();
-    try {
-      if (correctNetwork) {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
+    if (correctNetwork) {
+      window.ethereum
+        .request({ method: "eth_requestAccounts" })
+        .then(handleAccountsChanged)
+        .catch((err) => {
+          if (err.code === 4001) {
+            setWarning("Please connect to MetaMask.");
+          } else if (err.code === -32002) {
+            setWarning("Please Check Meta mask extension to connect");
+          }
         });
-        await handleAccountsChanged(accounts);
-        await completeLoadingState();
-
-        return accounts[0];
-      }
-    } catch (err) {
-      if (err.code === 4001) {
-        setWarning("Please connect to MetaMask.");
-      } else if (err.code === -32002) {
-        setWarning("Please Check Meta mask extension to connect");
-      }
     }
   };
 
@@ -139,9 +138,14 @@ const DappContextProvider: React.FC = ({ children }) => {
     }));
   };
 
-  const checkAuthorshipStatus = async (contracts, walletAddress) => {
+  const checkAuthorshipStatus = async (contracts) => {
     const marketplaceContract = contracts.pixelMarketplace;
-    const isAuthor = await marketplaceContract.isAuthor(walletAddress);
+    const accounts = await window.ethereum.request({
+      method: "eth_accounts",
+    });
+    const isAuthor = await marketplaceContract.isAuthor(accounts[0]);
+
+    console.log(isAuthor);
 
     if (isAuthor) {
       setDappState((oldState) => ({ ...oldState, isAuthor: true }));
@@ -157,10 +161,11 @@ const DappContextProvider: React.FC = ({ children }) => {
 
     // Start app connection methods
     await connectNetwork(chainId);
-    const walletAddress = await connectWallet();
+    await connectWallet();
     const contracts = await initializeContracts(provider);
     await getMyListings(contracts);
-    await checkAuthorshipStatus(contracts, walletAddress);
+    await checkAuthorshipStatus(contracts);
+    await completeLoadingState();
   };
 
   const completeLoadingState = async () => {
