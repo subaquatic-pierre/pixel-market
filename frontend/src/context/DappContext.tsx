@@ -32,14 +32,10 @@ const DappContextProvider: React.FC = ({ children }) => {
   };
 
   // Called any time an account is connected or disconnected from the app
-  const handleAccountsChanged = async () => {
+  const handleAccountsChanged = async (accounts: any) => {
     const correctNetwork = await isCorrectNetwork();
 
     try {
-      // Get accounts off window ethereum object
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
       // Check if accounts exist
       if (accounts.length === 0) {
         setError("Please connect your wallet");
@@ -65,17 +61,22 @@ const DappContextProvider: React.FC = ({ children }) => {
   // Used to prompt user to connect wallet to app
   const connectWallet = async () => {
     const correctNetwork = await isCorrectNetwork();
-    if (correctNetwork) {
-      window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then(handleAccountsChanged)
-        .catch((err) => {
-          if (err.code === 4001) {
-            setWarning("Please connect to MetaMask.");
-          } else if (err.code === -32002) {
-            setWarning("Please Check Meta mask extension to connect");
-          }
+    try {
+      if (correctNetwork) {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
         });
+        await handleAccountsChanged(accounts);
+        await completeLoadingState();
+
+        return accounts[0];
+      }
+    } catch (err) {
+      if (err.code === 4001) {
+        setWarning("Please connect to MetaMask.");
+      } else if (err.code === -32002) {
+        setWarning("Please Check Meta mask extension to connect");
+      }
     }
   };
 
@@ -104,6 +105,49 @@ const DappContextProvider: React.FC = ({ children }) => {
       ...oldState,
       contracts: buildContracts(provider),
     }));
+
+    return buildContracts(provider);
+  };
+
+  const getMyListings = async (contracts) => {
+    const marketContract = contracts.pixelMarketplace;
+    const listingIds: string[] = [];
+    const listings: IListingInfo[] = [];
+
+    // Get array of Ids from marketplace contract
+    const bigNumTokenIds = await marketContract.getMyListingsIds();
+
+    for (let i = 0; i < bigNumTokenIds.length; i++) {
+      const tokenId = bigNumTokenIds[i].toString();
+      listingIds.push(tokenId);
+    }
+
+    listingIds.forEach(async (listingId) => {
+      const listingRes = await marketContract.listings(listingId);
+      const listing: IListingInfo = {
+        listingId: listingId,
+        author: listingRes.author,
+        status: listingRes.status,
+        tokenId: listingRes.tokenId.toString(),
+        value: listingRes.value.toString(),
+      };
+      listings.push(listing);
+    });
+    setDappState((oldState) => ({
+      ...oldState,
+      myListings: listings,
+    }));
+  };
+
+  const checkAuthorshipStatus = async (contracts, walletAddress) => {
+    const marketplaceContract = contracts.pixelMarketplace;
+    const isAuthor = await marketplaceContract.isAuthor(walletAddress);
+
+    if (isAuthor) {
+      setDappState((oldState) => ({ ...oldState, isAuthor: true }));
+    } else {
+      setDappState((oldState) => ({ ...oldState, isAuthor: false }));
+    }
   };
 
   // Contains all functions to be called to connect to Dapp
@@ -113,8 +157,10 @@ const DappContextProvider: React.FC = ({ children }) => {
 
     // Start app connection methods
     await connectNetwork(chainId);
-    await connectWallet();
-    await initializeContracts(provider);
+    const walletAddress = await connectWallet();
+    const contracts = await initializeContracts(provider);
+    await getMyListings(contracts);
+    await checkAuthorshipStatus(contracts, walletAddress);
   };
 
   const completeLoadingState = async () => {

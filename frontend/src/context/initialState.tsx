@@ -5,6 +5,8 @@ const initialDappState: IDappState = {
   chainId: undefined,
   provider: undefined,
   contracts: undefined,
+  myListings: [],
+  isAuthor: false,
 };
 
 const initialNotificationState: INotificationState = {

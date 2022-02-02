@@ -7,15 +7,12 @@ import TokenListItem from "components/TokenListItem";
 import TokenListToolbar from "components/TokenListToolbar";
 import useDappContext from "hooks/useDappContext";
 
-interface ITokenListProps {
-  myListings: IListingInfo[];
-}
-
-const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
+const TokenList: React.FC = () => {
   const [state, setState] = React.useState({
     loading: true,
     tokens: [],
     isAuthor: true,
+    myListings: [],
   });
   const [authorState, setAuthorState] = React.useState<any>({
     loading: true,
@@ -98,29 +95,21 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
     return _listingInfo;
   };
 
-  const checkAuthorshipStatus = async () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const isAuthor = await marketplaceContract.isAuthor(
-      dappState.currentAccount
-    );
+  const setMyListings = () => {
+    const { myListings: listings } = dappState;
+    setState((oldState) => ({ ...oldState, myListings: listings }));
+  };
 
-    if (isAuthor) {
-      setAuthorState({
-        isAuthor: true,
-        loading: false,
-      });
-    } else {
-      setAuthorState({
-        isAuthor: false,
-        loading: false,
-      });
-    }
+  const setAuthorStatus = () => {
+    const { isAuthor } = dappState;
+    setAuthorState({ loading: false, isAuthor });
   };
 
   React.useEffect(() => {
     if (dappState.isInitialized) {
       getTokens();
-      checkAuthorshipStatus();
+      setMyListings();
+      setAuthorStatus();
     }
   }, [dappState]);
 
@@ -135,7 +124,7 @@ const TokenList: React.FC<ITokenListProps> = ({ myListings }) => {
             <Grid item key={index} xs={12} sm={6} md={4}>
               <TokenListItem
                 token={token}
-                listingInfo={checkIfListing(token.tokenId, myListings)}
+                listingInfo={checkIfListing(token.tokenId, state.myListings)}
               />
             </Grid>
           ))}
