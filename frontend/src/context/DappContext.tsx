@@ -145,8 +145,6 @@ const DappContextProvider: React.FC = ({ children }) => {
     });
     const isAuthor = await marketplaceContract.isAuthor(accounts[0]);
 
-    console.log(isAuthor);
-
     if (isAuthor) {
       setDappState((oldState) => ({ ...oldState, isAuthor: true }));
     } else {

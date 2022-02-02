@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 
 import MarketplaceListItem from "components/MarketplaceListItem";
 import useDappContext from "hooks/useDappContext";
+import filterAvailableListings from "utils/filterAvailableListings";
 
 interface IMarketPlaceProps {
   myListings: IListingInfo[];
@@ -70,32 +71,6 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
     return marketplaceItems;
   };
 
-  const getAvailableListings = async (
-    allListings: IListingInfo[]
-  ): Promise<IListingInfo[]> => {
-    const NFTContract = dappState.contracts.pixelNFT;
-
-    const availableListings: IListingInfo[] = [];
-
-    for (let i = 0; i < allListings.length; i++) {
-      const listing = allListings[i];
-      const tokenId = listing.tokenId;
-
-      // Check owner of token is author of listing
-      const tokenOwner = await NFTContract.ownerOf(tokenId);
-      if (tokenOwner.toLowerCase() !== listing.author.toLowerCase()) {
-        // TODO: Notify admins listing should be de-listed
-        continue;
-      }
-
-      if (listing.status === 0) {
-        availableListings.push(listing);
-      }
-    }
-
-    return availableListings;
-  };
-
   const getMarketPlaceItems = async () => {
     const marketContract = dappState.contracts.pixelMarketplace;
 
@@ -106,7 +81,10 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
 
     const allListings = await buildListingInfoList(listingIds);
 
-    const availableListings = await getAvailableListings(allListings);
+    const availableListings = await filterAvailableListings(
+      allListings,
+      dappState
+    );
 
     const marketplaceData = await buildListingData(availableListings);
     setState({ loading: false, marketplaceItems: marketplaceData });

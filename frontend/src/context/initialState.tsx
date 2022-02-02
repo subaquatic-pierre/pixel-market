@@ -6,7 +6,7 @@ const initialDappState: IDappState = {
   provider: undefined,
   contracts: undefined,
   myListings: [],
-  isAuthor: false,
+  isAuthor: true,
 };
 
 const initialNotificationState: INotificationState = {

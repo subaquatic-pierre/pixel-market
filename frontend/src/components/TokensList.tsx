@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import TokenListItem from "components/TokenListItem";
 import TokenListToolbar from "components/TokenListToolbar";
 import useDappContext from "hooks/useDappContext";
+import filterAvailableListings from "utils/filterAvailableListings";
 
 const TokenList: React.FC = () => {
   const [state, setState] = React.useState({
@@ -95,8 +96,9 @@ const TokenList: React.FC = () => {
     return _listingInfo;
   };
 
-  const setMyListings = () => {
-    const { myListings: listings } = dappState;
+  const setMyListings = async () => {
+    const { myListings } = dappState;
+    const listings = await filterAvailableListings(myListings, dappState);
     setState((oldState) => ({ ...oldState, myListings: listings }));
   };
 
