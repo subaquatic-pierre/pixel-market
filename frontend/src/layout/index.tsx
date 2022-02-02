@@ -4,10 +4,10 @@ import { useTheme } from "@mui/material/styles";
 
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
 
 import SideNav from "components/SideNav";
 import TopNav from "components/TopNav";
+import Footer from "components/Footer";
 
 import AlertMessage from "components/AlertMessage";
 
@@ -43,7 +43,10 @@ const Layout: React.FC = ({ children }) => {
       >
         <Toolbar />
         <AlertMessage />
-        <Box component="main">{children}</Box>
+        <Box sx={{ minHeight: "80vh" }} component="main">
+          {children}
+        </Box>
+        <Footer />
       </Box>
     </Box>
   );
