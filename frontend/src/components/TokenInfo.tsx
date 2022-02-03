@@ -76,10 +76,11 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({
           <Typography gutterBottom variant="subtitle2">
             Value:
           </Typography>
-          <Typography color="text.secondary" variant="h5">
-            {listingInfo.value} PIX
-          </Typography>
-          {!isListing && (
+          {isListing ? (
+            <Typography color="text.secondary" variant="h5">
+              {listingInfo.value} PIX
+            </Typography>
+          ) : (
             <>
               <Typography variant="overline" color="text.secondary">
                 Unlisted
