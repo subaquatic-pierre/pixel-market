@@ -133,47 +133,51 @@ const TokenItem: React.FC<ITokenItemProps> = ({
               isListing={isListing}
               listingInfo={listingInfo}
             />
-            <CardActions
-              sx={{
-                mt: "auto",
-                px: 2,
-                pb: 2,
-                justifyContent: "space-between",
-              }}
-            >
-              {!isListing ? (
-                <>
-                  <Box>
-                    <TextField
-                      id="outlined-name"
-                      label="Value"
-                      name="listing-value"
-                      value={listingValue}
-                      onChange={(event) => setListingValue(event.target.value)}
-                      fullWidth
-                    />
-                  </Box>
-                  <Button
-                    color="success"
-                    variant="contained"
-                    onClick={() => handleActionAreaButtonClick("create")}
-                  >
-                    Create Listing
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Box></Box>
-                  <Button
-                    color="warning"
-                    variant="contained"
-                    onClick={() => handleActionAreaButtonClick("delete")}
-                  >
-                    Remove Listing
-                  </Button>
-                </>
-              )}
-            </CardActions>
+            {state.isAuthor && (
+              <CardActions
+                sx={{
+                  mt: "auto",
+                  px: 2,
+                  pb: 2,
+                  justifyContent: "space-between",
+                }}
+              >
+                {!isListing ? (
+                  <>
+                    <Box>
+                      <TextField
+                        id="outlined-name"
+                        label="Value"
+                        name="listing-value"
+                        value={listingValue}
+                        onChange={(event) =>
+                          setListingValue(event.target.value)
+                        }
+                        fullWidth
+                      />
+                    </Box>
+                    <Button
+                      color="success"
+                      variant="contained"
+                      onClick={() => handleActionAreaButtonClick("create")}
+                    >
+                      Create Listing
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Box></Box>
+                    <Button
+                      color="warning"
+                      variant="contained"
+                      onClick={() => handleActionAreaButtonClick("delete")}
+                    >
+                      Remove Listing
+                    </Button>
+                  </>
+                )}
+              </CardActions>
+            )}
           </Card>
         </Grid>
       </Grid>

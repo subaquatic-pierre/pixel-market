@@ -24,7 +24,8 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   tokenInfo,
   listingInfo,
 }) => {
-  const { author, tokenMeta } = tokenInfo;
+  const { author: listingAuthor } = listingInfo;
+  const { tokenMeta } = tokenInfo;
   const { imageUrl, name } = tokenMeta;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
@@ -32,7 +33,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   const navigate = useNavigate();
 
   const checkOwner = () => {
-    if (author === dappState.currentAccount) {
+    if (listingAuthor.toLowerCase() === dappState.currentAccount) {
       setIsOwner(true);
     }
   };
@@ -45,7 +46,6 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
       setSuccess("Token successfully purchased");
     } catch (err) {
       setWarning(`There was an error transferring your token, ${err.message}`);
-      console.log(err.message);
     }
   };
 

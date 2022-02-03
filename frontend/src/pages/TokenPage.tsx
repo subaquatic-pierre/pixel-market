@@ -86,7 +86,6 @@ const TokenPage = () => {
     listingInfo = availableListings.filter(
       (listing) => listing.tokenId === _tokenId
     )[0];
-    console.log(listingInfo);
     return listingInfo;
   };
 
