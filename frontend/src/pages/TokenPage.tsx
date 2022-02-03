@@ -15,7 +15,7 @@ interface ITokenPageState {
   loading: boolean;
   pageError: boolean;
   tokenUri: string;
-  tokenMeta: ITokenMeta | undefined;
+  tokenInfo: ITokenInfo | undefined;
   listingInfo: IListingInfo | undefined;
 }
 
@@ -23,7 +23,7 @@ const initialMarketplaceItemPageState: ITokenPageState = {
   loading: true,
   pageError: false,
   tokenUri: "",
-  tokenMeta: undefined,
+  tokenInfo: undefined,
   listingInfo: undefined,
 };
 
@@ -55,22 +55,25 @@ const TokenPage = () => {
     }
   };
 
-  const getMetadata = async (_tokenUri: string): Promise<ITokenMeta> => {
+  const getTokenMeta = async (_tokenUri: string): Promise<ITokenMeta> => {
     try {
       const itemMetaRes = await axios.get(_tokenUri);
-      const attrs = itemMetaRes.data.attributes;
       const tokenMeta: ITokenMeta = {
-        tokenId: itemMetaRes.data.tokenId,
         imageUrl: itemMetaRes.data.imageUrl,
         name: itemMetaRes.data.name,
         description: itemMetaRes.data.description,
-        author: attrs[1].author,
         dateCreated: "somedate",
       };
       return tokenMeta;
     } catch (err) {
       setPageError(err.message);
     }
+  };
+
+  const getTokenAuthor = async (tokenId: string) => {
+    const NFTContract = dappState.contracts.pixelNFT;
+    const author = await NFTContract.ownerOf(tokenId);
+    return author;
   };
 
   const getListingInfo = async (_tokenId: string) => {
@@ -87,16 +90,31 @@ const TokenPage = () => {
     return listingInfo;
   };
 
+  const getTokenInfo = async (tokenUri: string): Promise<ITokenInfo> => {
+    try {
+      const author: string = await getTokenAuthor(tokenId);
+      const tokenMeta: ITokenMeta = await getTokenMeta(tokenUri);
+      const tokenInfo: ITokenInfo = {
+        tokenId,
+        author,
+        tokenMeta,
+      };
+      return tokenInfo;
+    } catch (err) {
+      setPageError(err.message);
+    }
+  };
+
   const loadItem = async () => {
     const tokenUri = await getTokenUri(tokenId);
 
-    const tokenMeta: ITokenMeta = await getMetadata(tokenUri);
+    const tokenInfo: ITokenInfo = await getTokenInfo(tokenUri);
     const listingInfo: IListingInfo | undefined = await getListingInfo(tokenId);
 
     setState((oldState) => ({
       ...oldState,
       loading: false,
-      tokenMeta,
+      tokenInfo,
       listingInfo,
     }));
   };
@@ -113,7 +131,7 @@ const TokenPage = () => {
         <MarketplaceItemSkeleton />
       ) : (
         <TokenItem
-          tokenMeta={state.tokenMeta}
+          tokenInfo={state.tokenInfo}
           listingInfo={state.listingInfo}
           tokenId={tokenId}
           isListing={state.listingInfo !== undefined}

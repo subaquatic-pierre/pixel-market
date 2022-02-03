@@ -15,8 +15,8 @@ import { emptyAddress } from "const";
 
 import TokenInfo from "components/TokenInfo";
 
-interface IMarketplaceItemProps {
-  tokenMeta: ITokenMeta;
+interface ITokenItemProps {
+  tokenInfo: ITokenInfo;
   listingInfo: IListingInfo | undefined;
   isListing: boolean;
   tokenId: string;
@@ -30,13 +30,14 @@ const initialTokenItemState: ITokenItemState = {
   isAuthor: true,
 };
 
-const TokenItem: React.FC<IMarketplaceItemProps> = ({
-  tokenMeta,
+const TokenItem: React.FC<ITokenItemProps> = ({
+  tokenInfo,
   listingInfo,
   tokenId,
   isListing,
 }) => {
-  const { imageUrl, name, author } = tokenMeta;
+  const { tokenMeta, author } = tokenInfo;
+  const { imageUrl, name } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [state, setState] = React.useState<ITokenItemState>(
@@ -54,11 +55,11 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({
 
     const resHash = await NFTContract.approve(
       marketplaceContract.address,
-      tokenMeta.tokenId
+      tokenId
     );
 
     const bigNumListingId = await marketplaceContract.createListing(
-      tokenMeta.tokenId,
+      tokenId,
       listingValue
     );
 
@@ -128,7 +129,7 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({
             elevation={0}
           >
             <TokenInfo
-              tokenMeta={tokenMeta}
+              tokenInfo={tokenInfo}
               isListing={isListing}
               listingInfo={listingInfo}
             />

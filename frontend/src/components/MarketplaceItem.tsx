@@ -16,15 +16,16 @@ import MarketPlaceItemInfo from "components/MarketPlaceItemInfo";
 import useNotificationContext from "hooks/useNotificationContext";
 
 interface IMarketplaceItemProps {
-  tokenMeta: ITokenMeta;
+  tokenInfo: ITokenInfo;
   listingInfo: IListingInfo;
 }
 
 const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
-  tokenMeta,
+  tokenInfo,
   listingInfo,
 }) => {
-  const { imageUrl, name, author } = tokenMeta;
+  const { author, tokenMeta } = tokenInfo;
+  const { imageUrl, name } = tokenMeta;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
   const [_n, { setSuccess, setWarning }] = useNotificationContext();
@@ -83,7 +84,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             elevation={0}
           >
             <MarketPlaceItemInfo
-              tokenMeta={tokenMeta}
+              tokenInfo={tokenInfo}
               listingInfo={listingInfo}
             />
             <Box sx={{ mt: "auto", alignSelf: "end", p: 1 }}>

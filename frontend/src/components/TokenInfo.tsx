@@ -16,17 +16,18 @@ import useDappContext from "hooks/useDappContext";
 import { Link } from "react-router-dom";
 
 interface ITokenInfoProps {
-  tokenMeta: ITokenMeta;
+  tokenInfo: ITokenInfo;
   isListing: boolean;
   listingInfo: IListingInfo | undefined;
 }
 
 const TokenInfo: React.FC<ITokenInfoProps> = ({
-  tokenMeta,
+  tokenInfo,
   isListing,
   listingInfo,
 }) => {
-  const { name, description, dateCreated, author } = tokenMeta;
+  const { tokenMeta, author } = tokenInfo;
+  const { name, description, dateCreated } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [expanded, setExpanded] = React.useState<string | false>("panel1");
   const [contractAddress, setContractAddress] = React.useState<string>("");

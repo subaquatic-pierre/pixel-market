@@ -16,7 +16,7 @@ interface IMarketplaceItemPageState {
   tokenUri: string;
   marketplaceItem:
     | {
-        tokenMeta: ITokenMeta;
+        tokenInfo: ITokenInfo;
         listingInfo: IListingInfo;
       }
     | undefined;
@@ -33,7 +33,7 @@ const MarketplaceItemPage = () => {
   const [state, setState] = React.useState<IMarketplaceItemPageState>(
     initialMarketplaceItemPageState
   );
-  const { id } = useParams();
+  const { id: tokenId } = useParams();
   const [_n, { setWarning }] = useNotificationContext();
   const [dappState, _] = useDappContext();
 
@@ -57,19 +57,33 @@ const MarketplaceItemPage = () => {
     }
   };
 
-  const getMetadata = async (tokenUri: string): Promise<ITokenMeta> => {
+  const getTokenAuthor = async (tokenId: string) => {
+    const NFTContract = dappState.contracts.pixelNFT;
+    const author = await NFTContract.ownerOf(tokenId);
+    return author;
+  };
+
+  const getTokenMeta = async (tokenUri: string): Promise<ITokenMeta> => {
+    const itemMetaRes = await axios.get(tokenUri);
+    const tokenMeta = {
+      name: itemMetaRes.data.name,
+      imageUrl: itemMetaRes.data.imageUrl,
+      description: itemMetaRes.data.description,
+      dateCreated: "somedate",
+    };
+    return tokenMeta;
+  };
+
+  const getTokenInfo = async (tokenUri: string): Promise<ITokenInfo> => {
     try {
-      const itemMetaRes = await axios.get(tokenUri);
-      const attrs = itemMetaRes.data.attributes;
-      const tokenMeta: ITokenMeta = {
-        tokenId: itemMetaRes.data.tokenId,
-        imageUrl: itemMetaRes.data.imageUrl,
-        name: itemMetaRes.data.name,
-        description: itemMetaRes.data.description,
-        author: attrs[1].author,
-        dateCreated: "somedate",
+      const author: string = await getTokenAuthor(tokenId);
+      const tokenMeta: ITokenMeta = await getTokenMeta(tokenUri);
+      const tokenInfo: ITokenInfo = {
+        tokenId,
+        author,
+        tokenMeta,
       };
-      return tokenMeta;
+      return tokenInfo;
     } catch (err) {
       setPageError(err.message);
     }
@@ -79,10 +93,10 @@ const MarketplaceItemPage = () => {
     const marketContract = dappState.contracts.pixelMarketplace;
 
     try {
-      const listingInfoRes = await marketContract.listings(id);
+      const listingInfoRes = await marketContract.listings(tokenId);
 
       const listingInfo: IListingInfo = {
-        listingId: id,
+        listingId: tokenId,
         author: listingInfoRes.author,
         status: listingInfoRes.status,
         tokenId: listingInfoRes.tokenId.toString(),
@@ -100,12 +114,12 @@ const MarketplaceItemPage = () => {
 
     const tokenUri = await getTokenUri(listingInfo.tokenId);
 
-    const tokenMeta: ITokenMeta = await getMetadata(tokenUri);
+    const tokenInfo: ITokenInfo = await getTokenInfo(tokenUri);
 
     setState((oldState) => ({
       ...oldState,
       loading: false,
-      marketplaceItem: { tokenMeta, listingInfo },
+      marketplaceItem: { tokenInfo, listingInfo },
     }));
   };
 
@@ -121,7 +135,7 @@ const MarketplaceItemPage = () => {
         <MarketplaceItemSkeleton />
       ) : (
         <MarketplaceItem
-          tokenMeta={state.marketplaceItem.tokenMeta}
+          tokenInfo={state.marketplaceItem.tokenInfo}
           listingInfo={state.marketplaceItem.listingInfo}
         />
       )}

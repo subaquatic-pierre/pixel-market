@@ -26,31 +26,36 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
   token,
   listingInfo,
 }) => {
+  const { tokenUri } = token;
   const [tokenMeta, setTokenMeta] = React.useState<ITokenMeta>(null);
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
 
-  const loadTokenMeta = () => {
-    axios
-      .get(token.tokenUri)
-      .then((res) => {
-        const attrs = res.data.attributes;
-        const itemRes: ITokenMeta = {
-          tokenId: res.data.tokenId,
-          author: res.data.author,
-          imageUrl: res.data.imageUrl,
-          name: res.data.name,
-          description: res.data.description,
-          dateCreated: "some date",
-        };
-        setTokenMeta(itemRes);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setWarning(err.message);
-        return;
-      });
+  const getTokenMeta = async (tokenUri: string): Promise<ITokenMeta> => {
+    try {
+      const res = await axios.get(tokenUri);
+      const tokenMeta: ITokenMeta = {
+        imageUrl: res.data.imageUrl,
+        name: res.data.name,
+        description: res.data.description,
+        dateCreated: "some date",
+      };
+      return tokenMeta;
+    } catch (err) {
+      setWarning(err.message);
+    }
+  };
+
+  const loadTokenMeta = async () => {
+    try {
+      const tokenMeta = await getTokenMeta(tokenUri);
+
+      setTokenMeta(tokenMeta);
+      setLoading(false);
+    } catch (err) {
+      setWarning(err.message);
+    }
   };
 
   React.useEffect(() => {

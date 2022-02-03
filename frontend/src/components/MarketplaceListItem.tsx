@@ -22,38 +22,55 @@ interface IMarketplaceListItemProps {
   isMyListing: boolean;
 }
 
-type TokenMeta = ITokenMeta | null;
+type TokenMeta = ITokenInfo | null;
 
 const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   listItem,
   isMyListing,
 }) => {
-  const [tokenMeta, setTokenMeta] = React.useState<TokenMeta>(null);
+  const { tokenUri, tokenId } = listItem;
+  const [tokenInfo, setTokenInfo] = React.useState<TokenMeta>(null);
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [loading, setLoading] = React.useState(true);
   const [dappState, _] = useDappContext();
   const navigate = useNavigate();
 
-  const loadItem = () => {
-    axios
-      .get(listItem.tokenUri)
-      .then((res) => {
-        const attrs = res.data.attributes;
-        const itemRes: ITokenMeta = {
-          tokenId: res.data.tokenId,
-          imageUrl: res.data.imageUrl,
-          author: res.data.author,
-          name: res.data.name,
-          description: res.data.description,
-          dateCreated: "some date",
-        };
-        setTokenMeta(itemRes);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setWarning(err.message);
-        return;
-      });
+  const getTokenAuthor = async (tokenId: string): Promise<string> => {
+    const NFTContract = dappState.contracts.pixelNFT;
+    const author = await NFTContract.ownerOf(tokenId);
+    return author;
+  };
+
+  const getTokenMeta = async (tokenUri: string): Promise<ITokenMeta> => {
+    try {
+      const res = await axios.get(listItem.tokenUri);
+      const tokenMeta: ITokenMeta = {
+        imageUrl: res.data.imageUrl,
+        name: res.data.name,
+        description: res.data.description,
+        dateCreated: "some date",
+      };
+      return tokenMeta;
+    } catch (err) {
+      setWarning(err.message);
+    }
+  };
+
+  const loadItem = async () => {
+    try {
+      const tokenMeta = await getTokenMeta(tokenUri);
+      const author = await getTokenAuthor(tokenId);
+      const tokenInfo: ITokenInfo = {
+        tokenId,
+        author,
+        tokenMeta,
+      };
+      setTokenInfo(tokenInfo);
+      setLoading(false);
+    } catch (err) {
+      setWarning(err.message);
+      return;
+    }
   };
 
   const handlePurchaseButtonClick = async (event: any) => {
@@ -80,7 +97,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
   return (
     <div>
       {loading && <MarketplaceItemSkeleton />}
-      {tokenMeta && (
+      {tokenInfo && (
         <Card sx={{ display: "flex", flexDirection: "column" }}>
           <Link
             style={{ textDecoration: "none" }}
@@ -89,17 +106,17 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
             <CardActionArea>
               <CardMedia
                 component="img"
-                image={tokenMeta.imageUrl}
-                alt={tokenMeta.name}
+                image={tokenInfo.tokenMeta.imageUrl}
+                alt={tokenInfo.tokenMeta.name}
                 height={300}
               />
             </CardActionArea>
           </Link>
           <CardContent sx={{ flexGrow: 1 }}>
             <Typography gutterBottom variant="h5" component="h2">
-              {tokenMeta.name}
+              {tokenInfo.tokenMeta.name}
             </Typography>
-            <Typography>{tokenMeta.description}</Typography>
+            <Typography>{tokenInfo.tokenMeta.description}</Typography>
           </CardContent>
           <CardActions sx={{ p: 2 }}>
             <Link

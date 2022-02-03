@@ -1,10 +1,14 @@
 interface ITokenMeta {
-  tokenId: number;
-  imageUrl: string;
   name: string;
+  imageUrl: string;
   description?: string;
+  dateCreated?: string;
+}
+
+interface ITokenInfo {
+  tokenId: string;
   author: string;
-  dateCreated: string;
+  tokenMeta: ITokenMeta;
 }
 
 interface ITokenMetaAttributes {
