@@ -17,10 +17,16 @@ import { Link } from "react-router-dom";
 
 interface ITokenInfoProps {
   tokenMeta: ITokenMeta;
+  isListing: boolean;
+  listingInfo: IListingInfo | undefined;
 }
 
-const TokenInfo: React.FC<ITokenInfoProps> = ({ tokenMeta }) => {
-  const { name, description, dateCreated, author, value } = tokenMeta;
+const TokenInfo: React.FC<ITokenInfoProps> = ({
+  tokenMeta,
+  isListing,
+  listingInfo,
+}) => {
+  const { name, description, dateCreated, author } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [expanded, setExpanded] = React.useState<string | false>("panel1");
   const [contractAddress, setContractAddress] = React.useState<string>("");
@@ -71,50 +77,52 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({ tokenMeta }) => {
             Value:
           </Typography>
           <Typography color="text.secondary" variant="h5">
-            {value} PIX
+            {listingInfo.value} PIX
           </Typography>
-          <>
-            <Typography variant="overline" color="text.secondary">
-              Unlisted
-              <span
-                style={{ marginLeft: 2, fontSize: 8 }}
-                onMouseEnter={handlePopoverOpen}
-                onMouseLeave={handlePopoverClose}
+          {!isListing && (
+            <>
+              <Typography variant="overline" color="text.secondary">
+                Unlisted
+                <span
+                  style={{ marginLeft: 2, fontSize: 8 }}
+                  onMouseEnter={handlePopoverOpen}
+                  onMouseLeave={handlePopoverClose}
+                >
+                  &#9432;
+                </span>
+              </Typography>
+              <Popover
+                id="mouse-over-popover"
+                sx={{
+                  pointerEvents: "none",
+                }}
+                open={open}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
               >
-                &#9432;
-              </span>
-            </Typography>
-            <Popover
-              id="mouse-over-popover"
-              sx={{
-                pointerEvents: "none",
-              }}
-              open={open}
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              onClose={handlePopoverClose}
-              disableRestoreFocus
-            >
-              <Box sx={{ p: 1 }}>
-                <Typography color="text.secondary" fontSize={12}>
-                  Token not listed in the marketplace,
-                </Typography>
-                <Typography color="text.secondary" fontSize={12}>
-                  register as an author and post listing
-                </Typography>
-                <Typography color="text.secondary" fontSize={12}>
-                  to see the value here
-                </Typography>
-              </Box>
-            </Popover>
-          </>
+                <Box sx={{ p: 1 }}>
+                  <Typography color="text.secondary" fontSize={12}>
+                    Token not listed in the marketplace,
+                  </Typography>
+                  <Typography color="text.secondary" fontSize={12}>
+                    register as an author and post listing
+                  </Typography>
+                  <Typography color="text.secondary" fontSize={12}>
+                    to see the value here
+                  </Typography>
+                </Box>
+              </Popover>
+            </>
+          )}
         </Box>
       </Stack>
       <Box>

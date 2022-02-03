@@ -3,7 +3,6 @@ interface ITokenMeta {
   imageUrl: string;
   name: string;
   description?: string;
-  value: number;
   author: string;
   dateCreated: string;
 }

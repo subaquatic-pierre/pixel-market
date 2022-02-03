@@ -45,7 +45,6 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
           author: res.data.author,
           name: res.data.name,
           description: res.data.description,
-          value: attrs[0].value,
           dateCreated: "some date",
         };
         setTokenMeta(itemRes);

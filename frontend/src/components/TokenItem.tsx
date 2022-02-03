@@ -9,26 +9,31 @@ import Button from "@mui/material/Button";
 
 import useNotificationContext from "hooks/useNotificationContext";
 import useDappContext from "hooks/useDappContext";
+import { emptyAddress } from "const";
 
 import TokenInfo from "components/TokenInfo";
 
 interface IMarketplaceItemProps {
   tokenMeta: ITokenMeta;
+  listingInfo: IListingInfo | undefined;
+  isListing: boolean;
+  tokenId: string;
 }
 
 interface ITokenItemState {
   isAuthor: boolean;
-  listingInfo: IListingInfo | null;
-  isListing: boolean;
 }
 
 const initialTokenItemState: ITokenItemState = {
   isAuthor: true,
-  listingInfo: null,
-  isListing: false,
 };
 
-const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
+const TokenItem: React.FC<IMarketplaceItemProps> = ({
+  tokenMeta,
+  listingInfo,
+  tokenId,
+  isListing,
+}) => {
   const { imageUrl, name, author } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
@@ -51,27 +56,27 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
 
     const bigNumListingId = await marketplaceContract.createListing(
       tokenMeta.tokenId,
-      tokenMeta.value
+      42
     );
 
     const listingId = Number(bigNumListingId.toString());
     setSuccess(`Listing created with ID: ${listingId}`);
   };
 
-  // const submitRemoveListing = async () => {
-  //   const marketplaceContract = dappState.contracts.pixelMarketplace;
-  //   const NFTContract = dappState.contracts.pixelNFT;
+  const submitRemoveListing = async () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+    const NFTContract = dappState.contracts.pixelNFT;
 
-  //   // Remove any operators
-  //   await NFTContract.approve(emptyAddress, token.tokenId);
+    // Remove any operators
+    await NFTContract.approve(emptyAddress, tokenId);
 
-  //   // Change to remove listing method
-  //   const bigNumListingId = await marketplaceContract.removeListing(
-  //     listingInfo.listingId
-  //   );
-  //   const listingId = Number(bigNumListingId.toString());
-  //   setSuccess(`Listing removed with ID: ${listingId}`);
-  // };
+    // Change to remove listing method
+    const bigNumListingId = await marketplaceContract.removeListing(
+      listingInfo.listingId
+    );
+    const listingId = Number(bigNumListingId.toString());
+    setSuccess(`Listing removed with ID: ${listingId}`);
+  };
 
   const handleActionAreaButtonClick = (method: string) => {
     if (method === "create") {
@@ -115,7 +120,11 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
             }}
             elevation={0}
           >
-            <TokenInfo tokenMeta={tokenMeta} />
+            <TokenInfo
+              tokenMeta={tokenMeta}
+              isListing={isListing}
+              listingInfo={listingInfo}
+            />
             <CardActions sx={{ mt: "auto", px: 2, pb: 2, alignSelf: "end" }}>
               <Button
                 color="warning"

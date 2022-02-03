@@ -42,7 +42,6 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
           imageUrl: res.data.imageUrl,
           name: res.data.name,
           description: res.data.description,
-          value: attrs[0].value,
           dateCreated: "some date",
         };
         setTokenMeta(itemRes);
