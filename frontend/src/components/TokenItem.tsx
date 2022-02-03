@@ -6,6 +6,8 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 
 import useNotificationContext from "hooks/useNotificationContext";
 import useDappContext from "hooks/useDappContext";
@@ -40,6 +42,7 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({
   const [state, setState] = React.useState<ITokenItemState>(
     initialTokenItemState
   );
+  const [listingValue, setListingValue] = React.useState("");
 
   const checkIfListing = () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
@@ -56,7 +59,7 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({
 
     const bigNumListingId = await marketplaceContract.createListing(
       tokenMeta.tokenId,
-      42
+      listingValue
     );
 
     const listingId = Number(bigNumListingId.toString());
@@ -80,9 +83,13 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({
 
   const handleActionAreaButtonClick = (method: string) => {
     if (method === "create") {
-      submitCreateListing();
+      if (listingValue === "") {
+        setWarning("Please enter listing Amount");
+      } else {
+        submitCreateListing();
+      }
     } else if (method === "delete") {
-      // submitRemoveListing();
+      submitRemoveListing();
     }
   };
 
@@ -125,14 +132,46 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({
               isListing={isListing}
               listingInfo={listingInfo}
             />
-            <CardActions sx={{ mt: "auto", px: 2, pb: 2, alignSelf: "end" }}>
-              <Button
-                color="warning"
-                variant="contained"
-                // onClick={() => handleActionAreaButtonClick("delete")}
-              >
-                Remove Listing
-              </Button>
+            <CardActions
+              sx={{
+                mt: "auto",
+                px: 2,
+                pb: 2,
+                justifyContent: "space-between",
+              }}
+            >
+              {!isListing ? (
+                <>
+                  <Box>
+                    <TextField
+                      id="outlined-name"
+                      label="Value"
+                      name="listing-value"
+                      value={listingValue}
+                      onChange={(event) => setListingValue(event.target.value)}
+                      fullWidth
+                    />
+                  </Box>
+                  <Button
+                    color="success"
+                    variant="contained"
+                    onClick={() => handleActionAreaButtonClick("create")}
+                  >
+                    Create Listing
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Box></Box>
+                  <Button
+                    color="warning"
+                    variant="contained"
+                    onClick={() => handleActionAreaButtonClick("delete")}
+                  >
+                    Remove Listing
+                  </Button>
+                </>
+              )}
             </CardActions>
           </Card>
         </Grid>

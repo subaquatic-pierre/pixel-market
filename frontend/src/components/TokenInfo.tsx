@@ -58,7 +58,7 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({
 
   return (
     <CardContent>
-      <Stack spacing={2} sx={{ paddingLeft: 1.7, pt: 1.7, mb: 2 }}>
+      <Stack spacing={2} sx={{ mb: 2 }}>
         <Box>
           <Typography gutterBottom variant="h4">
             {name}
