@@ -33,13 +33,15 @@ const TokenListItemHeader: React.FC<ICardHeadingProps> = ({
       <>
         <Typography variant="overline" color="text.secondary">
           {subtitle}
-          <span
-            style={{ marginLeft: 2, fontSize: 8 }}
-            onMouseEnter={handlePopoverOpen}
-            onMouseLeave={handlePopoverClose}
-          >
-            &#9432;
-          </span>
+          {!listed && (
+            <span
+              style={{ marginLeft: 2, fontSize: 8 }}
+              onMouseEnter={handlePopoverOpen}
+              onMouseLeave={handlePopoverClose}
+            >
+              &#9432;
+            </span>
+          )}
         </Typography>
       </>
       <Popover

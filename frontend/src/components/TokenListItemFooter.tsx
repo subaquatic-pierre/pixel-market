@@ -45,21 +45,12 @@ const TokenListItemFooter: React.FC<ICardActionAreaFooterProps> = ({
   return (
     <div>
       <CardActions sx={{ p: 2 }} disableSpacing>
-        {/* {listingInfo && (
-          <Button
-            color="warning"
-            variant="contained"
-            onClick={() => handleActionAreaButtonClick("delete")}
-          >
-            Remove Listing
-          </Button>
-        )} */}
         <Button
-          color="success"
+          color="primary"
           variant="contained"
           onClick={() => navigate(`/token/${tokenId}`)}
         >
-          View Token
+          View
         </Button>
         <ExpandMore
           expand={expanded}

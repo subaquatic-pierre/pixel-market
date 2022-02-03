@@ -9,7 +9,6 @@ import Button from "@mui/material/Button";
 
 import useNotificationContext from "hooks/useNotificationContext";
 import useDappContext from "hooks/useDappContext";
-import { emptyAddress } from "const";
 
 import TokenInfo from "components/TokenInfo";
 
@@ -17,14 +16,29 @@ interface IMarketplaceItemProps {
   tokenMeta: ITokenMeta;
 }
 
+interface ITokenItemState {
+  isAuthor: boolean;
+  listingInfo: IListingInfo | null;
+  isListing: boolean;
+}
+
+const initialTokenItemState: ITokenItemState = {
+  isAuthor: true,
+  listingInfo: null,
+  isListing: false,
+};
+
 const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
   const { imageUrl, name, author } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
-  const [authorState, setAuthorState] = React.useState<any>({
-    loading: true,
-    isAuthor: true,
-  });
+  const [state, setState] = React.useState<ITokenItemState>(
+    initialTokenItemState
+  );
+
+  const checkIfListing = () => {
+    const marketplaceContract = dappState.contracts.pixelMarketplace;
+  };
 
   const submitCreateListing = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
@@ -67,28 +81,9 @@ const TokenItem: React.FC<IMarketplaceItemProps> = ({ tokenMeta }) => {
     }
   };
 
-  const checkAuthorshipStatus = async () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const isAuthor = await marketplaceContract.isAuthor(
-      dappState.currentAccount
-    );
-
-    if (isAuthor) {
-      setAuthorState({
-        isAuthor: true,
-        loading: false,
-      });
-    } else {
-      setAuthorState({
-        isAuthor: false,
-        loading: false,
-      });
-    }
-  };
-
   React.useEffect(() => {
     if (dappState.isInitialized) {
-      checkAuthorshipStatus();
+      setState((oldState) => ({ ...oldState, isAuthor: dappState.isAuthor }));
     }
   }, [dappState]);
 

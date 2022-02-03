@@ -43,7 +43,7 @@ const Layout: React.FC = ({ children }) => {
       >
         <Toolbar />
         <AlertMessage />
-        <Box sx={{ minHeight: "80vh" }} component="main">
+        <Box sx={{ minHeight: "90vh" }} component="main">
           {children}
         </Box>
         <Footer />

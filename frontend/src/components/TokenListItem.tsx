@@ -54,14 +54,6 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
       });
   };
 
-  const getLinkAddress = (): string => {
-    if (listingInfo) {
-      return `/marketplace/${listingInfo.listingId}`;
-    } else {
-      return ``;
-    }
-  };
-
   React.useEffect(() => {
     if (dappState.isInitialized) {
       loadTokenMeta();
