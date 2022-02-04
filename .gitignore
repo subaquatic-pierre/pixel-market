@@ -1,5 +1,7 @@
 node_modules
 .idea
+venv
+generative-art-nft
 
 #Hardhat files
 cache
@@ -11,3 +13,4 @@ server/meta
 
 scripts/contracts
 scripts/images
+scripts/meta
