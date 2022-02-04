@@ -59,8 +59,7 @@ const TokenItem: React.FC<ITokenItemProps> = ({
       listingValue
     );
 
-    const listingId = Number(bigNumListingId.toString());
-    setSuccess(`Listing created with ID: ${listingId}`);
+    setSuccess(`Listing created`);
   };
 
   const submitRemoveListing = async () => {
@@ -74,8 +73,7 @@ const TokenItem: React.FC<ITokenItemProps> = ({
     const bigNumListingId = await marketplaceContract.removeListing(
       listingInfo.listingId
     );
-    const listingId = Number(bigNumListingId.toString());
-    setSuccess(`Listing removed with ID: ${listingId}`);
+    setSuccess(`Listing removed`);
   };
 
   const handleActionAreaButtonClick = (method: string) => {
