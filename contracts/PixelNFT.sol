@@ -42,6 +42,8 @@ contract PixelNFT is ERC721Enumerable {
         return super.tokenURI(tokenId);
     }
 
+    event PermanentURI(string _value, uint256 indexed _id);
+
     function _setTokenURI(uint256 tokenId, string memory _tokenURI)
         internal
         virtual

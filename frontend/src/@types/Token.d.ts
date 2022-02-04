@@ -2,7 +2,7 @@ interface ITokenMeta {
   name: string;
   imageUri: string;
   description?: string;
-  dateCreated?: string;
+  attributes: ITokenMetaAttributes[];
 }
 
 interface ITokenInfo {
@@ -12,15 +12,8 @@ interface ITokenInfo {
 }
 
 interface ITokenMetaAttributes {
-  [key: string]: string;
-}
-
-interface ITokenFormMeta {
-  tokenId: number;
-  name: string;
-  description: string;
-  imageUri: string;
-  attributes: ITokenMetaAttributes[];
+  trait_type: string;
+  value: string;
 }
 
 interface ITokenIdToUriMap {

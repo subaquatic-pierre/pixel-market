@@ -27,7 +27,7 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({
   listingInfo,
 }) => {
   const { tokenMeta, author } = tokenInfo;
-  const { name, description, dateCreated } = tokenMeta;
+  const { name, description } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [expanded, setExpanded] = React.useState<string | false>("panel1");
   const [contractAddress, setContractAddress] = React.useState<string>("");
@@ -152,6 +152,28 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({
             aria-controls="panel2bh-content"
             id="panel2bh-header"
           >
+            <Typography>Attributes:</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={1}>
+              {tokenMeta.attributes.map((attr, i) => (
+                <Box key={i} display="flex" justifyContent="space-between">
+                  <Typography>{attr.trait_type}:</Typography>
+                  <Typography color="text.secondary">{attr.value}</Typography>
+                </Box>
+              ))}
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion
+          expanded={expanded === "panel3"}
+          onChange={handleChange("panel3")}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel3bh-content"
+            id="panel3bh-header"
+          >
             <Typography>Details:</Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -169,10 +191,6 @@ const TokenInfo: React.FC<ITokenInfoProps> = ({
                     {formatWalletAddress(author)}
                   </Typography>
                 </Link>
-              </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Typography>Date Created:</Typography>
-                <Typography color="text.secondary">{dateCreated}</Typography>
               </Box>
             </Stack>
           </AccordionDetails>

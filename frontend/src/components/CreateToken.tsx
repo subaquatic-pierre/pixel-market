@@ -113,19 +113,21 @@ const CreateListing = () => {
 
   const handleMetaDataSave = async (newTokenId: string): Promise<boolean> => {
     const url = `${HOST_URL}/save-meta`;
-    const data: ITokenFormMeta = {
-      tokenId: Number(newTokenId),
+    const tokenMeta: ITokenMeta = {
       name: formState.name,
       description: formState.description,
       imageUri: `${HOST_URL}/token-image/${newTokenId}.jpg`,
-      attributes: [
-        { value: formState.value },
-        { author: dappState.currentAccount },
-      ],
+      attributes: [],
+    };
+
+    const tokenInfo: ITokenInfo = {
+      tokenId: newTokenId,
+      author: dappState.currentAccount,
+      tokenMeta,
     };
 
     try {
-      await axios.post(url, data);
+      await axios.post(url, tokenInfo);
       return true;
     } catch (err) {
       setWarning(err.message);

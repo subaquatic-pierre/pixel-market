@@ -48,7 +48,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
         imageUri: res.data.imageUri,
         name: res.data.name,
         description: res.data.description,
-        dateCreated: "some date",
+        attributes: [],
       };
       return tokenMeta;
     } catch (err) {

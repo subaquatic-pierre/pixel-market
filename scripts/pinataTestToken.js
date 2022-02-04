@@ -58,7 +58,20 @@ const uploadMetaData = async (tokenId, imageUri) => {
       name: "The World",
       description:
         "The most amazing world, it exists within the life of experience",
-      attributes: [{ lightYearDistance: "42" }],
+      attributes: [
+        {
+          trait_type: "Base",
+          value: "Starfish",
+        },
+        {
+          trait_type: "Eyes",
+          value: "Big",
+        },
+        {
+          trait_type: "Light Year Distance",
+          value: "42",
+        },
+      ],
     },
   };
   const headers = {

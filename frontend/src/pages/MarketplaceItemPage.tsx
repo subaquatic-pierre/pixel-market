@@ -65,11 +65,11 @@ const MarketplaceItemPage = () => {
 
   const getTokenMeta = async (tokenUri: string): Promise<ITokenMeta> => {
     const itemMetaRes = await axios.get(tokenUri);
-    const tokenMeta = {
+    const tokenMeta: ITokenMeta = {
       name: itemMetaRes.data.name,
       imageUri: itemMetaRes.data.imageUri,
       description: itemMetaRes.data.description,
-      dateCreated: "somedate",
+      attributes: itemMetaRes.data.attributes,
     };
     return tokenMeta;
   };
