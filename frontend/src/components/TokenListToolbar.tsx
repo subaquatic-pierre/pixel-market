@@ -21,14 +21,14 @@ const TokenListToolbar: React.FC<ITokenListToolbar> = ({ isAuthor }) => {
   return (
     <Grid item>
       <Toolbar disableGutters sx={{ mb: 1 }}>
-        <Link style={{ textDecoration: "none", color: "inherit" }} to="/create">
+        {/* <Link style={{ textDecoration: "none", color: "inherit" }} to="/create">
           <Button variant="contained" sx={{ mr: 2 }}>
             <ListItemIcon sx={{ color: "inherit", minWidth: "40px" }}>
               <CreateIcon />
             </ListItemIcon>
             <ListItemText primary="New Token" />
           </Button>
-        </Link>
+        </Link> */}
         {!isAuthor && (
           <Link
             style={{ textDecoration: "none", color: "inherit" }}

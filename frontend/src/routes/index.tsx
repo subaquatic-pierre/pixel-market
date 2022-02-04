@@ -5,7 +5,7 @@ import DashboardPage from "pages/DashboardPage";
 import WalletPage from "pages/WalletPage";
 import MarketPlacePage from "pages/MarketplacePage";
 import MarketplaceItemPage from "pages/MarketplaceItemPage";
-import CreateTokenPage from "pages/CreateTokenPage";
+// import CreateTokenPage from "pages/CreateTokenPage";
 import TokenListPage from "pages/TokenListPage";
 import AuthorListPage from "pages/AuthorListPage";
 import RegisterAuthorPage from "pages/RegisterAuthorPage";
@@ -18,7 +18,7 @@ const BaseRouter = () => {
       <Route path="/wallet" element={<WalletPage />} />
       <Route path="/marketplace" element={<MarketPlacePage />} />
       <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
-      <Route path="/create" element={<CreateTokenPage />} />
+      {/* <Route path="/create" element={<CreateTokenPage />} /> */}
       <Route path="/tokens" element={<TokenListPage />} />
       <Route path="/authors" element={<AuthorListPage />} />
       <Route path="/register-author" element={<RegisterAuthorPage />} />
