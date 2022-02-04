@@ -9,7 +9,7 @@ export interface TokenMetaAttributes {
 export interface TokenMeta {
   name: string;
   description: string;
-  imageUrl: string;
+  imageUri: string;
   attributes: TokenMetaAttributes[];
 }
 
@@ -25,9 +25,9 @@ export const buildMetaUrl = (tokenId: string) => {
   return tokenUrl;
 };
 
-export const buildImageUrl = (tokenId: string) => {
-  const imageUrl = `${IMAGE_URL}/token-id-${tokenId}.jpeg`;
-  return imageUrl;
+export const buildimageUri = (tokenId: string) => {
+  const imageUri = `${IMAGE_URL}/token-id-${tokenId}.jpeg`;
+  return imageUri;
 };
 
 export const buildTokenMeta = (
@@ -39,7 +39,7 @@ export const buildTokenMeta = (
   const tokenMetaJson = {
     name: name,
     description: description,
-    imageUrl: buildImageUrl(tokenId),
+    imageUri: buildimageUri(tokenId),
     attributes: attrs,
   };
 

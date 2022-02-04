@@ -67,7 +67,7 @@ const MarketplaceItemPage = () => {
     const itemMetaRes = await axios.get(tokenUri);
     const tokenMeta = {
       name: itemMetaRes.data.name,
-      imageUrl: itemMetaRes.data.imageUrl,
+      imageUri: itemMetaRes.data.imageUri,
       description: itemMetaRes.data.description,
       dateCreated: "somedate",
     };

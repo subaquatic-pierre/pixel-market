@@ -1,6 +1,6 @@
 interface ITokenMeta {
   name: string;
-  imageUrl: string;
+  imageUri: string;
   description?: string;
   dateCreated?: string;
 }
@@ -19,7 +19,7 @@ interface ITokenFormMeta {
   tokenId: number;
   name: string;
   description: string;
-  imageUrl: string;
+  imageUri: string;
   attributes: ITokenMetaAttributes[];
 }
 

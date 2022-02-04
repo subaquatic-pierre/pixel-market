@@ -36,7 +36,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
     try {
       const res = await axios.get(tokenUri);
       const tokenMeta: ITokenMeta = {
-        imageUrl: res.data.imageUrl,
+        imageUri: res.data.imageUri,
         name: res.data.name,
         description: res.data.description,
         dateCreated: "some date",
@@ -85,7 +85,7 @@ const TokenListItem: React.FC<ITokenListItemProps> = ({
             <CardActionArea>
               <CardMedia
                 component="img"
-                image={tokenMeta.imageUrl}
+                image={tokenMeta.imageUri}
                 alt={tokenMeta.name}
                 height={300}
               />

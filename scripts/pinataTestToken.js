@@ -55,6 +55,9 @@ const uploadMetaData = async (tokenId, imageUri) => {
     pinataContent: {
       tokenId: tokenId,
       imageUri: imageUri,
+      name: "The World",
+      description:
+        "The most amazing world, it exists within the life of experience",
       attributes: [{ lightYearDistance: "42" }],
     },
   };
@@ -89,7 +92,7 @@ const createToken = async (tokenUri, tokenId) => {
 };
 
 const main = async () => {
-  const tokenId = "7";
+  const tokenId = "8";
   const imageUri = await uploadImage(tokenId);
   const tokenUri = await uploadMetaData(tokenId, imageUri);
   const res = await createToken(tokenUri);

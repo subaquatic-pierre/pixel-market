@@ -37,17 +37,13 @@ const TokenItem: React.FC<ITokenItemProps> = ({
   isListing,
 }) => {
   const { tokenMeta, author } = tokenInfo;
-  const { imageUrl, name } = tokenMeta;
+  const { imageUri, name } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [state, setState] = React.useState<ITokenItemState>(
     initialTokenItemState
   );
   const [listingValue, setListingValue] = React.useState("");
-
-  const checkIfListing = () => {
-    const marketplaceContract = dappState.contracts.pixelMarketplace;
-  };
 
   const submitCreateListing = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
@@ -112,7 +108,7 @@ const TokenItem: React.FC<ITokenItemProps> = ({
           >
             <CardMedia
               component="img"
-              image={imageUrl}
+              image={imageUri}
               alt={name}
               height={500}
             />

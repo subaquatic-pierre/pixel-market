@@ -58,8 +58,9 @@ const TokenPage = () => {
   const getTokenMeta = async (_tokenUri: string): Promise<ITokenMeta> => {
     try {
       const itemMetaRes = await axios.get(_tokenUri);
+      console.log(itemMetaRes);
       const tokenMeta: ITokenMeta = {
-        imageUrl: itemMetaRes.data.imageUrl,
+        imageUri: itemMetaRes.data.imageUri,
         name: itemMetaRes.data.name,
         description: itemMetaRes.data.description,
         dateCreated: "somedate",
