@@ -10,7 +10,8 @@ import TokenListPage from "pages/TokenListPage";
 import AuthorListPage from "pages/AuthorListPage";
 import RegisterAuthorPage from "pages/RegisterAuthorPage";
 import TokenPage from "pages/TokenPage";
-import ListingsListPage from "pages/ListingsListPage.tsx";
+import ListingsListPage from "pages/ListingsListPage";
+import AdminListPage from "pages/AdminListPage";
 
 const BaseRouter = () => {
   return (
@@ -25,6 +26,7 @@ const BaseRouter = () => {
       <Route path="/register-author" element={<RegisterAuthorPage />} />
       <Route path="/token/:id" element={<TokenPage />} />
       <Route path="/listings" element={<ListingsListPage />} />
+      <Route path="/admins" element={<AdminListPage />} />
     </Routes>
   );
 };

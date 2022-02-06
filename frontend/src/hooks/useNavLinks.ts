@@ -18,6 +18,7 @@ export function useNavLinks() {
 const adminLinks: INavLink[] = [
   { text: "Authors", link: "authors", icon: "author" },
   { text: "Listings", link: "listings", icon: "listings" },
+  { text: "Admins", link: "admins", icon: "admins" },
 ];
 
 export function useAdminLinks() {
