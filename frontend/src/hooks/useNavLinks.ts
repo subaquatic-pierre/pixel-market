@@ -1,4 +1,10 @@
-const navLinks = [
+interface INavLink {
+  text: string;
+  link: string;
+  icon: string;
+}
+
+const navLinks: INavLink[] = [
   { text: "Dashboard", link: "/", icon: "dashboard" },
   { text: "Wallet", link: "wallet", icon: "wallet" },
   { text: "Marketplace", link: "marketplace", icon: "market" },
@@ -9,7 +15,10 @@ export function useNavLinks() {
   return navLinks;
 }
 
-const adminLinks = [{ text: "Authors", link: "authors", icon: "author" }];
+const adminLinks: INavLink[] = [
+  { text: "Authors", link: "authors", icon: "author" },
+  { text: "Listings", link: "listings", icon: "listings" },
+];
 
 export function useAdminLinks() {
   return adminLinks;

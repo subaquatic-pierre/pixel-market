@@ -7,6 +7,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import TokenIcon from "@mui/icons-material/Token";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
+import ListIcon from "@mui/icons-material/List";
 
 const filterIconByName = (iconName: string) => {
   switch (iconName) {
@@ -21,7 +22,7 @@ const filterIconByName = (iconName: string) => {
     case "token":
       return <TokenIcon />;
     case "listings":
-      return <AddBusinessIcon />;
+      return <ListIcon />;
     case "author":
       return <AddReactionIcon />;
 
