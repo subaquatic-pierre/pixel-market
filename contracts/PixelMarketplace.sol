@@ -15,10 +15,20 @@ struct Author {
     bool exists;
 }
 
+enum UpdateAdminMethod {
+    CREATE,
+    REMOVE
+}
+
 enum ListingStatus {
     AVAILABLE,
     SOLD,
     REMOVED
+}
+
+struct Admin {
+    address walletAddress;
+    bool activeStatus;
 }
 
 struct Listing {
@@ -36,6 +46,10 @@ contract PixelMarketplace is IERC721Receiver {
     PixelNFT NFTContract;
     PixelToken tokenContract;
 
+    // Create admin list
+    Counters.Counter public adminCount;
+    mapping(address => Admin) public admins;
+
     // Marketplace items
     Counters.Counter public listingIds;
     mapping(uint256 => Listing) public listings;
@@ -48,12 +62,20 @@ contract PixelMarketplace is IERC721Receiver {
     // Author listing IDs
     mapping(address => uint256[]) addressToListingIds;
 
+    // EVENTS
     event AuthorUpdate(
         uint256 authorCount,
         address _authorWalletAddress,
         string _authorName,
         string _authorEmail,
         bool isActive
+    );
+
+    event AdminUpdate(
+        uint256 adminCount,
+        address walletAddress,
+        bool activeStatus,
+        UpdateAdminMethod
     );
 
     event ListingCreated(address _authorId, uint256 _listingId, uint256 value);
@@ -68,6 +90,9 @@ contract PixelMarketplace is IERC721Receiver {
         string memory _authorEmail = "default@email.com";
 
         _updateAuthor(msg.sender, _authorName, _authorEmail, true);
+
+        bool adminActiveStatus = true;
+        _updateAdmin(msg.sender, adminActiveStatus, UpdateAdminMethod.CREATE);
     }
 
     function name() public pure returns (string memory) {
@@ -109,6 +134,64 @@ contract PixelMarketplace is IERC721Receiver {
         );
     }
 
+    function createAdmin(address _walletAddress) public returns (bool) {
+        // Add new admin to admin mapping
+        _updateAdmin(_walletAddress, true, UpdateAdminMethod.CREATE);
+
+        return true;
+    }
+
+    function removeAdmin(address _walletAddress) public returns (bool) {
+        Admin memory admin = admins[_walletAddress];
+        require(admin.walletAddress != address(0), "Admin does not exist");
+
+        _updateAdmin(_walletAddress, false, UpdateAdminMethod.REMOVE);
+
+        return true;
+    }
+
+    function _updateAdmin(
+        address _walletAddress,
+        bool activeStatus,
+        UpdateAdminMethod method
+    ) private {
+        // Only contract only can create or remove admins
+        require(
+            msg.sender == _owner,
+            "Only contract owner can add or remove admins"
+        );
+
+        if (method == UpdateAdminMethod.CREATE) {
+            adminCount.increment();
+            Admin memory newAdmin = Admin(_walletAddress, activeStatus);
+            admins[_walletAddress] = newAdmin;
+
+            emit AdminUpdate(
+                adminCount.current(),
+                _walletAddress,
+                activeStatus,
+                method
+            );
+        }
+
+        if (method == UpdateAdminMethod.CREATE) {
+            Admin memory admin = admins[_walletAddress];
+
+            // Update admin active status
+            admin.activeStatus = activeStatus;
+
+            // Update admin in admin map
+            admins[_walletAddress] = admin;
+
+            emit AdminUpdate(
+                adminCount.current(),
+                _walletAddress,
+                activeStatus,
+                method
+            );
+        }
+    }
+
     function _updateAuthor(
         address _walletAddress,
         string memory _authorName,
@@ -139,7 +222,13 @@ contract PixelMarketplace is IERC721Receiver {
     }
 
     function isAdmin() public view returns (bool) {
-        return msg.sender == _owner;
+        Admin memory admin = admins[msg.sender];
+
+        if (admin.activeStatus == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function _listingExists() private pure returns (bool) {
