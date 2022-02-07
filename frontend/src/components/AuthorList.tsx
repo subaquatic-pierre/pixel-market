@@ -1,7 +1,9 @@
 import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
+import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 

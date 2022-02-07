@@ -1,18 +1,25 @@
 import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
+import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
+import AdminListToolbar from "components/AdminListToolbar";
+
 const columns: GridColDef[] = [
   { field: "adminId", headerName: "ID", width: 150 },
+  { field: "name", headerName: "Name", width: 150 },
+  { field: "email", headerName: "Email", width: 150 },
   { field: "status", headerName: "Active Status", width: 150 },
   { field: "walletAddress", headerName: "Wallet Address", width: 370 },
 ];
 
 interface IAdminRow {
   id: number;
+  name: string;
+  email: string;
   adminId: string;
   walletAddress: string;
   status: string;
@@ -34,6 +41,8 @@ const AdminList = () => {
       try {
         const _admin: IAdminRow = {
           id: adminRes.adminId.toString(),
+          name: adminRes.name,
+          email: adminRes.email,
           adminId: adminRes.adminId.toString(),
           walletAddress: adminRes.walletAddress,
           status: adminRes.activeStatus,
@@ -52,9 +61,12 @@ const AdminList = () => {
   }, [dappState]);
 
   return (
-    <Paper sx={{ height: 500, width: "100%" }}>
-      <DataGrid rows={admins} columns={columns} />
-    </Paper>
+    <Box>
+      <AdminListToolbar />
+      <Paper sx={{ height: 500, width: "100%" }}>
+        <DataGrid rows={admins} columns={columns} />
+      </Paper>
+    </Box>
   );
 };
 
