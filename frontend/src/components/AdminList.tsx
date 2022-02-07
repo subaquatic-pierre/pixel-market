@@ -1,5 +1,6 @@
 import React from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { useNavigate } from "react-router";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -20,6 +21,7 @@ const AdminList = () => {
   const [dappState, _] = useDappContext();
   const [admins, setAdmins] = React.useState<IAdmin[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
+  const navigate = useNavigate();
 
   const getAdmins = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
@@ -46,6 +48,11 @@ const AdminList = () => {
     setAdmins(_admins);
   };
 
+  const handleRowClick = ({ row }: GridRowParams) => {
+    const adminId = row.id.toString();
+    navigate(`/admin/${adminId}`);
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) getAdmins();
   }, [dappState]);
@@ -54,7 +61,13 @@ const AdminList = () => {
     <Box>
       <AdminListToolbar />
       <Paper sx={{ height: 500, width: "100%" }}>
-        <DataGrid disableSelectionOnClick rows={admins} columns={columns} />
+        <DataGrid
+          disableSelectionOnClick
+          rows={admins}
+          columns={columns}
+          sx={{ ".MuiDataGrid-row": { "&:hover": { cursor: "pointer" } } }}
+          onRowClick={handleRowClick}
+        />
       </Paper>
     </Box>
   );

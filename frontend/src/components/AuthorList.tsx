@@ -1,5 +1,6 @@
 import React from "react";
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { useNavigate } from "react-router";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -8,7 +9,6 @@ import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
 import AuthorListToolbar from "components/AuthorListToolbar";
-import { useNavigate } from "react-router";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 150 },
