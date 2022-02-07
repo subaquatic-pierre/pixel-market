@@ -89,13 +89,14 @@ const ListingsList = () => {
 
   return (
     <Box>
-      {selected.length >= 0 && <ListingsListToolbar selected={selected} />}
+      {selected.length > 0 && <ListingsListToolbar selected={selected} />}
       <Paper sx={{ height: 500, width: "100%" }}>
         <DataGrid
           checkboxSelection={true}
           onStateChange={handleGridStateChange}
           rows={listings}
           columns={columns}
+          isRowSelectable={({ row }) => row.status !== "Removed"}
         />
       </Paper>
     </Box>

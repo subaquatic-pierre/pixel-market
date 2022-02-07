@@ -1,5 +1,5 @@
 import React from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -8,6 +8,7 @@ import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
 import AuthorListToolbar from "components/AuthorListToolbar";
+import { useNavigate } from "react-router";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 150 },
@@ -17,19 +18,12 @@ const columns: GridColDef[] = [
   { field: "address", headerName: "Wallet Address", width: 370 },
 ];
 
-interface IAuthor {
-  id: number;
-  name: string;
-  email: string;
-  isActive: boolean;
-  address: string;
-}
-
 const AuthorRequestList = () => {
   const [dappState, _] = useDappContext();
   const [authors, setAuthors] = React.useState<IAuthor[]>([]);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
+  const navigate = useNavigate();
 
   const getAuthors = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
@@ -42,7 +36,7 @@ const AuthorRequestList = () => {
       const authorRes = await marketplaceContract.authors(authorAddress);
       try {
         const _author: IAuthor = {
-          id: i,
+          id: authorRes.id,
           name: authorRes.authorName,
           email: authorRes.authorEmail,
           isActive: authorRes.isActive,
@@ -57,6 +51,11 @@ const AuthorRequestList = () => {
     setAuthors(_authors);
   };
 
+  const handleRowClick = ({ row }: GridRowParams) => {
+    const authorId = row.id.toString();
+    navigate(`/author/${authorId}`);
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) getAuthors();
   }, [dappState]);
@@ -65,7 +64,13 @@ const AuthorRequestList = () => {
     <Box>
       {selected.length > 0 && <AuthorListToolbar selected={selected} />}
       <Paper sx={{ height: 500, width: "100%" }}>
-        <DataGrid rows={authors} columns={columns} />
+        <DataGrid
+          onRowClick={handleRowClick}
+          disableSelectionOnClick
+          rows={authors}
+          columns={columns}
+          sx={{ ".MuiDataGrid-row": { "&:hover": { cursor: "pointer" } } }}
+        />
       </Paper>
     </Box>
   );

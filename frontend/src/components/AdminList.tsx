@@ -9,41 +9,31 @@ import useNotificationContext from "hooks/useNotificationContext";
 import AdminListToolbar from "components/AdminListToolbar";
 
 const columns: GridColDef[] = [
-  { field: "adminId", headerName: "ID", width: 150 },
+  { field: "id", headerName: "ID", width: 150 },
   { field: "name", headerName: "Name", width: 150 },
   { field: "email", headerName: "Email", width: 150 },
   { field: "status", headerName: "Active Status", width: 150 },
   { field: "walletAddress", headerName: "Wallet Address", width: 370 },
 ];
 
-interface IAdminRow {
-  id: number;
-  name: string;
-  email: string;
-  adminId: string;
-  walletAddress: string;
-  status: string;
-}
-
 const AdminList = () => {
   const [dappState, _] = useDappContext();
-  const [admins, setAdmins] = React.useState<IAdminRow[]>([]);
+  const [admins, setAdmins] = React.useState<IAdmin[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
 
   const getAdmins = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const adminCountBigNum = await marketplaceContract.adminCount();
     const adminCount = Number(adminCountBigNum.toString());
-    const _admins: IAdminRow[] = [];
+    const _admins: IAdmin[] = [];
 
     for (let i = 0; i < adminCount; i++) {
       const adminRes = await marketplaceContract.admins(i);
       try {
-        const _admin: IAdminRow = {
-          id: adminRes.adminId.toString(),
+        const _admin: IAdmin = {
+          id: adminRes.id.toString(),
           name: adminRes.name,
           email: adminRes.email,
-          adminId: adminRes.adminId.toString(),
           walletAddress: adminRes.walletAddress,
           status: adminRes.activeStatus,
         };
@@ -64,7 +54,7 @@ const AdminList = () => {
     <Box>
       <AdminListToolbar />
       <Paper sx={{ height: 500, width: "100%" }}>
-        <DataGrid rows={admins} columns={columns} />
+        <DataGrid disableSelectionOnClick rows={admins} columns={columns} />
       </Paper>
     </Box>
   );

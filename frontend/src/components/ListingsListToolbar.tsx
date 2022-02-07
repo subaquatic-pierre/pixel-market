@@ -47,12 +47,13 @@ const ListingsListToolbar: React.FC<IListingsListToolbarProps> = ({
         <Button
           variant="contained"
           sx={{ mr: 2 }}
+          color="error"
           onClick={handleDeleteSelected}
         >
           <ListItemIcon sx={{ color: "inherit", minWidth: "40px" }}>
             <DeleteIcon />
           </ListItemIcon>
-          <ListItemText primary="Delete Selected" />
+          <ListItemText primary="Remove" />
         </Button>
       </Toolbar>
     </Grid>

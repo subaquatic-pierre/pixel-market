@@ -8,6 +8,7 @@ import "./PixelNFT.sol";
 import "./PixelToken.sol";
 
 struct Author {
+    uint256 id;
     address authorWallet;
     string authorName;
     string authorEmail;
@@ -22,9 +23,9 @@ enum ListingStatus {
 }
 
 struct Admin {
+    uint256 id;
     string name;
     string email;
-    uint256 adminId;
     address walletAddress;
     bool activeStatus;
 }
@@ -142,9 +143,9 @@ contract PixelMarketplace is IERC721Receiver {
         );
         // Add new admin to admin mapping
         Admin memory newAdmin = Admin(
+            adminCount.current(),
             adminName,
             adminEmail,
-            adminCount.current(),
             _walletAddress,
             true
         );
@@ -171,7 +172,7 @@ contract PixelMarketplace is IERC721Receiver {
             admin.activeStatus == true && admin.walletAddress == _walletAddress
         ) {
             admin.activeStatus = false;
-            admins[admin.adminId] = admin;
+            admins[admin.id] = admin;
             return true;
         }
 
@@ -202,7 +203,7 @@ contract PixelMarketplace is IERC721Receiver {
             }
         }
 
-        Admin memory blankAdmin = Admin("", "", 0, address(0), false);
+        Admin memory blankAdmin = Admin(0, "", "", address(0), false);
         return blankAdmin;
     }
 
@@ -230,6 +231,7 @@ contract PixelMarketplace is IERC721Receiver {
         bool setAuthorExistsInMap = true;
 
         Author memory newAuthor = Author(
+            authorCount.current(),
             _walletAddress,
             _authorName,
             _authorEmail,
@@ -239,7 +241,6 @@ contract PixelMarketplace is IERC721Receiver {
 
         authors[_walletAddress] = newAuthor;
         authorAddressList.push(_walletAddress);
-        authorCount.increment();
 
         emit AuthorUpdate(
             authorCount.current(),
@@ -248,6 +249,7 @@ contract PixelMarketplace is IERC721Receiver {
             _authorEmail,
             _isActiveStatus
         );
+        authorCount.increment();
     }
 
     function _listingExists() private pure returns (bool) {
