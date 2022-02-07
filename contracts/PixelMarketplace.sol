@@ -4,46 +4,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-// import "./Structs.sol";
+import "./Structs.sol";
 import "./PixelNFT.sol";
 import "./PixelToken.sol";
-
-struct Admin {
-    uint256 id;
-    address walletAddress;
-    string name;
-    string email;
-    ActiveStatus activeStatus;
-}
-
-struct Listing {
-    uint256 id;
-    uint256 tokenId;
-    uint256 value;
-    Author author;
-    ListingStatus status;
-}
-
-enum ListingStatus {
-    AVAILABLE,
-    SOLD,
-    REMOVED
-}
-
-enum ActiveStatus {
-    ACTIVE,
-    INACTIVE,
-    NONE
-}
-
-struct Author {
-    uint256 id;
-    address walletAddress;
-    string name;
-    string email;
-    Listing[] listings;
-    ActiveStatus activeStatus;
-}
 
 contract PixelMarketplace is IERC721Receiver {
     using Counters for Counters.Counter;
