@@ -7,7 +7,7 @@ struct User {
     address walletAddress;
     string name;
     string email;
-    Listing[] listings;
+    uint256[] listingIds;
     ActiveStatus adminStatus;
     ActiveStatus authorStatus;
 }
@@ -21,13 +21,14 @@ struct Listing {
 }
 
 enum ListingStatus {
+    NONE,
     AVAILABLE,
     SOLD,
     REMOVED
 }
 
 enum ActiveStatus {
+    NONE,
     ACTIVE,
-    INACTIVE,
-    NONE
+    INACTIVE
 }

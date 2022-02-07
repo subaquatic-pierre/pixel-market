@@ -40,7 +40,8 @@ const RequestAuthorship: React.FC = () => {
 
   const submitTransaction = async () => {
     try {
-      const resHash = await contract.requestAuthorship(
+      const resHash = await contract.createAuthor(
+        dappState.currentAccount,
         formState.name,
         formState.email
       );

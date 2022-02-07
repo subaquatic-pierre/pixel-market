@@ -140,10 +140,11 @@ const DappContextProvider: React.FC = ({ children }) => {
 
   const checkAuthorshipStatus = async (contracts) => {
     const marketplaceContract = contracts.pixelMarketplace;
-    const accounts = await window.ethereum.request({
-      method: "eth_accounts",
-    });
-    const isAuthor = await marketplaceContract.isAuthor(accounts[0]);
+    // const accounts = await window.ethereum.request({
+    //   method: "eth_accounts",
+    // });
+
+    const isAuthor = await marketplaceContract.isAuthor();
 
     if (isAuthor) {
       setDappState((oldState) => ({ ...oldState, isAuthor: true }));
