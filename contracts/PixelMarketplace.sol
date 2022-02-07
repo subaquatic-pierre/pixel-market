@@ -22,6 +22,8 @@ enum ListingStatus {
 }
 
 struct Admin {
+    string name;
+    string email;
     uint256 adminId;
     address walletAddress;
     bool activeStatus;
@@ -68,6 +70,8 @@ contract PixelMarketplace is IERC721Receiver {
     );
 
     event AdminUpdate(
+        string name,
+        string email,
         uint256 adminCount,
         address walletAddress,
         bool activeStatus
@@ -85,7 +89,7 @@ contract PixelMarketplace is IERC721Receiver {
         string memory _authorEmail = "default@email.com";
 
         _updateAuthor(msg.sender, _authorName, _authorEmail, true);
-        createAdmin(msg.sender);
+        createAdmin(msg.sender, _authorName, _authorEmail);
     }
 
     function name() public pure returns (string memory) {
@@ -127,13 +131,19 @@ contract PixelMarketplace is IERC721Receiver {
         );
     }
 
-    function createAdmin(address _walletAddress) public returns (bool) {
+    function createAdmin(
+        address _walletAddress,
+        string memory adminName,
+        string memory adminEmail
+    ) public returns (bool) {
         require(
             msg.sender == _owner,
             "Only contract owner can add or remove admins"
         );
         // Add new admin to admin mapping
         Admin memory newAdmin = Admin(
+            adminName,
+            adminEmail,
             adminCount.current(),
             _walletAddress,
             true
@@ -141,7 +151,13 @@ contract PixelMarketplace is IERC721Receiver {
 
         admins[adminCount.current()] = newAdmin;
 
-        emit AdminUpdate(adminCount.current(), _walletAddress, true);
+        emit AdminUpdate(
+            adminName,
+            adminEmail,
+            adminCount.current(),
+            _walletAddress,
+            true
+        );
 
         adminCount.increment();
 
@@ -159,7 +175,13 @@ contract PixelMarketplace is IERC721Receiver {
             return true;
         }
 
-        emit AdminUpdate(adminCount.current(), _walletAddress, false);
+        emit AdminUpdate(
+            admin.name,
+            admin.email,
+            adminCount.current(),
+            _walletAddress,
+            false
+        );
 
         return false;
     }
@@ -180,18 +202,23 @@ contract PixelMarketplace is IERC721Receiver {
             }
         }
 
-        Admin memory blankAdmin = Admin(0, address(0), false);
+        Admin memory blankAdmin = Admin("", "", 0, address(0), false);
         return blankAdmin;
     }
 
-    function isAdmin() public view returns (bool) {
-        Admin memory admin = _findAdmin(msg.sender);
+    function _isAdmin(address _walletAddress) private view returns (bool) {
+        Admin memory admin = _findAdmin(_walletAddress);
 
         if (admin.activeStatus == true && admin.walletAddress != address(0)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    function isAdmin() public view returns (bool) {
+        bool result = _isAdmin(msg.sender);
+        return result;
     }
 
     function _updateAuthor(
