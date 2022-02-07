@@ -4,9 +4,46 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./Structs.sol";
+// import "./Structs.sol";
 import "./PixelNFT.sol";
 import "./PixelToken.sol";
+
+struct Admin {
+    uint256 id;
+    address walletAddress;
+    string name;
+    string email;
+    ActiveStatus activeStatus;
+}
+
+struct Listing {
+    uint256 id;
+    uint256 tokenId;
+    uint256 value;
+    Author author;
+    ListingStatus status;
+}
+
+enum ListingStatus {
+    AVAILABLE,
+    SOLD,
+    REMOVED
+}
+
+enum ActiveStatus {
+    ACTIVE,
+    INACTIVE,
+    NONE
+}
+
+struct Author {
+    uint256 id;
+    address walletAddress;
+    string name;
+    string email;
+    Listing[] listings;
+    ActiveStatus activeStatus;
+}
 
 contract PixelMarketplace is IERC721Receiver {
     using Counters for Counters.Counter;
@@ -15,37 +52,30 @@ contract PixelMarketplace is IERC721Receiver {
     PixelNFT NFTContract;
     PixelToken tokenContract;
 
-    // Create admin list
+    // Create user list
     Counters.Counter public adminCount;
-    mapping(uint256 => Admin) public admins;
+    Counters.Counter public userCount;
+    mapping(uint256 => User) public users;
 
     // Marketplace items
-    Counters.Counter public listingIds;
+    Counters.Counter public listingCount;
     mapping(uint256 => Listing) public listings;
-
-    // Marketplace authors
-    Counters.Counter public authorCount;
-    address[] public authorAddressList;
-    mapping(address => Author) public authors;
-
-    // Author listing IDs
-    mapping(address => uint256[]) addressToListingIds;
 
     // EVENTS
     event AuthorUpdate(
-        uint256 authorCount,
-        address _authorWalletAddress,
-        string _authorName,
-        string _authorEmail,
-        bool isActive
+        uint256 id,
+        address walletAddress,
+        string name,
+        string email,
+        ActiveStatus
     );
 
     event AdminUpdate(
+        uint256 id,
+        address walletAddress,
         string name,
         string email,
-        uint256 adminCount,
-        address walletAddress,
-        bool activeStatus
+        ActiveStatus
     );
 
     event ListingCreated(address _authorId, uint256 _listingId, uint256 value);
@@ -56,11 +86,14 @@ contract PixelMarketplace is IERC721Receiver {
         tokenContract = PixelToken(_tokenContractAddress);
 
         // Default author
-        string memory _authorName = "Default Author";
-        string memory _authorEmail = "default@email.com";
+        string memory _name = "Default Author";
+        string memory _email = "default@email.com";
 
-        _updateAuthor(msg.sender, _authorName, _authorEmail, true);
-        createAdmin(msg.sender, _authorName, _authorEmail);
+        // Create blank admin and blank author
+        createBlankMapEntries();
+
+        createAuthor(msg.sender, _name, _email);
+        createAdmin(msg.sender, _name, _email);
     }
 
     function name() public pure returns (string memory) {
@@ -74,36 +107,40 @@ contract PixelMarketplace is IERC721Receiver {
         bytes calldata data
     ) public override returns (bytes4) {}
 
-    function isAuthor(address _walletAddress) public view returns (bool) {
-        Author memory _author = authors[_walletAddress];
+    function createBlankMapEntries() private {
+        uint256 adminId = adminCount.current();
 
-        if (_author.exists == true) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function requestAuthorship(
-        string memory _authorName,
-        string memory _authorEmail
-    ) public {
-        // Check if author already exists
-        bool _isAuthor = isAuthor(msg.sender);
-        require(!_isAuthor, "Author already exists");
-
-        bool _setAuthorExistsInMap = true;
-
-        _updateAuthor(
-            msg.sender,
-            _authorName,
-            _authorEmail,
-            _setAuthorExistsInMap
+        // Create blank admin at position 0
+        Admin memory newAdmin = Admin(
+            adminId,
+            walletAddress,
+            adminName,
+            adminEmail,
+            ActiveStatus.ACTIVE
         );
+
+        admins[adminId] = newAdmin;
+        adminCount.increment();
+
+        // Create blank author at position 0
+
+        uint256 authorId = authorCount.current();
+
+        Admin memory newAuthor = Author(
+            authorCount,
+            walletAddress,
+            adminName,
+            adminEmail,
+            [],
+            ActiveStatus.ACTIVE
+        );
+
+        authors[adminId] = newAdmin;
+        authorCount.increment();
     }
 
     function createAdmin(
-        address _walletAddress,
+        address walletAddress,
         string memory adminName,
         string memory adminEmail
     ) public returns (bool) {
@@ -111,23 +148,25 @@ contract PixelMarketplace is IERC721Receiver {
             msg.sender == _owner,
             "Only contract owner can add or remove admins"
         );
+
+        uint256 adminId = adminCount.current();
         // Add new admin to admin mapping
         Admin memory newAdmin = Admin(
-            adminCount.current(),
+            adminId,
+            walletAddress,
             adminName,
             adminEmail,
-            _walletAddress,
-            true
+            ActiveStatus.ACTIVE
         );
 
-        admins[adminCount.current()] = newAdmin;
+        admins[adminId] = newAdmin;
 
         emit AdminUpdate(
+            adminId,
+            walletAddress,
             adminName,
             adminEmail,
-            adminCount.current(),
-            _walletAddress,
-            true
+            ActiveStatus.ACTIVE
         );
 
         adminCount.increment();
@@ -135,29 +174,30 @@ contract PixelMarketplace is IERC721Receiver {
         return true;
     }
 
-    function removeAdmin(address _walletAddress) public returns (bool) {
-        Admin memory admin = _findAdmin(_walletAddress);
+    function removeAdmin(address walletAddress) public returns (bool) {
+        Admin memory admin = _findAdmin(walletAddress);
 
         if (
-            admin.activeStatus == true && admin.walletAddress == _walletAddress
+            admin.activeStatus == ActiveStatus.ACTIVE &&
+            admin.walletAddress == walletAddress
         ) {
-            admin.activeStatus = false;
+            admin.activeStatus = ActiveStatus.INACTIVE;
             admins[admin.id] = admin;
             return true;
         }
 
         emit AdminUpdate(
+            admin.id,
+            walletAddress,
             admin.name,
             admin.email,
-            adminCount.current(),
-            _walletAddress,
-            false
+            ActiveStatus.INACTIVE
         );
 
         return false;
     }
 
-    function _findAdmin(address _walletAddress)
+    function _findAdmin(address walletAddress)
         private
         view
         returns (Admin memory)
@@ -165,22 +205,25 @@ contract PixelMarketplace is IERC721Receiver {
         for (uint256 i = 0; i < adminCount.current(); i++) {
             Admin memory admin = admins[i];
 
-            if (
-                admin.activeStatus == true &&
-                admin.walletAddress == _walletAddress
-            ) {
+            if (admin.walletAddress == walletAddress) {
                 return admin;
             }
         }
 
-        Admin memory blankAdmin = Admin(0, "", "", address(0), false);
+        Admin memory blankAdmin = Admin(
+            0,
+            address(0),
+            "",
+            "",
+            ActiveStatus.INACTIVE
+        );
         return blankAdmin;
     }
 
-    function _isAdmin(address _walletAddress) private view returns (bool) {
-        Admin memory admin = _findAdmin(_walletAddress);
+    function _isAdmin(address walletAddress) private view returns (bool) {
+        Admin memory admin = _findAdmin(walletAddress);
 
-        if (admin.activeStatus == true && admin.walletAddress != address(0)) {
+        if (admin.activeStatus == ActiveStatus.ACTIVE) {
             return true;
         } else {
             return false;
@@ -192,33 +235,68 @@ contract PixelMarketplace is IERC721Receiver {
         return result;
     }
 
-    function _updateAuthor(
-        address _walletAddress,
-        string memory _authorName,
-        string memory _authorEmail,
-        bool _isActiveStatus
+    function isAuthor(address walletAddress) public view returns (bool) {
+        Author memory _author = _findAuthor(walletAddress);
+
+        if (_author.activeStatus == ActiveStatus.ACTIVE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function requestAuthorship(string memory _name, string memory _email)
+        public
+    {
+        // Check if author already exists
+        bool _isAuthor = isAuthor(msg.sender);
+        require(!_isAuthor, "Author already exists");
+
+        createAuthor(msg.sender, _name, _email);
+    }
+
+    function _findAuthor(address walletAddress)
+        private
+        view
+        returns (Author storage)
+    {
+        for (uint256 i = 0; i < adminCount.current(); i++) {
+            Author storage author = authors[i];
+
+            if (author.walletAddress == walletAddress) {
+                return author;
+            }
+        }
+
+        Author storage blankAuthor = authors[0];
+        return blankAuthor;
+    }
+
+    function createAuthor(
+        address walletAddress,
+        string memory _name,
+        string memory email
     ) private {
-        bool setAuthorExistsInMap = true;
+        uint256 authorId = authorCount.current();
 
         Author memory newAuthor = Author(
-            authorCount.current(),
-            _walletAddress,
-            _authorName,
-            _authorEmail,
-            _isActiveStatus,
-            setAuthorExistsInMap
+            authorId,
+            walletAddress,
+            _name,
+            email,
+            ActiveStatus.ACTIVE
         );
 
-        authors[_walletAddress] = newAuthor;
-        authorAddressList.push(_walletAddress);
+        authors[authorId] = newAuthor;
 
         emit AuthorUpdate(
-            authorCount.current(),
-            _walletAddress,
-            _authorName,
-            _authorEmail,
-            _isActiveStatus
+            authorId,
+            walletAddress,
+            _name,
+            email,
+            ActiveStatus.ACTIVE
         );
+
         authorCount.increment();
     }
 
@@ -231,8 +309,10 @@ contract PixelMarketplace is IERC721Receiver {
         public
         returns (uint256)
     {
+        Author storage author = _findAuthor(msg.sender);
+
         require(
-            isAuthor(msg.sender),
+            author.activeStatus == ActiveStatus.ACTIVE,
             "Only registered authors can create listings"
         );
 
@@ -244,26 +324,25 @@ contract PixelMarketplace is IERC721Receiver {
         // Increment token Id's
 
         // Get latest Id for new token after increment
-        uint256 _currentListingId = listingIds.current();
+        uint256 _currentListingId = listingCount.current();
 
         // Create item in memory
         Listing memory listing = Listing(
             _currentListingId,
-            msg.sender,
             _tokenId,
             _value,
+            author,
             ListingStatus.AVAILABLE
         );
 
+        author.listings.push(listing);
+
         // Add item to listings mapping
         listings[_currentListingId] = listing;
-        listingIds.increment();
-
-        // Add listing to author listings
-        uint256[] storage authorListingIds = addressToListingIds[msg.sender];
-        authorListingIds.push(_currentListingId);
 
         emit ListingCreated(msg.sender, _currentListingId, _value);
+
+        listingCount.increment();
 
         return _currentListingId;
     }
@@ -283,7 +362,7 @@ contract PixelMarketplace is IERC721Receiver {
 
     function getAllListingIds() public view returns (uint256[] memory) {
         // Create array of size listing count
-        uint256 _listingCount = listingIds.current();
+        uint256 _listingCount = listingCount.current();
         uint256[] memory _listingIds = new uint256[](_listingCount);
 
         // Build token Id array by looping over listing mapping and pushing list item Id to array

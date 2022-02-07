@@ -16,8 +16,8 @@ import { useNavigate } from "react-router";
 
 const RequestAuthorship: React.FC = () => {
   const [formState, setFormState] = React.useState<any>({
-    authorName: "",
-    authorEmail: "",
+    name: "",
+    email: "",
   });
   const navigate = useNavigate();
   const [_n, { setSuccess, setWarning }] = useNotificationContext();
@@ -41,10 +41,10 @@ const RequestAuthorship: React.FC = () => {
   const submitTransaction = async () => {
     try {
       const resHash = await contract.requestAuthorship(
-        formState.authorName,
-        formState.authorEmail
+        formState.name,
+        formState.email
       );
-      setFormState({ authorName: "", authorEmail: "" });
+      setFormState({ name: "", email: "" });
       setSuccess("Your request has been submitted");
       navigate("/tokens");
     } catch (err) {
@@ -55,7 +55,7 @@ const RequestAuthorship: React.FC = () => {
   const handleButtonClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    if (!formState.authorName || !formState.authorEmail) {
+    if (!formState.name || !formState.email) {
       setWarning("Form fields cannot be empty");
       return;
     }
@@ -106,22 +106,22 @@ const RequestAuthorship: React.FC = () => {
             onChange={handleInputChange}
             required
             fullWidth
-            name="authorName"
-            value={formState.authorName}
+            name="name"
+            value={formState.name}
             label="Full Name"
-            id="authorName"
+            id="name"
             autoFocus
           />
           <TextField
             margin="normal"
             onChange={handleInputChange}
-            value={formState.authorEmail}
+            value={formState.email}
             required
             fullWidth
-            id="authorEmail"
+            id="email"
             type="email"
             label="Email Address"
-            name="authorEmail"
+            name="email"
           />
           <Button
             onClick={handleButtonClick}

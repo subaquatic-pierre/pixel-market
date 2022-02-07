@@ -1,27 +1,20 @@
 pragma solidity ^0.8.0;
 
-struct Author {
+struct User {
     uint256 id;
-    address authorWallet;
-    string authorName;
-    string authorEmail;
-    bool isActive;
-    bool exists;
-}
-
-struct Admin {
-    uint256 id;
+    address walletAddress;
     string name;
     string email;
-    address walletAddress;
-    bool activeStatus;
+    Listing[] listings;
+    ActiveStatus adminStatus;
+    ActiveStatus authorStatus;
 }
 
 struct Listing {
     uint256 id;
-    address author;
     uint256 tokenId;
     uint256 value;
+    User author;
     ListingStatus status;
 }
 
@@ -29,4 +22,10 @@ enum ListingStatus {
     AVAILABLE,
     SOLD,
     REMOVED
+}
+
+enum ActiveStatus {
+    ACTIVE,
+    INACTIVE,
+    NONE
 }

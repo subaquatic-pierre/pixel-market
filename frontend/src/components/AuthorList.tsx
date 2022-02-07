@@ -14,7 +14,7 @@ const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 150 },
   { field: "name", headerName: "Name", width: 150 },
   { field: "email", headerName: "Email", width: 150 },
-  { field: "isActive", headerName: "Active Status", width: 150 },
+  { field: "activeStatus", headerName: "Active Status", width: 150 },
   { field: "address", headerName: "Wallet Address", width: 370 },
 ];
 
@@ -37,10 +37,10 @@ const AuthorRequestList = () => {
       try {
         const _author: IAuthor = {
           id: authorRes.id,
-          name: authorRes.authorName,
-          email: authorRes.authorEmail,
-          isActive: authorRes.isActive,
-          address: authorRes.authorWallet,
+          name: authorRes.name,
+          email: authorRes.email,
+          activeStatus: authorRes.activeStatus,
+          address: authorRes.walletAddress,
         };
         _authors.push(_author);
       } catch (err) {
