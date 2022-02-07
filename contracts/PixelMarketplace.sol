@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./IMarketplace.sol";
 import "./Structs.sol";
 import "./PixelNFT.sol";
 import "./PixelToken.sol";
