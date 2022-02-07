@@ -116,7 +116,7 @@ const CreateListing = () => {
     const tokenMeta: ITokenMeta = {
       name: formState.name,
       description: formState.description,
-      imageUri: `${HOST_URL}/token-image/${newTokenId}.jpg`,
+      image: `${HOST_URL}/token-image/${newTokenId}.jpg`,
       attributes: [],
     };
 

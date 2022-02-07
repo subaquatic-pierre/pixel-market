@@ -50,19 +50,19 @@ const uploadImage = async (filename) => {
   try {
     const axiosRes = await axios.post(url, data, options);
     const IpfsHash = axiosRes.data.IpfsHash;
-    const imageUri = `${IPFS_GATEWAY}/${IpfsHash}`;
-    return [imageUri, tokenId];
+    const image = `${IPFS_GATEWAY}/${IpfsHash}`;
+    return [image, tokenId];
   } catch (err) {
     console.log(err);
   }
 };
 
-const uploadMetaData = async (tokenId, imageUri) => {
+const uploadMetaData = async (tokenId, image) => {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
   const rawData = fs.readFileSync(`${META_DIR}/${tokenId}.json`);
   const tokenData = JSON.parse(rawData);
   tokenData.tokenId = tokenId;
-  tokenData.imageUri = imageUri;
+  tokenData.image = image;
 
   // Create metadata
   const jsonData = {
@@ -114,8 +114,8 @@ const main = async () => {
 
   for (filename of files) {
     try {
-      const [imageUri, tokenId] = await uploadImage(filename);
-      const tokenUri = await uploadMetaData(tokenId, imageUri);
+      const [image, tokenId] = await uploadImage(filename);
+      const tokenUri = await uploadMetaData(tokenId, image);
       const res = await createToken(tokenUri);
       // return 'yo';
     } catch (err) {

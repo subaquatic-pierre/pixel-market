@@ -1,6 +1,6 @@
 interface ITokenMeta {
   name: string;
-  imageUri: string;
+  image: string;
   description?: string;
   attributes: ITokenMetaAttributes[];
 }

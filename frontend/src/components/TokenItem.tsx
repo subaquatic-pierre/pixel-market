@@ -37,7 +37,7 @@ const TokenItem: React.FC<ITokenItemProps> = ({
   isListing,
 }) => {
   const { tokenMeta, author } = tokenInfo;
-  const { imageUri, name } = tokenMeta;
+  const { image, name } = tokenMeta;
   const [dappState, _] = useDappContext();
   const [_n, { setWarning, setSuccess }] = useNotificationContext();
   const [state, setState] = React.useState<ITokenItemState>(
@@ -104,12 +104,7 @@ const TokenItem: React.FC<ITokenItemProps> = ({
             square
             elevation={0}
           >
-            <CardMedia
-              component="img"
-              image={imageUri}
-              alt={name}
-              height={500}
-            />
+            <CardMedia component="img" image={image} alt={name} height={500} />
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>

@@ -59,7 +59,7 @@ const TokenPage = () => {
     try {
       const itemMetaRes = await axios.get(_tokenUri);
       const tokenMeta: ITokenMeta = {
-        imageUri: itemMetaRes.data.imageUri,
+        image: itemMetaRes.data.image,
         name: itemMetaRes.data.name,
         description: itemMetaRes.data.description,
         attributes: itemMetaRes.data.attributes,

@@ -26,7 +26,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
 }) => {
   const { author: listingAuthor } = listingInfo;
   const { tokenMeta } = tokenInfo;
-  const { imageUri, name } = tokenMeta;
+  const { image, name } = tokenMeta;
   const [isOwner, setIsOwner] = React.useState(false);
   const [dappState, _] = useDappContext();
   const [_n, { setSuccess, setWarning }] = useNotificationContext();
@@ -65,12 +65,7 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
             square
             elevation={0}
           >
-            <CardMedia
-              component="img"
-              image={imageUri}
-              alt={name}
-              height={500}
-            />
+            <CardMedia component="img" image={image} alt={name} height={500} />
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>

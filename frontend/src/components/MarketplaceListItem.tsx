@@ -45,7 +45,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
     try {
       const res = await axios.get(listItem.tokenUri);
       const tokenMeta: ITokenMeta = {
-        imageUri: res.data.imageUri,
+        image: res.data.image,
         name: res.data.name,
         description: res.data.description,
         attributes: [],
@@ -106,7 +106,7 @@ const MarketplaceListItem: React.FC<IMarketplaceListItemProps> = ({
             <CardActionArea>
               <CardMedia
                 component="img"
-                image={tokenInfo.tokenMeta.imageUri}
+                image={tokenInfo.tokenMeta.image}
                 alt={tokenInfo.tokenMeta.name}
                 height={300}
               />

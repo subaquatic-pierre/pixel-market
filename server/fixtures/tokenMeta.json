@@ -2,7 +2,7 @@
     "tokenId": 1,
     "name": "Super Cool",
     "description": "This is a super cool token",
-    "imageUri": "http://localhost:8080/token-image/1.jpg",
+    "image": "http://localhost:8080/token-image/1.jpg",
     "attributes": [{
         "value": "600"
     }, {

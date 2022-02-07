@@ -8,6 +8,7 @@ import TokenIcon from "@mui/icons-material/Token";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import ListIcon from "@mui/icons-material/List";
 
 const filterIconByName = (iconName: string) => {
@@ -27,7 +28,7 @@ const filterIconByName = (iconName: string) => {
     case "author":
       return <AddReactionIcon />;
     case "admins":
-      return <AdminPanelSettingsIcon />;
+      return <SupervisorAccountIcon />;
 
     default:
       return <AddReactionIcon />;
