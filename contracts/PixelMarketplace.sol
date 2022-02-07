@@ -332,6 +332,17 @@ contract PixelMarketplace is IERC721Receiver {
         _updateListingStatus(_listingId, ListingStatus.REMOVED);
     }
 
+    function removeListings(uint256[] memory _listingIds) public {
+        require(
+            _isAdmin(msg.sender),
+            "Only registered admins can remove listings"
+        );
+
+        for (uint256 i = 0; i < _listingIds.length; i++) {
+            removeListing(_listingIds[i]);
+        }
+    }
+
     function _setListingSold(uint256 listingId) private {
         _updateListingStatus(listingId, ListingStatus.SOLD);
     }

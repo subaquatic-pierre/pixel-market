@@ -7,6 +7,8 @@ import Paper from "@mui/material/Paper";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
 
+import AuthorListToolbar from "components/AuthorListToolbar";
+
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 150 },
   { field: "name", headerName: "Name", width: 150 },
@@ -26,6 +28,7 @@ interface IAuthor {
 const AuthorRequestList = () => {
   const [dappState, _] = useDappContext();
   const [authors, setAuthors] = React.useState<IAuthor[]>([]);
+  const [selected, setSelected] = React.useState<string[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
 
   const getAuthors = async () => {
@@ -59,9 +62,12 @@ const AuthorRequestList = () => {
   }, [dappState]);
 
   return (
-    <Paper sx={{ height: 500, width: "100%" }}>
-      <DataGrid rows={authors} columns={columns} />
-    </Paper>
+    <Box>
+      {selected.length > 0 && <AuthorListToolbar selected={selected} />}
+      <Paper sx={{ height: 500, width: "100%" }}>
+        <DataGrid rows={authors} columns={columns} />
+      </Paper>
+    </Box>
   );
 };
 

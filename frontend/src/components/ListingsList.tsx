@@ -2,8 +2,11 @@ import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 import useDappContext from "hooks/useDappContext";
 import useNotificationContext from "hooks/useNotificationContext";
+
+import ListingsListToolbar from "components/ListingsListToolbar";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 150 },
@@ -15,11 +18,11 @@ const columns: GridColDef[] = [
 
 const parseStatusCode = (statusCode: number): string => {
   switch (statusCode) {
-    case 1:
+    case 0:
       return "Available";
-    case 2:
+    case 1:
       return "Sold";
-    case 3:
+    case 2:
       return "Removed";
     default:
       return "NA";
@@ -37,6 +40,7 @@ interface IListingRow {
 const ListingsList = () => {
   const [dappState, _] = useDappContext();
   const [listings, setListings] = React.useState<IListingRow[]>([]);
+  const [selected, setSelected] = React.useState<ISelectedListing[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
 
   const getListings = async () => {
@@ -49,7 +53,7 @@ const ListingsList = () => {
       const listingRes = await marketplaceContract.listings(i);
       try {
         const _listing: IListingRow = {
-          id: listingRes.id,
+          id: listingRes.id.toString(),
           author: listingRes.author,
           status: parseStatusCode(listingRes.status),
           tokenId: listingRes.tokenId,
@@ -64,14 +68,37 @@ const ListingsList = () => {
     setListings(_listings);
   };
 
+  const handleGridStateChange = (state: any): void => {
+    const selected = state.selection;
+    const selectedListings: ISelectedListing[] = [];
+
+    selected.forEach((listing) => {
+      const selectedListing: ISelectedListing = {
+        listingId: Number(listings[listing].id),
+        status: listings[listing].status,
+        tokenId: listings[listing].tokenId.toString(),
+      };
+      selectedListings.push(selectedListing);
+    });
+    setSelected(selectedListings);
+  };
+
   React.useEffect(() => {
     if (dappState.isInitialized) getListings();
   }, [dappState]);
 
   return (
-    <Paper sx={{ height: 500, width: "100%" }}>
-      <DataGrid rows={listings} columns={columns} />
-    </Paper>
+    <Box>
+      {selected.length >= 0 && <ListingsListToolbar selected={selected} />}
+      <Paper sx={{ height: 500, width: "100%" }}>
+        <DataGrid
+          checkboxSelection={true}
+          onStateChange={handleGridStateChange}
+          rows={listings}
+          columns={columns}
+        />
+      </Paper>
+    </Box>
   );
 };
 

@@ -11,3 +11,9 @@ interface IListingItem {
   tokenUri: string;
   listingInfo: IListingInfo;
 }
+
+interface ISelectedListing {
+  listingId: number;
+  status: string;
+  tokenId: string;
+}

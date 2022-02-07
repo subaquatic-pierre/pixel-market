@@ -10,10 +10,14 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 
 import useDappContext from "hooks/useDappContext";
 
-interface IAdminListToolbarProps {}
+interface IAuthorListToolbarProps {
+  selected: string[];
+}
 
-const AdminListToolbar: React.FC<IAdminListToolbarProps> = () => {
+const AuthorListToolbar: React.FC<IAuthorListToolbarProps> = ({ selected }) => {
   const [dappState, _] = useDappContext();
+
+  const handleRemoveAuthorClick = (): void => {};
 
   return (
     <Grid item>
@@ -34,4 +38,4 @@ const AdminListToolbar: React.FC<IAdminListToolbarProps> = () => {
   );
 };
 
-export default AdminListToolbar;
+export default AuthorListToolbar;

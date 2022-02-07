@@ -51,7 +51,7 @@ const uploadImage = async (filename) => {
     const axiosRes = await axios.post(url, data, options);
     const IpfsHash = axiosRes.data.IpfsHash;
     const image = `${IPFS_GATEWAY}/${IpfsHash}`;
-    return [image, tokenId];
+    return [image, Number(tokenId)];
   } catch (err) {
     console.log(err);
   }
@@ -97,9 +97,9 @@ const createToken = async (tokenUri, tokenId) => {
 
   const res = await pixelNFT.createToken(tokenUri);
 
-  //   await pixelNFT.approve(pixelMarketplace.address, tokenId);
+  await pixelNFT.approve(pixelMarketplace.address, tokenId);
 
-  //   const res = await pixelMarketplace.createListing(tokenId, 100);
+  await pixelMarketplace.createListing(tokenId, 100);
   return res;
 };
 
@@ -116,10 +116,11 @@ const main = async () => {
     try {
       const [image, tokenId] = await uploadImage(filename);
       const tokenUri = await uploadMetaData(tokenId, image);
-      const res = await createToken(tokenUri);
-      // return 'yo';
+      const res = await createToken(tokenUri, tokenId);
     } catch (err) {
+      console.log("There was an error in the loop");
       console.log(err);
+
       continue;
     }
   }
@@ -128,4 +129,7 @@ const main = async () => {
 
 main()
   .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    console.log("There was an error in final execution");
+    console.log(err);
+  });
