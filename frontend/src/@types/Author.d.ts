@@ -1,7 +1,9 @@
-interface IAuthor {
+interface IUser {
   id: number;
+  walletAddress: string;
   name: string;
   email: string;
-  activeStatus: boolean;
-  address: string;
+  listingIds: number[];
+  adminStatus: string;
+  authorStatus: string;
 }

@@ -374,6 +374,16 @@ contract PixelMarketplace is IERC721Receiver {
         _updateListing(_listingId, ListingStatus.SOLD);
     }
 
+    function userAddresses() public view returns (address[] memory) {
+        uint256 _userCount = userCount();
+        address[] memory addressList = new address[](_userCount);
+        for (uint256 i = 0; i < _userCount; i++) {
+            addressList[i] = userAddressList[i];
+        }
+
+        return addressList;
+    }
+
     function name() public pure returns (string memory) {
         return "PixelMarketplace";
     }

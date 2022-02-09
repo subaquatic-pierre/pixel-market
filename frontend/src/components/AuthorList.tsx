@@ -20,27 +20,32 @@ const columns: GridColDef[] = [
 
 const AuthorRequestList = () => {
   const [dappState, _] = useDappContext();
-  const [authors, setAuthors] = React.useState<IAuthor[]>([]);
+  const [authors, setAuthors] = React.useState<IUser[]>([]);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
   const navigate = useNavigate();
 
   const getAuthors = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const bigNumAuthorCount = await marketplaceContract.authorCount();
-    const authorCount = Number(bigNumAuthorCount.toString());
+    const userAddressList = await marketplaceContract.userAddresses();
+    // const userCount = Number(bigNumUserCount.toString());
     const _authors = [];
 
-    for (let i = 0; i < authorCount; i++) {
-      const authorAddress = await marketplaceContract.authorAddressList(i);
-      const authorRes = await marketplaceContract.authors(authorAddress);
+    console.log(userAddressList);
+
+    for (const address of userAddressList) {
+      const userRes = await marketplaceContract.users(address);
+      console.log(userRes);
+      // const authorRes = await marketplaceContract.authors(authorAddress);
       try {
-        const _author: IAuthor = {
-          id: authorRes.id,
-          name: authorRes.name,
-          email: authorRes.email,
-          activeStatus: authorRes.activeStatus,
-          address: authorRes.walletAddress,
+        const _author: IUser = {
+          id: userRes.id,
+          walletAddress: userRes.walletAddress,
+          name: userRes.name,
+          email: userRes.email,
+          listingIds: userRes.listingIds,
+          adminStatus: userRes.adminStatus,
+          authorStatus: userRes.authorStatus,
         };
         _authors.push(_author);
       } catch (err) {
