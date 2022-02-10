@@ -23,6 +23,7 @@ contract PixelMarketplace is IERC721Receiver {
     // Marketplace items
     Counters.Counter public listingCount;
     mapping(uint256 => Listing) public listings;
+    mapping(address => uint256[]) public userAddressToListingIds;
 
     // EVENTS
     event UserUpdated(
@@ -250,7 +251,8 @@ contract PixelMarketplace is IERC721Receiver {
         );
 
         // Add listing id to user lisingId list
-        _user.listingIds.push(_listing.id);
+        uint256[] storage userListingIds = userAddressToListingIds[msg.sender];
+        userListingIds.push(_listing.id);
 
         // Add item to listings mapping
         listings[_listingId] = _listing;

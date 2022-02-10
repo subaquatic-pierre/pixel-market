@@ -49,7 +49,6 @@ const AuthorRequestList = () => {
       walletAddress: userRes.walletAddress,
       name: userRes.name,
       email: userRes.email,
-      listingIds: [],
       adminStatus: parseActiveStatusCode(userRes.adminStatus),
       authorStatus: parseActiveStatusCode(userRes.authorStatus),
     };
@@ -64,6 +63,7 @@ const AuthorRequestList = () => {
 
     for (const address of userAddressList) {
       const userRes = await marketplaceContract.users(address);
+      console.log(userRes);
       const user = parseUserRes(userRes);
       users.push(user);
     }

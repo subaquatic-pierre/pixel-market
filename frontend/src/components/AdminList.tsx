@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
 
 const AdminList = () => {
   const [dappState, _] = useDappContext();
-  const [admins, setAdmins] = React.useState<IAdmin[]>([]);
+  const [admins, setAdmins] = React.useState<IUser[]>([]);
   const [_n, { setWarning }] = useNotificationContext();
   const navigate = useNavigate();
 
@@ -27,18 +27,38 @@ const AdminList = () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const adminCountBigNum = await marketplaceContract.adminCount();
     const adminCount = Number(adminCountBigNum.toString());
-    const _admins: IAdmin[] = [];
+    const _admins: IUser[] = [];
+
+    const parseActiveStatusCode = (code: number): string => {
+      switch (code) {
+        case 0:
+          return "None";
+        case 1:
+          return "Active";
+        case 2:
+          return "Inactive";
+        default:
+          return "NA";
+      }
+    };
+
+    const parseUserRes = (userRes): IUser => {
+      const user: IUser = {
+        id: userRes.id.toString(),
+        walletAddress: userRes.walletAddress,
+        name: userRes.name,
+        email: userRes.email,
+        adminStatus: parseActiveStatusCode(userRes.adminStatus),
+        authorStatus: parseActiveStatusCode(userRes.authorStatus),
+      };
+
+      return user;
+    };
 
     for (let i = 0; i < adminCount; i++) {
       const adminRes = await marketplaceContract.admins(i);
       try {
-        const _admin: IAdmin = {
-          id: adminRes.id.toString(),
-          name: adminRes.name,
-          email: adminRes.email,
-          walletAddress: adminRes.walletAddress,
-          status: adminRes.activeStatus,
-        };
+        const _admin: IUser = parseUserRes(adminRes);
         _admins.push(_admin);
       } catch (err) {
         setWarning(err.message);

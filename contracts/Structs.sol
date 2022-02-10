@@ -7,7 +7,6 @@ struct User {
     address walletAddress;
     string name;
     string email;
-    uint256[] listingIds;
     ActiveStatus adminStatus;
     ActiveStatus authorStatus;
 }
