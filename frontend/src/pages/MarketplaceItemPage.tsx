@@ -33,7 +33,7 @@ const MarketplaceItemPage = () => {
   const [state, setState] = React.useState<IMarketplaceItemPageState>(
     initialMarketplaceItemPageState
   );
-  const { id: tokenId } = useParams();
+  const { id: listingId } = useParams();
   const [_n, { setWarning }] = useNotificationContext();
   const [dappState, _] = useDappContext();
 
@@ -74,9 +74,12 @@ const MarketplaceItemPage = () => {
     return tokenMeta;
   };
 
-  const getTokenInfo = async (tokenUri: string): Promise<ITokenInfo> => {
+  const getTokenInfo = async (
+    tokenUri: string,
+    tokenId,
+    author
+  ): Promise<ITokenInfo> => {
     try {
-      const author: string = await getTokenAuthor(tokenId);
       const tokenMeta: ITokenMeta = await getTokenMeta(tokenUri);
       const tokenInfo: ITokenInfo = {
         tokenId,
@@ -93,10 +96,10 @@ const MarketplaceItemPage = () => {
     const marketContract = dappState.contracts.pixelMarketplace;
 
     try {
-      const listingInfoRes = await marketContract.listings(tokenId);
+      const listingInfoRes = await marketContract.listings(listingId);
 
       const listingInfo: IListingInfo = {
-        listingId: tokenId,
+        listingId: listingInfoRes.tokenId,
         author: listingInfoRes.author,
         status: listingInfoRes.status,
         tokenId: listingInfoRes.tokenId.toString(),
@@ -114,7 +117,11 @@ const MarketplaceItemPage = () => {
 
     const tokenUri = await getTokenUri(listingInfo.tokenId);
 
-    const tokenInfo: ITokenInfo = await getTokenInfo(tokenUri);
+    const tokenInfo: ITokenInfo = await getTokenInfo(
+      tokenUri,
+      listingInfo.tokenId,
+      listingInfo.author
+    );
 
     setState((oldState) => ({
       ...oldState,
