@@ -13,7 +13,9 @@ import useNotificationContext from "hooks/useNotificationContext";
 
 import CreateTokenForm from "components/CreateTokenForm";
 
-import { HOST_URL } from "const";
+// Set Constants
+const HOST_URL = "https://gateway.pinata.cloud/ipfs";
+const PINATA_JWT = process.env.PINATA_JWT;
 
 interface IFormData {
   image: any;
@@ -81,22 +83,72 @@ const CreateListing = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleImageSave = async (newTokenId: string): Promise<boolean> => {
-    const url = `${HOST_URL}/save-image`;
+  // const uploadImage = async (filename) => {
+  //   const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+  //   const tokenId = getTokenIdFromFilename(filename);
+
+  //   // Get image
+  //   let data = new FormData();
+  //   const file = fs.createReadStream(`${IMAGE_DIR}/${filename}`);
+
+  //   // Add image to data
+  //   data.append("file", file);
+
+  //   // Set image meta
+  //   const imageMeta = JSON.stringify({
+  //     name: `token-id-${tokenId}-image`,
+  //   });
+  //   data.append("pinataMetadata", imageMeta);
+
+  //   const headers = {
+  //     "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+  //     Authorization: `Bearer ${PINATA_JWT}`,
+  //   };
+
+  //   const options = {
+  //     maxBodyLength: "Infinity",
+  //     headers,
+  //   };
+
+  //   try {
+  //     const axiosRes = await axios.post(url, data, options);
+  //     const IpfsHash = axiosRes.data.IpfsHash;
+  //     const image = `${IPFS_GATEWAY}/${IpfsHash}`;
+  //     return [image, Number(tokenId)];
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  const handleImageSave = async (newTokenId: string): Promise<string> => {
+    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("tokenId", `${newTokenId}`);
+
+    // Set image meta
+    const imageMeta = JSON.stringify({
+      name: `token-id-${newTokenId}-image`,
+    });
+    formData.append("pinataMetadata", imageMeta);
+
+    const headers = {
+      "Content-Type": `multipart/form-data;`,
+      Authorization: `Bearer ${PINATA_JWT}`,
+    };
+
+    const options = {
+      maxBodyLength: -1,
+      headers,
+    };
 
     try {
-      await axios.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return true;
+      const axiosRes = await axios.post(url, formData, options);
+      const IpfsHash = axiosRes.data.IpfsHash;
+      const imageUrl = `${HOST_URL}/${IpfsHash}`;
+      return imageUrl;
     } catch (err) {
       setWarning(err.message);
-      return false;
+      return "";
     }
   };
 
@@ -111,38 +163,81 @@ const CreateListing = () => {
     return true;
   };
 
-  const handleMetaDataSave = async (newTokenId: string): Promise<boolean> => {
-    const url = `${HOST_URL}/save-meta`;
+  const handleMetaDataSave = async (
+    tokenId: string,
+    imageUrl: string
+  ): Promise<string> => {
+    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+
     const tokenMeta: ITokenMeta = {
-      name: formState.name,
-      description: formState.description,
-      image: `${HOST_URL}/token-image/${newTokenId}.jpg`,
-      attributes: [],
+      name: "New Token",
+      description: "The best of the Super Circle life",
+      image: imageUrl,
+      attributes: [
+        {
+          trait_type: "Background",
+          value: "white",
+        },
+        {
+          trait_type: "Body",
+          value: "maroon",
+        },
+        {
+          trait_type: "Eyes",
+          value: "standard",
+        },
+        {
+          trait_type: "Clothes",
+          value: "blue_dot",
+        },
+        {
+          trait_type: "Held Item",
+          value: "nut",
+        },
+        {
+          trait_type: "Hands",
+          value: "standard",
+        },
+      ],
     };
 
-    const tokenInfo: ITokenInfo = {
-      tokenId: newTokenId,
-      author: dappState.currentAccount,
-      tokenMeta,
+    // Create metadata
+    const jsonData = {
+      pinataMetadata: {
+        name: `token-id-${tokenId}-meta`,
+      },
+      pinataContent: tokenMeta,
+    };
+
+    const headers = {
+      Authorization: `Bearer ${PINATA_JWT}`,
+    };
+
+    const options = {
+      maxBodyLength: -1,
+      headers,
     };
 
     try {
-      await axios.post(url, tokenInfo);
-      return true;
+      const axiosRes = await axios.post(url, jsonData, options);
+      const IpfsHash = axiosRes.data.IpfsHash;
+      const tokenUri = `${HOST_URL}/${IpfsHash}`;
+      return tokenUri;
     } catch (err) {
       setWarning(err.message);
-      return false;
+      return "";
     }
   };
 
   const handleCreateToken = async () => {
     const pixelNFTContract = dappState.contracts.pixelNFT;
+    let imageUrl = "";
     const newTokenId = await getLatestTokenId();
 
     // Check file exists and save image
     if (file) {
-      const imageSaved = await handleImageSave(newTokenId);
-      if (!imageSaved) {
+      imageUrl = await handleImageSave(newTokenId);
+      if (imageUrl === "") {
         setWarning("An error occurred during image save");
         return;
       }
@@ -159,17 +254,15 @@ const CreateListing = () => {
     }
 
     // Save meta data
-    const metaSaved = await handleMetaDataSave(newTokenId);
-    if (!metaSaved) {
+    const tokenUri = await handleMetaDataSave(newTokenId, imageUrl);
+    if (tokenUri === "") {
       setWarning("There was an error saving meta data");
       return;
     }
 
     // Create token on block chain
     try {
-      const res = await pixelNFTContract.createToken(
-        `${HOST_URL}/token-meta/${newTokenId}`
-      );
+      const res = await pixelNFTContract.createToken(tokenUri);
       navigate(`/marketplace`);
       setSuccess(`Token successfully create, tx hash: ${res.hash}`);
     } catch (err) {
