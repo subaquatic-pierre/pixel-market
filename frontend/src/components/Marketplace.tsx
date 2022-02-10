@@ -93,7 +93,7 @@ const Marketplace: React.FC<IMarketPlaceProps> = ({ myListings }) => {
   const checkIsMyListing = (marketplaceItem: IMarketplaceItem): boolean => {
     if (
       dappState.currentAccount ===
-      marketplaceItem.listingInfo.author.toLowerCase()
+      marketplaceItem.listingInfo.author.walletAddress.toLowerCase()
     ) {
       return true;
     } else {

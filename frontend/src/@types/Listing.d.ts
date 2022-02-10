@@ -1,6 +1,6 @@
 interface IListingInfo {
   listingId: string;
-  author: string;
+  author: IUser;
   status: number;
   tokenId: string;
   value: string;

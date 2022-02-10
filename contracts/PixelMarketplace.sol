@@ -122,7 +122,6 @@ contract PixelMarketplace is IERC721Receiver {
             _walletAddress,
             _name,
             _email,
-            new uint256[](0),
             _adminStatus,
             _authorStatus
         );
@@ -282,8 +281,8 @@ contract PixelMarketplace is IERC721Receiver {
     }
 
     function getMyListingsIds() public view returns (uint256[] memory) {
-        User storage _user = users[msg.sender];
-        return _user.listingIds;
+        uint256[] storage listingIds = userAddressToListingIds[msg.sender];
+        return listingIds;
     }
 
     function getAllListingIds() public view returns (uint256[] memory) {

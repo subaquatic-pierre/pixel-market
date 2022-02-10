@@ -38,11 +38,6 @@ const AuthorRequestList = () => {
     }
   };
 
-  const parseListingIds = (list): number[] => {
-    const listingIds = list.map((listingId) => Number(listingId.toString()));
-    return listingIds;
-  };
-
   const parseUserRes = (userRes): IUser => {
     const user: IUser = {
       id: userRes.id.toString(),
