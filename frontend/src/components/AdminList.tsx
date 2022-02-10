@@ -13,7 +13,7 @@ const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 150 },
   { field: "name", headerName: "Name", width: 150 },
   { field: "email", headerName: "Email", width: 150 },
-  { field: "status", headerName: "Active Status", width: 150 },
+  { field: "adminStatus", headerName: "Admin Status", width: 150 },
   { field: "walletAddress", headerName: "Wallet Address", width: 370 },
 ];
 
@@ -49,17 +49,6 @@ const AdminList = () => {
     return user;
   };
 
-  const filterActiveAdmins = (users: IUser[]): IUser[] => {
-    const _users: IUser[] = [];
-
-    for (const user of users) {
-      if (user.adminStatus === "Active") {
-        _users.push(user);
-      }
-    }
-    return _users;
-  };
-
   const getAdmins = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
     const userAddressList = await marketplaceContract.userAddresses();
@@ -71,7 +60,7 @@ const AdminList = () => {
       users.push(user);
     }
 
-    const admins = filterActiveAdmins(users);
+    const admins = users.filter((user) => user.adminStatus === "Active");
 
     setAdmins(admins);
   };

@@ -19,10 +19,12 @@ const columns: GridColDef[] = [
 const parseStatusCode = (statusCode: number): string => {
   switch (statusCode) {
     case 0:
-      return "Available";
+      return "None";
     case 1:
-      return "Sold";
+      return "Available";
     case 2:
+      return "Sold";
+    case 3:
       return "Removed";
     default:
       return "NA";
@@ -45,7 +47,7 @@ const ListingsList = () => {
 
   const getListings = async () => {
     const marketplaceContract = dappState.contracts.pixelMarketplace;
-    const listingCountBigNum = await marketplaceContract.listingIds();
+    const listingCountBigNum = await marketplaceContract.listingCount();
     const listingCount = Number(listingCountBigNum.toString());
     const _listings: IListingRow[] = [];
 
