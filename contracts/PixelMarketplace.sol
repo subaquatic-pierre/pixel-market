@@ -399,6 +399,10 @@ contract PixelMarketplace is IERC721Receiver {
         uint256 tokenId,
         bytes calldata data
     ) public override returns (bytes4) {}
+
+    function owner() public view returns (address) {
+        return _owner;
+    }
 }
 
 // TODO:

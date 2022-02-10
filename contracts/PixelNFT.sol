@@ -10,10 +10,17 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract PixelNFT is ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+    address private _owner;
 
     mapping(uint256 => string) private _tokenURIs;
 
-    constructor() ERC721("PixelNFT", "PIXNFT") {}
+    constructor() ERC721("PixelNFT", "PIXNFT") {
+        _owner = msg.sender;
+    }
+
+    function owner() public view returns (address) {
+        return _owner;
+    }
 
     function tokenURI(uint256 tokenId)
         public

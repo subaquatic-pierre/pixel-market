@@ -12,7 +12,7 @@ describe("Pixel NFT contract", function () {
     factory = await ethers.getContractFactory("PixelNFT");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
-    pixelNFT = await Token.deploy();
+    pixelNFT = await factory.deploy();
     await pixelNFT.deployed();
   });
 

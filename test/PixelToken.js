@@ -41,7 +41,7 @@ describe("Pixel Token contract", function () {
 
       await expect(
         pixelToken.connect(addr1).transfer(owner.address, 1)
-      ).to.be.revertedWith("Not enough tokens");
+      ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
 
       expect(await pixelToken.balanceOf(owner.address)).to.equal(
         initialOwnerBalance
