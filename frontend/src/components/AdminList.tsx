@@ -61,7 +61,8 @@ const AdminList = () => {
         const _admin: IUser = parseUserRes(adminRes);
         _admins.push(_admin);
       } catch (err) {
-        setWarning(err.message);
+        console.log(err.message);
+        // setWarning(err.message);
       }
     }
 
