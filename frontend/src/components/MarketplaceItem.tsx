@@ -33,7 +33,9 @@ const MarketplaceItem: React.FC<IMarketplaceItemProps> = ({
   const navigate = useNavigate();
 
   const checkOwner = () => {
-    if (listingAuthor.toLowerCase() === dappState.currentAccount) {
+    if (
+      listingAuthor.walletAddress.toLowerCase() === dappState.currentAccount
+    ) {
       setIsOwner(true);
     }
   };

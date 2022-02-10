@@ -2,33 +2,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-struct Author {
+struct User {
     uint256 id;
-    address authorWallet;
-    string authorName;
-    string authorEmail;
-    bool isActive;
-    bool exists;
-}
-
-struct Admin {
-    uint256 id;
+    address walletAddress;
     string name;
     string email;
-    address walletAddress;
-    bool activeStatus;
+    ActiveStatus adminStatus;
+    ActiveStatus authorStatus;
 }
 
 struct Listing {
     uint256 id;
-    address author;
     uint256 tokenId;
     uint256 value;
+    User author;
     ListingStatus status;
 }
 
 enum ListingStatus {
+    NONE,
     AVAILABLE,
     SOLD,
     REMOVED
+}
+
+enum ActiveStatus {
+    NONE,
+    ACTIVE,
+    INACTIVE
 }

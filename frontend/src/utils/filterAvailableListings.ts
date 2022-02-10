@@ -12,12 +12,14 @@ const getAvailableListings = async (
 
     // Check owner of token is author of listing
     const tokenOwner = await NFTContract.ownerOf(tokenId);
-    if (tokenOwner.toLowerCase() !== listing.author.toLowerCase()) {
+    if (
+      tokenOwner.toLowerCase() !== listing.author.walletAddress.toLowerCase()
+    ) {
       // TODO: Notify admins listing should be de-listed
       continue;
     }
 
-    if (listing.status === 0) {
+    if (listing.status === 1) {
       availableListings.push(listing);
     }
   }

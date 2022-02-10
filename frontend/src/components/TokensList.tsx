@@ -99,6 +99,9 @@ const TokenList: React.FC = () => {
   const setMyListings = async () => {
     const { myListings } = dappState;
     const listings = await filterAvailableListings(myListings, dappState);
+
+    console.log(listings);
+    console.log(dappState);
     setState((oldState) => ({ ...oldState, myListings: listings }));
   };
 

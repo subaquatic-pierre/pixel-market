@@ -15,40 +15,33 @@ contract PixelMarketplace is IERC721Receiver {
     PixelNFT NFTContract;
     PixelToken tokenContract;
 
-    // Create admin list
+    // Create user list
     Counters.Counter public adminCount;
-    mapping(uint256 => Admin) public admins;
+    mapping(address => User) public users;
+    address[] public userAddressList;
 
     // Marketplace items
-    Counters.Counter public listingIds;
+    Counters.Counter public listingCount;
     mapping(uint256 => Listing) public listings;
-
-    // Marketplace authors
-    Counters.Counter public authorCount;
-    address[] public authorAddressList;
-    mapping(address => Author) public authors;
-
-    // Author listing IDs
-    mapping(address => uint256[]) addressToListingIds;
+    mapping(address => uint256[]) public userAddressToListingIds;
 
     // EVENTS
-    event AuthorUpdate(
-        uint256 authorCount,
-        address _authorWalletAddress,
-        string _authorName,
-        string _authorEmail,
-        bool isActive
-    );
-
-    event AdminUpdate(
+    event UserUpdated(
+        uint256 id,
+        address walletAddress,
         string name,
         string email,
-        uint256 adminCount,
-        address walletAddress,
-        bool activeStatus
+        ActiveStatus adminStatus,
+        ActiveStatus authorStatus
     );
 
-    event ListingCreated(address _authorId, uint256 _listingId, uint256 value);
+    event ListingUpdated(
+        uint256 id,
+        uint256 authorId,
+        uint256 tokenId,
+        uint256 value,
+        ListingStatus listingStatus
+    );
 
     constructor(address _NFTContractAddress, address _tokenContractAddress) {
         _owner = msg.sender;
@@ -56,135 +49,137 @@ contract PixelMarketplace is IERC721Receiver {
         tokenContract = PixelToken(_tokenContractAddress);
 
         // Default author
-        string memory _authorName = "Default Author";
-        string memory _authorEmail = "default@email.com";
+        string memory _name = "Default User";
+        string memory _email = "default@email.com";
 
-        _updateAuthor(msg.sender, _authorName, _authorEmail, true);
-        createAdmin(msg.sender, _authorName, _authorEmail);
+        createAdmin(msg.sender, _name, _email);
     }
 
-    function name() public pure returns (string memory) {
-        return "PixelMarketplace";
+    function _userExists(address _walletAddress) private view returns (bool) {
+        User storage user = users[_walletAddress];
+        return user.walletAddress != address(0);
     }
 
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) public override returns (bytes4) {}
+    function _availableListingExists(uint256 _listingId, bool _exists)
+        private
+        pure
+        returns (bool)
+    {
+        // TODO: Implement check if listing exists
+        // _exists varaible is only used for dummy purpose, must be removed
 
-    function isAuthor(address _walletAddress) public view returns (bool) {
-        Author memory _author = authors[_walletAddress];
+        return _exists;
+    }
 
-        if (_author.exists == true) {
+    function _availableListingExistsWithTokenId(uint256 _tokenId, bool _exists)
+        private
+        pure
+        returns (bool)
+    {
+        // TODO: Implement check if available listing exists with tokenId
+        // _exists varaible is only used for dummy purpose, must be removed
+
+        return _exists;
+    }
+
+    function _isAdmin(address _walletAddress) private view returns (bool) {
+        User storage user = users[_walletAddress];
+
+        if (
+            user.adminStatus == ActiveStatus.ACTIVE &&
+            user.walletAddress != address(0)
+        ) {
             return true;
         } else {
             return false;
         }
     }
 
-    function requestAuthorship(
-        string memory _authorName,
-        string memory _authorEmail
-    ) public {
-        // Check if author already exists
-        bool _isAuthor = isAuthor(msg.sender);
-        require(!_isAuthor, "Author already exists");
+    function _isAuthor(address _walletAddress) private view returns (bool) {
+        User storage user = users[_walletAddress];
 
-        bool _setAuthorExistsInMap = true;
+        if (
+            user.authorStatus == ActiveStatus.ACTIVE &&
+            user.walletAddress != address(0)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        _updateAuthor(
-            msg.sender,
-            _authorName,
-            _authorEmail,
-            _setAuthorExistsInMap
+    function _createUser(
+        address _walletAddress,
+        string memory _name,
+        string memory _email,
+        ActiveStatus _adminStatus,
+        ActiveStatus _authorStatus
+    ) private returns (User storage) {
+        uint256 _userId = userAddressList.length;
+
+        User memory _newUser = User(
+            _userId,
+            _walletAddress,
+            _name,
+            _email,
+            _adminStatus,
+            _authorStatus
         );
+
+        users[_walletAddress] = _newUser;
+        userAddressList.push(_walletAddress);
+
+        emit UserUpdated(
+            _userId,
+            _walletAddress,
+            _name,
+            _email,
+            _adminStatus,
+            _authorStatus
+        );
+
+        return users[_walletAddress];
     }
 
     function createAdmin(
         address _walletAddress,
-        string memory adminName,
-        string memory adminEmail
-    ) public returns (bool) {
+        string memory _adminName,
+        string memory _adminEmail
+    ) public returns (User memory) {
+        require(msg.sender == _owner, "Only contract owner can create admins");
+
+        require(!_isAdmin(_walletAddress), "User is already an admin");
+
+        User storage user = _createUser(
+            _walletAddress,
+            _adminName,
+            _adminEmail,
+            ActiveStatus.ACTIVE,
+            ActiveStatus.ACTIVE
+        );
+
+        return user;
+    }
+
+    function removeAdmin(address _walletAddress) public {
         require(
-            msg.sender == _owner,
-            "Only contract owner can add or remove admins"
-        );
-        // Add new admin to admin mapping
-        Admin memory newAdmin = Admin(
-            adminCount.current(),
-            adminName,
-            adminEmail,
-            _walletAddress,
-            true
+            _userExists(_walletAddress),
+            "User with that address does not exist"
         );
 
-        admins[adminCount.current()] = newAdmin;
+        require(_isAdmin(_walletAddress), "User it not an admin");
 
-        emit AdminUpdate(
-            adminName,
-            adminEmail,
-            adminCount.current(),
-            _walletAddress,
-            true
+        User storage _user = users[_walletAddress];
+        _user.adminStatus = ActiveStatus.INACTIVE;
+
+        emit UserUpdated(
+            _user.id,
+            _user.walletAddress,
+            _user.name,
+            _user.email,
+            _user.adminStatus,
+            _user.authorStatus
         );
-
-        adminCount.increment();
-
-        return true;
-    }
-
-    function removeAdmin(address _walletAddress) public returns (bool) {
-        Admin memory admin = _findAdmin(_walletAddress);
-
-        if (
-            admin.activeStatus == true && admin.walletAddress == _walletAddress
-        ) {
-            admin.activeStatus = false;
-            admins[admin.id] = admin;
-            return true;
-        }
-
-        emit AdminUpdate(
-            admin.name,
-            admin.email,
-            adminCount.current(),
-            _walletAddress,
-            false
-        );
-
-        return false;
-    }
-
-    function _findAdmin(address _walletAddress)
-        private
-        view
-        returns (Admin memory)
-    {
-        for (uint256 i = 0; i < adminCount.current(); i++) {
-            Admin memory admin = admins[i];
-
-            if (
-                admin.activeStatus == true &&
-                admin.walletAddress == _walletAddress
-            ) {
-                return admin;
-            }
-        }
-
-        Admin memory blankAdmin = Admin(0, "", "", address(0), false);
-        return blankAdmin;
-    }
-
-    function _isAdmin(address _walletAddress) private view returns (bool) {
-        Admin memory admin = _findAdmin(_walletAddress);
-
-        if (admin.activeStatus == true && admin.walletAddress != address(0)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     function isAdmin() public view returns (bool) {
@@ -192,98 +187,107 @@ contract PixelMarketplace is IERC721Receiver {
         return result;
     }
 
-    function _updateAuthor(
+    function isAuthor() public view returns (bool) {
+        bool result = _isAuthor(msg.sender);
+        return result;
+    }
+
+    function createAuthor(
         address _walletAddress,
-        string memory _authorName,
-        string memory _authorEmail,
-        bool _isActiveStatus
-    ) private {
-        bool setAuthorExistsInMap = true;
+        string memory _name,
+        string memory _email
+    ) public {
+        // Check if author already exists
+        require(!_isAuthor(msg.sender), "Author already exists");
 
-        Author memory newAuthor = Author(
-            authorCount.current(),
-            _walletAddress,
-            _authorName,
-            _authorEmail,
-            _isActiveStatus,
-            setAuthorExistsInMap
-        );
+        ActiveStatus _authorStatus = ActiveStatus.ACTIVE;
+        ActiveStatus _adminStatus = ActiveStatus.NONE;
 
-        authors[_walletAddress] = newAuthor;
-        authorAddressList.push(_walletAddress);
-
-        emit AuthorUpdate(
-            authorCount.current(),
-            _walletAddress,
-            _authorName,
-            _authorEmail,
-            _isActiveStatus
-        );
-        authorCount.increment();
+        _createUser(_walletAddress, _name, _email, _adminStatus, _authorStatus);
     }
 
-    function _listingExists() private pure returns (bool) {
-        // check listing does not exist with tokenId and is available
-        return false;
-    }
-
-    function createListing(uint256 _tokenId, uint256 _value)
-        public
-        returns (uint256)
-    {
+    function removeAuthor(address _walletAddress) public {
         require(
-            isAuthor(msg.sender),
-            "Only registered authors can create listings"
+            _userExists(_walletAddress),
+            "User with that address does not exist"
         );
 
+        require(_isAuthor(_walletAddress), "User is not an author");
+
+        User storage _user = users[_walletAddress];
+        _user.authorStatus = ActiveStatus.INACTIVE;
+
+        emit UserUpdated(
+            _user.id,
+            _user.walletAddress,
+            _user.name,
+            _user.email,
+            _user.adminStatus,
+            _user.authorStatus
+        );
+    }
+
+    function createListing(uint256 _tokenId, uint256 _value) public {
+        require(_isAuthor(msg.sender), "Only authors can create listings");
+
+        User storage _user = users[msg.sender];
+
         require(
-            !_listingExists(),
+            !_availableListingExistsWithTokenId(_tokenId, false),
             "Cannot create new listing with that token ID"
         );
 
-        // Increment token Id's
-
         // Get latest Id for new token after increment
-        uint256 _currentListingId = listingIds.current();
+        uint256 _listingId = listingCount.current();
 
         // Create item in memory
-        Listing memory listing = Listing(
-            _currentListingId,
-            msg.sender,
+        Listing memory _listing = Listing(
+            _listingId,
             _tokenId,
             _value,
+            _user,
             ListingStatus.AVAILABLE
         );
 
+        // Add listing id to user lisingId list
+        uint256[] storage userListingIds = userAddressToListingIds[msg.sender];
+        userListingIds.push(_listing.id);
+
         // Add item to listings mapping
-        listings[_currentListingId] = listing;
-        listingIds.increment();
+        listings[_listingId] = _listing;
 
-        // Add listing to author listings
-        uint256[] storage authorListingIds = addressToListingIds[msg.sender];
-        authorListingIds.push(_currentListingId);
+        emit ListingUpdated(
+            _listing.id,
+            _tokenId,
+            _listing.author.id,
+            _listing.value,
+            _listing.status
+        );
 
-        emit ListingCreated(msg.sender, _currentListingId, _value);
-
-        return _currentListingId;
+        listingCount.increment();
     }
 
-    function listingIdToTokenId(uint256 listingId)
+    function listingIdToTokenId(uint256 _listingId)
         public
         view
         returns (uint256)
     {
-        Listing memory listing = listings[listingId];
+        require(
+            _availableListingExists(_listingId, true),
+            "Listing with that ID does not exist"
+        );
+        Listing memory listing = listings[_listingId];
         return listing.tokenId;
     }
 
     function getMyListingsIds() public view returns (uint256[] memory) {
-        return addressToListingIds[msg.sender];
+        uint256[] storage listingIds = userAddressToListingIds[msg.sender];
+        return listingIds;
     }
 
     function getAllListingIds() public view returns (uint256[] memory) {
         // Create array of size listing count
-        uint256 _listingCount = listingIds.current();
+        uint256 _listingCount = listingCount.current();
         uint256[] memory _listingIds = new uint256[](_listingCount);
 
         // Build token Id array by looping over listing mapping and pushing list item Id to array
@@ -297,63 +301,104 @@ contract PixelMarketplace is IERC721Receiver {
 
     function removeListing(uint256 _listingId) public {
         require(
-            isAuthor(msg.sender),
-            "Only registered authors can remove listings"
+            _isAuthor(msg.sender),
+            "Only registered users can remove listings"
         );
 
-        _updateListingStatus(_listingId, ListingStatus.REMOVED);
+        // TODO: Ensure listing exists
+        // TODO: Ensure msg.sender owns listing if not admin
+
+        _updateListing(_listingId, ListingStatus.REMOVED);
     }
 
     function removeListings(uint256[] memory _listingIds) public {
         require(
             _isAdmin(msg.sender),
-            "Only registered admins can remove listings"
+            "Only registered users can remove listings"
         );
 
         for (uint256 i = 0; i < _listingIds.length; i++) {
-            removeListing(_listingIds[i]);
+            uint256 _listingId = _listingIds[i];
+
+            require(
+                _availableListingExists(_listingId, true),
+                "Listing with that ID is not marked as available"
+            );
+
+            _updateListing(_listingId, ListingStatus.REMOVED);
         }
     }
 
-    function _setListingSold(uint256 listingId) private {
-        _updateListingStatus(listingId, ListingStatus.SOLD);
-    }
+    function _updateListing(uint256 _listingId, ListingStatus _listingStatus)
+        private
+    {
+        Listing storage _listing = listings[_listingId];
+        _listing.status = _listingStatus;
 
-    function _updateListingStatus(
-        uint256 listingId,
-        ListingStatus _listingStatus
-    ) private {
-        Listing memory updateListing = listings[listingId];
-
-        // update listing
-        updateListing.status = _listingStatus;
-        listings[listingId] = updateListing;
+        emit ListingUpdated(
+            _listing.id,
+            _listing.author.id,
+            _listing.tokenId,
+            _listing.value,
+            _listing.status
+        );
     }
 
     function transferToken(
-        address authorAddress,
-        address receiverAddress,
-        uint256 listingId,
-        uint256 tokenId,
-        uint256 tokenValue
-    ) public payable returns (bool) {
+        address _authorAddress,
+        address _receiverAddress,
+        uint256 _listingId,
+        uint256 _tokenId,
+        uint256 _tokenValue
+    ) public payable {
         // Get 10% of item value, send to owner of marketplace for commission
-        uint256 ownerCommission = ((tokenValue * 10) / 100);
-        uint256 authorShare = tokenValue - ownerCommission;
+        uint256 _ownerCommission = ((_tokenValue * 10) / 100);
+        uint256 _authorShare = _tokenValue - _ownerCommission;
 
         // Transfer to marketplace owner / contract owner
-        tokenContract.transferFrom(receiverAddress, _owner, ownerCommission);
+        tokenContract.transferFrom(_receiverAddress, _owner, _ownerCommission);
 
         // Transfer to tokens to author of listing
-        tokenContract.transferFrom(receiverAddress, authorAddress, authorShare);
+        tokenContract.transferFrom(
+            _receiverAddress,
+            _authorAddress,
+            _authorShare
+        );
 
         // Transfer NFT token to the caller
-        NFTContract.safeTransferFrom(authorAddress, receiverAddress, tokenId);
+        NFTContract.safeTransferFrom(
+            _authorAddress,
+            _receiverAddress,
+            _tokenId
+        );
 
-        _setListingSold(listingId);
-
-        return true;
+        _updateListing(_listingId, ListingStatus.SOLD);
     }
+
+    function userAddresses() public view returns (address[] memory) {
+        uint256 _userCount = userCount();
+        address[] memory addressList = new address[](_userCount);
+        for (uint256 i = 0; i < _userCount; i++) {
+            addressList[i] = userAddressList[i];
+        }
+
+        return addressList;
+    }
+
+    function name() public pure returns (string memory) {
+        return "PixelMarketplace";
+    }
+
+    function userCount() public view returns (uint256) {
+        return userAddressList.length;
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) public override returns (bytes4) {}
 }
 
 // TODO:

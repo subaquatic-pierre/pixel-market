@@ -108,6 +108,11 @@ const DappContextProvider: React.FC = ({ children }) => {
     return buildContracts(provider);
   };
 
+  const parseListingIds = (list): number[] => {
+    const listingIds = list.map((listingId) => Number(listingId.toString()));
+    return listingIds;
+  };
+
   const getMyListings = async (contracts) => {
     const marketContract = contracts.pixelMarketplace;
     const listingIds: string[] = [];
@@ -140,10 +145,7 @@ const DappContextProvider: React.FC = ({ children }) => {
 
   const checkAuthorshipStatus = async (contracts) => {
     const marketplaceContract = contracts.pixelMarketplace;
-    const accounts = await window.ethereum.request({
-      method: "eth_accounts",
-    });
-    const isAuthor = await marketplaceContract.isAuthor(accounts[0]);
+    const isAuthor = await marketplaceContract.isAuthor();
 
     if (isAuthor) {
       setDappState((oldState) => ({ ...oldState, isAuthor: true }));
