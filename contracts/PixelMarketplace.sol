@@ -158,6 +158,8 @@ contract PixelMarketplace is IERC721Receiver {
             ActiveStatus.ACTIVE
         );
 
+        adminCount.increment();
+
         return user;
     }
 

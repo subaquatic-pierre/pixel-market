@@ -58,7 +58,6 @@ const AuthorRequestList = () => {
 
     for (const address of userAddressList) {
       const userRes = await marketplaceContract.users(address);
-      console.log(userRes);
       const user = parseUserRes(userRes);
       users.push(user);
     }
