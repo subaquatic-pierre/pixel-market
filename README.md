@@ -4,7 +4,7 @@ NFT Market place to sell NFTs from the PixelNFT solidity contract.
 
 If you wish to create your own NFT art tokens consider the following Python package to create tokens and metadata.
 
-Generative NFT Art: https://github.com/rounakbanik/generative-art-nft
+Generative NFT Art: <https://github.com/rounakbanik/generative-art-nft>
 
 The contract specifies Admins who are able to manage listings as well as Authors who are able to publish tokens to the marketplace.
 
@@ -18,7 +18,7 @@ The project can be deployed to any solidity smart contract compatible blockchain
 - Material UI
 - Hardhat (solidity development)
 
-## How To:
+## How To
 
 1. Clone this repo
 
@@ -41,7 +41,11 @@ The project can be deployed to any solidity smart contract compatible blockchain
 
    `npm install`
 
-7. Run the following commands to deploy project to local environment
+7. Start Hardhat node
+
+   `npx hardhat node`
+
+8. Run the following commands to deploy project to local environment
 
    `npx hardhat run scripts/deployContracts.js --network localhost`
 
